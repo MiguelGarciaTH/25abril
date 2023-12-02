@@ -1,0 +1,44 @@
+############################################################################
+############################################################################
+# Auxiliary services definitions
+#
+# This is not meant to be run directly, but to be used as base definitions
+# referenced from other docker compose files (with 'extends' clause).
+############################################################################
+
+version: "2"
+
+services:
+
+  postgres:
+    image: postgres:13.4
+    ports:
+      - "5432:5432"
+    command: -c max_connections=200
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=arquivo-db
+
+  zookeeper:
+    # use the same version deployed in production
+    image: bitnami/zookeeper:3.6.3
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    # use the same version deployed in production
+    image: bitnami/kafka:3.0.0
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,PLAINTEXT_EXT://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_EXT://localhost:9093
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_EXT:PLAINTEXT
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_INTER_BROKER_LISTENER_NAME:PLAINTEXT
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_DELETE_TOPIC_ENABLE=true
