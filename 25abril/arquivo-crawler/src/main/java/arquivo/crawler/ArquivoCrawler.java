@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class ArquivoCrawler {
 
     ArquivoCrawler() {
-        System.out.println("HELLO");
+        System.out.println("HELLO2");
     }
 
 }
