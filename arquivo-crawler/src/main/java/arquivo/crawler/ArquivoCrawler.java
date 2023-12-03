@@ -49,7 +49,7 @@ public class ArquivoCrawler {
                 .retrieve().bodyToMono(String.class).block());
 
         System.out.println(response.toPrettyString());
-        LOG.info("Finished crawling");
+        LOG.info("Finished crawling!");
     }
 
 }
