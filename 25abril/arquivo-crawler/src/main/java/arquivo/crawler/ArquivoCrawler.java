@@ -41,7 +41,7 @@ public class ArquivoCrawler {
 
     @Scheduled(fixedRate = 10000)
     public void test() throws JsonProcessingException {
-        LOG.info("Starting crawling");
+        LOG.info("Starting crawling...");
         String url = "https://arquivo.pt/textsearch?versionHistory=http://publico.pt";
         final JsonNode response = objectMapper.readTree(webClient.get()
                 .uri(url)
