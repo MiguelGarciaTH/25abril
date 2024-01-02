@@ -8,4 +8,8 @@
     <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <!--
+    <logger name="arquivo.crawler.ArquivoCrawler" level="DEBUG"/>
+    -->
 </configuration>

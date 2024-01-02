@@ -15,11 +15,13 @@ import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -49,15 +51,22 @@ public class ArquivoCrawler {
     private final SiteRepository siteRepository;
     private final ChangelogRepository changeLogRepository;
 
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
+
+    @Value("${crawler.topic}")
+    private String topic;
 
     @Autowired
     public ArquivoCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
-                          SiteRepository siteRepository, ChangelogRepository changeLogRepository) {
+                          SiteRepository siteRepository, ChangelogRepository changeLogRepository,
+                          KafkaTemplate<String, String> kafkaTemplate) {
         this.integrationLogRepository = integrationLogRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.siteRepository = siteRepository;
         this.changeLogRepository = changeLogRepository;
+        this.kafkaTemplate = kafkaTemplate;
 
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
@@ -107,6 +116,9 @@ public class ArquivoCrawler {
                 changelog.setToTimestamp(url.endDate);
                 changeLogRepository.save(changelog);
 
+                // publish to kafka
+                publishToKafka(url, response.get("response_items"));
+
             } catch (WebClientResponseException e) {
                 LOG.error("Failed to get {}", url);
                 integrationLogRepository.save(new IntegrationLog(url.url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TR, "", e.getMessage()));
@@ -115,6 +127,23 @@ public class ArquivoCrawler {
 
         LocalDateTime finished = LocalDateTime.now(ZoneOffset.UTC);
         LOG.info("Finished: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
+    }
+
+    private void publishToKafka(UrlRecord url, JsonNode response) {
+        for (var node : response) {
+            final int siteId = url.site.getId();
+            final int entityId = url.entity.getId();
+            final String arquivoDigest = node.get("digest").toString();
+            final String arquivoMetaData = node.get("linkToMetadata").toString();
+            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoMetaData);
+            try {
+                kafkaTemplate.send(topic, arquivoDigest, objectMapper.writeValueAsString(record));
+                LOG.debug("Sent to topic {} the key={} and value={}", topic, arquivoDigest, record);
+            } catch (JsonProcessingException e) {
+                LOG.warn("Error processing {} and response item: {}", url.url, node.toPrettyString());
+
+            }
+        }
     }
 
     private List<UrlRecord> prepareSearchUrl(List<SearchEntity> entities, List<Site> sites) {
