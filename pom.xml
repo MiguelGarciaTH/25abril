@@ -27,6 +27,7 @@
 	<modules>
 		<module>arquivo-crawler</module>
 		<module>arquivo-lib</module>
+		<module>arquivo-processor</module>
 	</modules>
 
 	<dependencies>

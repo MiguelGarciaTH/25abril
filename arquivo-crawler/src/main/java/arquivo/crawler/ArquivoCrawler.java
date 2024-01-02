@@ -1,9 +1,6 @@
 package arquivo.crawler;
 
-import arquivo.model.Changelog;
-import arquivo.model.IntegrationLog;
-import arquivo.model.SearchEntity;
-import arquivo.model.Site;
+import arquivo.model.*;
 import arquivo.repository.ChangelogRepository;
 import arquivo.repository.IntegrationLogRepository;
 import arquivo.repository.SearchEntityRepository;
@@ -133,15 +130,18 @@ public class ArquivoCrawler {
         for (var node : response) {
             final int siteId = url.site.getId();
             final int entityId = url.entity.getId();
-            final String arquivoDigest = node.get("digest").toString();
-            final String arquivoMetaData = node.get("linkToMetadata").toString();
-            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoMetaData);
+            final String arquivoDigest = node.get("digest").asText();
+            final String arquivoMetaData = node.get("linkToMetadata").asText();
+            final String arquivoUrl = node.get("linkToArchive").asText();
+            final String arquivoText = node.get("linkToExtractedText").asText();
+            final String arquivoNoFrame = node.get("linkToNoFrame").asText();
+
+            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
             try {
                 kafkaTemplate.send(topic, arquivoDigest, objectMapper.writeValueAsString(record));
                 LOG.debug("Sent to topic {} the key={} and value={}", topic, arquivoDigest, record);
             } catch (JsonProcessingException e) {
                 LOG.warn("Error processing {} and response item: {}", url.url, node.toPrettyString());
-
             }
         }
     }
@@ -175,8 +175,8 @@ public class ArquivoCrawler {
             startDate = changeLog.getToTimestamp();
         }
 
-        String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=2000";
-        String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
+        final String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=2000";
+        final String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
         return new UrlRecord(entity, site, changeLog, startDate, endDate, url);
     }
 
