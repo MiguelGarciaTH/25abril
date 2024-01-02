@@ -2,23 +2,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <artifactId>arquivo-crawler</artifactId>
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>25abril</artifactId>
         <groupId>arquivo</groupId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <dependencies>
+    <modelVersion>4.0.0</modelVersion>
 
-        <dependency>
-            <groupId>arquivo</groupId>
-            <artifactId>arquivo-lib</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+    <artifactId>arquivo-lib</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
 
 </project>

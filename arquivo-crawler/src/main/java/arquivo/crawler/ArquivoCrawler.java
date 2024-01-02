@@ -1,21 +1,40 @@
 package arquivo.crawler;
 
+import arquivo.model.Changelog;
+import arquivo.model.IntegrationLog;
+import arquivo.model.SearchEntity;
+import arquivo.model.Site;
+import arquivo.repository.ChangelogRepository;
+import arquivo.repository.IntegrationLogRepository;
+import arquivo.repository.SearchEntityRepository;
+import arquivo.repository.SiteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.time.temporal.ChronoUnit.DAYS;
 
 @Component
 @EnableScheduling
@@ -23,9 +42,22 @@ public class ArquivoCrawler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArquivoCrawler.class);
     private final WebClient webClient;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    ArquivoCrawler() {
+    private final IntegrationLogRepository integrationLogRepository;
+    private final SearchEntityRepository searchEntityRepository;
+    private final SiteRepository siteRepository;
+    private final ChangelogRepository changeLogRepository;
+
+    private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
+
+    @Autowired
+    public ArquivoCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
+                          SiteRepository siteRepository, ChangelogRepository changeLogRepository) {
+        this.integrationLogRepository = integrationLogRepository;
+        this.searchEntityRepository = searchEntityRepository;
+        this.siteRepository = siteRepository;
+        this.changeLogRepository = changeLogRepository;
 
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
@@ -34,22 +66,98 @@ public class ArquivoCrawler {
         webClient = WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .codecs(codecs -> codecs
+                        .defaultCodecs()
+                        .maxInMemorySize(1500 * 1024))
                 .build();
 
         this.objectMapper = new ObjectMapper();
     }
 
-    @Scheduled(fixedRate = 10000)
-    public void test() throws JsonProcessingException {
-        LOG.info("Starting crawling...");
-        String url = "https://arquivo.pt/textsearch?versionHistory=http://publico.pt";
-        final JsonNode response = objectMapper.readTree(webClient.get()
-                .uri(url)
-                .accept(MediaType.APPLICATION_JSON)
-                .retrieve().bodyToMono(String.class).block());
+    @EventListener(ApplicationReadyEvent.class)
+    public void crawl() throws JsonProcessingException {
 
-        System.out.println(response.toPrettyString());
-        LOG.info("Finished crawling!");
+        final LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);
+        final List<SearchEntity> entities = searchEntityRepository.findAll();
+        final List<Site> sites = siteRepository.findAll();
+
+        int total = 0;
+        final List<UrlRecord> urls = prepareSearchUrl(entities, sites);
+        for (UrlRecord url : urls) {
+
+            LOG.info("Crawling: {} ({}) (site: {})", url.entity.getName(), url.entity.getType().name(), url.site.getName());
+
+            try {
+
+                final JsonNode response = objectMapper.readTree(webClient.get()
+                        .uri(url.url)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .retrieve().bodyToMono(String.class).block());
+
+                LOG.debug("Response for {}: {}", url.url, response.toPrettyString());
+                LOG.info("Crawling results: {} (site: {}) : {}", url.entity.getName(), url.site.getName(), response.get("response_items").size());
+                integrationLogRepository.save(new IntegrationLog(url.url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TS, "", "Total responses: " + response.get("response_items").size()));
+
+                total += response.get("response_items").size();
+
+                // update change log
+                Changelog changelog = url.changeLog;
+                int urlTotalResponses = changelog.getTotalEntries() + response.get("response_items").size();
+                changelog.setTotalEntries(urlTotalResponses);
+                changelog.setToTimestamp(url.endDate);
+                changeLogRepository.save(changelog);
+
+            } catch (WebClientResponseException e) {
+                LOG.error("Failed to get {}", url);
+                integrationLogRepository.save(new IntegrationLog(url.url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TR, "", e.getMessage()));
+            }
+        }
+
+        LocalDateTime finished = LocalDateTime.now(ZoneOffset.UTC);
+        LOG.info("Finished: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
     }
 
+    private List<UrlRecord> prepareSearchUrl(List<SearchEntity> entities, List<Site> sites) {
+        final List<UrlRecord> urls = new ArrayList<>();
+        for (SearchEntity entity : entities) {
+            for (Site site : sites) {
+                UrlRecord url = buildUrl(entity, site);
+                if (url != null) {
+                    urls.add(url);
+                }
+            }
+        }
+        return urls;
+    }
+
+    private UrlRecord buildUrl(SearchEntity entity, Site site) {
+        final LocalDateTime endDate = LocalDateTime.now(ZoneOffset.UTC);
+        Changelog changeLog = changeLogRepository.findBySearchEntityIdAndSiteId(entity.getId(), site.getId())
+                .orElse(null);
+
+        LocalDateTime startDate;
+        if (changeLog == null) {
+            changeLog = new Changelog(LocalDateTime.parse("19960101000000", arquivoFormatter), endDate, site, entity);
+            startDate = LocalDateTime.parse("19960101000000", arquivoFormatter);
+        } else {
+            if (isSameDay(endDate, changeLog.getToTimestamp())) {
+                return null;
+            }
+            startDate = changeLog.getToTimestamp();
+        }
+
+        String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=2000";
+        String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
+        return new UrlRecord(entity, site, changeLog, startDate, endDate, url);
+    }
+
+    public static boolean isSameDay(LocalDateTime timestamp,
+                                    LocalDateTime timestampToCompare) {
+        return timestamp.truncatedTo(DAYS)
+                .isEqual(timestampToCompare.truncatedTo(DAYS));
+    }
+
+    record UrlRecord(SearchEntity entity, Site site, Changelog changeLog, LocalDateTime startDate,
+                     LocalDateTime endDate, String url) {
+    }
 }
