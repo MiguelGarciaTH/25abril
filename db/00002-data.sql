@@ -124,9 +124,7 @@ insert into search_entity (name, abbreviation, aliases, keywords, type) values
 --('Brigadas Revolucionárias',null, null, null, 'MOVIMENTO'),
 --('Movimento dos capitães',null, null, null, 'MOVIMENTO'),
 --('Mocidade portuguesa',null, null, null, 'MOVIMENTO'),
+--('Margarida Tengarrinha',null, null, null, 'PESSOA'),
+--('José Dias Coelho',null, null, null, 'PESSOA'),
+--('Fuga de Peniche',null, null, null, 'EVENTO'),
 --('Processo Revolucionário em Curso', 'PREC',  null, null, 'EVENTO');
---
---
---
---
---
