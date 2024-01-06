@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>arquivo-processor</artifactId>
+    <artifactId>arquivo-rest</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -17,7 +17,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>arquivo</groupId>
             <artifactId>arquivo-lib</artifactId>
@@ -59,17 +58,17 @@
                                 <src>${project.build.directory}/${project.build.finalName}.jar</src>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/opt/25abril/arquivo-processor</prefix>
+                                    <prefix>/opt/25abril/arquivo-crawler</prefix>
                                     <user>arquivo</user>
                                     <group>arquivo</group>
                                 </mapper>
                             </data>
                             <data>
                                 <type>file</type>
-                                <src>deb/data/opt/arquivo/arquivo-processor/run.sh</src>
+                                <src>deb/data/opt/arquivo/arquivo-crawler/run.sh</src>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/opt/sensei/arquivo-processor</prefix>
+                                    <prefix>/opt/sensei/arquivo-crawler</prefix>
                                     <filemode>755</filemode>
                                     <user>arquivo</user>
                                     <group>arquivo</group>
@@ -87,5 +86,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

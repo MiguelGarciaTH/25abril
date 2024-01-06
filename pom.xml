@@ -28,6 +28,7 @@
 		<module>arquivo-crawler</module>
 		<module>arquivo-lib</module>
 		<module>arquivo-processor</module>
+		<module>arquivo-rest</module>
 	</modules>
 
 	<dependencies>
@@ -88,18 +89,5 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
-
-
 	</dependencies>
-
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>
