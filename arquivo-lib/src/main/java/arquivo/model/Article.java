@@ -1,5 +1,7 @@
 package arquivo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -22,7 +24,7 @@ public class Article {
 
     private LocalDateTime date;
 
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Site site;
 
@@ -41,6 +43,7 @@ public class Article {
     @Column(length = 50)
     private String digest;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "article_entity_association",
             joinColumns = {@JoinColumn(name = "article_id")},
