@@ -29,6 +29,11 @@ public class SearchEntityController {
         return searchEntityRepository.findAllByType(SearchEntity.Type.valueOf(type));
     }
 
+    @GetMapping("/types")
+    List<String> getSearchEntityTypesList() {
+        return searchEntityRepository.findAllTypes();
+    }
+
     @GetMapping
     List<SearchEntity> getSearchEntityList() {
         return searchEntityRepository.findAllByOrderByIdDesc();
