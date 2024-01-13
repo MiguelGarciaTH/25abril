@@ -13,13 +13,14 @@ import Home from './routes/Home.jsx'
 import Contact from './routes/Contact.jsx'
 import ErrorPage from './routes/ErrorPage.jsx'
 import Artistas from './routes/Artistas.jsx'
+import Articles from './routes/Articles.jsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
-    errorElement: <ErrorPage/>,
-    children: [ 
+    element: <App />,
+    errorElement: <ErrorPage />,
+    children: [
       {
         path: "/",
         element: <Home />
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "artistas",
         element: <Artistas />
+      },
+      {
+        path: "/articles/:id",
+        element: <Articles />
       }
     ]
   }
@@ -38,6 +43,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
