@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS search_entity (
     abbreviation varchar(50),
     keywords varchar(200),
     aliases text,
-    type varchar(50) NOT NULL CHECK (type in ('POLITICO','ARTISTA','JORNAL','PARTIDO','MOVIMENTO','EVENTO','LOCAL', 'PRISAO')),
+    type varchar(50) NOT NULL CHECK (type in ('POLITICO','ARTISTA','JORNAL','PARTIDO','MOVIMENTO','EVENTO','LOCAL','PRISAO')),
 
     CONSTRAINT search_entity_pk PRIMARY KEY (id)
 );
