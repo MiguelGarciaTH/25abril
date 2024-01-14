@@ -10,12 +10,16 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
 
     List<SearchEntity> findAllByOrderByIdDesc();
 
-    @Query("""
-            select s from SearchEntity s
-            where s.type = ?1
-            order by s.id desc
+    @Query(nativeQuery = true, value = """
+            select * from search_entity se
+            where se.type = ?1
+            and se.id in (
+                select distinct aes.search_entity_id
+                from article_entity_association aes
+            )
+            order by se.id desc
             """)
-    List<SearchEntity> findAllByType(SearchEntity.Type type);
+    List<SearchEntity> findAllByType(String type);
 
     @Query("""
             select DISTINCT s.type from SearchEntity s

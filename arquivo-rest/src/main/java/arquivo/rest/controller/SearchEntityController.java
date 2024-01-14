@@ -26,7 +26,7 @@ public class SearchEntityController {
 
     @GetMapping("/type/{type}")
     List<SearchEntity> getSearchEntityList(@PathVariable String type) {
-        return searchEntityRepository.findAllByType(SearchEntity.Type.valueOf(type));
+        return searchEntityRepository.findAllByType(SearchEntity.Type.valueOf(type).name());
     }
 
     @GetMapping("/types")
