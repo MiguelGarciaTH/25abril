@@ -5,7 +5,7 @@ const Articles = () => {
     const [articles, setPosts] = useState([]);
     const {id} = useParams();
     const userId = id;
-    console.log("THE ID " + userId)
+
     useEffect(() => {
         fetch("http://127.0.0.1:8082/article/" + userId)
             .then((res) => res.json())
