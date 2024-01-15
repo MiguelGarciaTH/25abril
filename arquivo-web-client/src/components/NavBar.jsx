@@ -2,21 +2,21 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const NavBar = () => {
+    
     return (
-        <nav>
-            <Link to="/">Home</Link>
+        <nav className="navbar">
+            <Link className="navbar-link" to="/">Home</Link>
             <br />
-            <Link to="/contact">Contacts</Link>
+            <Link className="navbar-link" to="/contact">Contacts</Link>
             <br />
-            <Link to="/artistas">Artistas</Link>
+            <Link className="navbar-link" to="/entity/ARTISTA">Artistas</Link>
             <br />
-            <Link to="/politicos">Politicos</Link>
+            <Link className="navbar-link" to="/entity/POLITICO">Politicos</Link>
             <br />
-            <Link to="/partidos">Partidos</Link>
+            <Link className="navbar-link" to="/entity/PARTIDO">Partidos</Link>
             <br />
-            <Link to="/eventos">Eventos</Link>
+            <Link className="navbar-link" to="/entity/EVENTO">Eventos</Link>
             <br />
-            <Link to="/movimentos">Movimentos</Link>
         </nav>
     )
 }
