@@ -24,8 +24,7 @@ public class Article {
 
     private LocalDateTime date;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Site site;
 
     @Column(columnDefinition = "text")
