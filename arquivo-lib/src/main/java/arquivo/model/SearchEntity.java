@@ -47,6 +47,9 @@ public class SearchEntity {
     @Column(length = 50)
     private Type type;
 
+    @Column(columnDefinition = "text")
+    private String imageUrl;
+
     public SearchEntity(){
 
     }
@@ -92,5 +95,13 @@ public class SearchEntity {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

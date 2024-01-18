@@ -13,10 +13,6 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
     @Query(nativeQuery = true, value = """
             select * from search_entity se
             where se.type = ?1
-            and se.id in (
-                select distinct aes.search_entity_id
-                from article_entity_association aes
-            )
             order by se.id desc
             """)
     List<SearchEntity> findAllByType(String type);
