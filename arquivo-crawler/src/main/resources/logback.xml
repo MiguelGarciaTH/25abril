@@ -11,6 +11,6 @@
 
     <!--
     <logger name="arquivo.crawler.ArquivoCrawler" level="DEBUG"/>
+    <logger name="arquivo.crawler.DBPediaCrawler" level="DEBUG"/>
     -->
-    <logger name="arquivo.crawler.WikiCrawler" level="DEBUG"/>
 </configuration>

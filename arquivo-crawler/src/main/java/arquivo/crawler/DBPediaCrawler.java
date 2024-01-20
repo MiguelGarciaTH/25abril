@@ -27,7 +27,7 @@ import java.util.List;
 @EnableScheduling
 public class DBPediaCrawler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WikiCrawler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DBPediaCrawler.class);
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
     private final static String dbPediaBaseUrl = "https://dbpedia.org/data/%s.json";
@@ -65,7 +65,8 @@ public class DBPediaCrawler {
                     if (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat)) {
                         JsonNode rootNode = response.get("http://dbpedia.org/resource/" + nameDBPediaFormat);
                         if (rootNode.has("http://dbpedia.org/ontology/thumbnail")) {
-                            imgUrl = rootNode.get("http://dbpedia.org/ontology/thumbnail").get(0).get("value").asText();
+                            imgUrl = rootNode.get("http://dbpedia.org/ontology/thumbnail").get(0).get("value").asText().replace("?width=300", "");
+                            LOG.info("Entity {} has image {}", entity.getName(), imgUrl);
                         }
                     }
                 entity.setImageUrl(imgUrl);
