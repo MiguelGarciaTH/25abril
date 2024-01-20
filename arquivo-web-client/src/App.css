@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap');
+
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -5,60 +8,110 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
 .read-the-docs {
   color: #888;
 }
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 body {
   margin: 0;
   padding: 0;
   font-family: 'Poppins', sans-serif;
-  background-color: #272121;
+  font-family: 'Poppins', sans-serif;
+  background-color: white;
+  color: #000;
 }
 
 /*** NAVBAR ***/
 .navbar {
   height: 60px;
-  background-color: #272121;
+  background-color: white;
   position: relative;
   text-align: left;
   font-family: 'Poppins', sans-serif;
 }
 
 .navbar-link {
-  color: aliceblue;
+  color: black;
+  font-size: xx-large;
+  font-family: 'Poppins', sans-serif;
+}
+
+.navbar-link:hover {
+  background: -webkit-linear-gradient(#a8a8a8, #181818);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: xx-large;
+  font-family: 'Poppins', sans-serif;
+}
+
+.box {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 50%;
+  width: 50%;
+  position: relative;
+  margin-left: 25%;
+  margin-bottom: 10px;
+  padding: 24px;
+  background: rgb(255, 255, 255);
+  box-sizing: 12px;
+  border-color: #000;
+  border-style: ridge;
+}
+
+.box-top {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.box-image {
+  width: 50%;
+  height: 200px;
+  object-fit: cover;
+  object-position: 50% 20%;
+  -webkit-filter: grayscale(100%);
+  filter: grayscale(100%);
+}
+
+.title-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: normal;
+}
+
+.box-title {
+  border-left: 3px solid var(--purple);
+  padding-left: 12px;
+}
+
+.user-follow-info {
+  color: hsl(0, 0%, 60%);
+}
+
+.button {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: auto;
+  padding: 16px;
+  color: #000;
+  background: transparent;
+  box-shadow: 0px 0px 0px 1px black inset;
+  transition: background 0.4s ease;
+}
+
+.button:hover {
+  background: var(--purple);
+}
+
+.fill-one {
+  background: var(--light-bg);
+}
+
+.fill-two {
+  background: var(--pink);
 }
