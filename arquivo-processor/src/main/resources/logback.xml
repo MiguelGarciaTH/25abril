@@ -10,7 +10,7 @@
     </root>
 
 
-    <!--<logger name="arquivo.processor.ArquivoRecordListener" level="DEBUG"/>-->
-    <logger name="arquivo.processor.ContextualTextScore" level="DEBUG"/>
+    <!--<logger name="arquivo.processor.ArquivoRecordListener" level="DEBUG"/>
+    <logger name="arquivo.processor.ContextualTextScore" level="DEBUG"/>-->
 
 </configuration>

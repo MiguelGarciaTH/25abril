@@ -21,7 +21,7 @@ public class ContextualTextScore {
             Map.entry("revolução de abril", 10),
             Map.entry("guerra colonial", 10),
             Map.entry("ditadura", 5),
-            Map.entry("facismo", 5)
+            Map.entry("fascismo", 5)
     );
 
     public ContextualTextScore() {
