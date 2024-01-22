@@ -1,5 +1,6 @@
 package arquivo.crawler;
 
+import arquivo.RateLimiter;
 import arquivo.model.*;
 import arquivo.repository.ChangelogRepository;
 import arquivo.repository.IntegrationLogRepository;
@@ -50,6 +51,7 @@ public class ArquivoCrawler {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
+    private final RateLimiter rateLimiter;
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
 
     @Value("${crawler.topic}")
@@ -64,6 +66,7 @@ public class ArquivoCrawler {
         this.siteRepository = siteRepository;
         this.changeLogRepository = changeLogRepository;
         this.kafkaTemplate = kafkaTemplate;
+        this.rateLimiter = new RateLimiter(250, 60_000L);
 
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
@@ -80,7 +83,7 @@ public class ArquivoCrawler {
         this.objectMapper = new ObjectMapper();
     }
 
-    //@EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void crawl() throws JsonProcessingException {
 
         final LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);
@@ -116,6 +119,8 @@ public class ArquivoCrawler {
                 // publish to kafka
                 publishToKafka(url, response.get("response_items"));
 
+                rateLimiter.increment();
+
             } catch (WebClientResponseException e) {
                 LOG.error("Failed to get {}", url);
                 integrationLogRepository.save(new IntegrationLog(url.url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TR, "", e.getMessage()));
@@ -131,12 +136,13 @@ public class ArquivoCrawler {
             final int siteId = url.site.getId();
             final int entityId = url.entity.getId();
             final String arquivoDigest = node.get("digest").asText();
+            final String arquivoTitle = node.get("title").asText();
             final String arquivoMetaData = node.get("linkToMetadata").asText();
             final String arquivoUrl = node.get("linkToArchive").asText();
             final String arquivoText = node.get("linkToExtractedText").asText();
             final String arquivoNoFrame = node.get("linkToNoFrame").asText();
 
-            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
+            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoTitle, arquivoUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
             try {
                 kafkaTemplate.send(topic, arquivoDigest, objectMapper.writeValueAsString(record));
                 LOG.debug("Sent to topic {} the key={} and value={}", topic, arquivoDigest, record);

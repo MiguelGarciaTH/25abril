@@ -28,6 +28,11 @@ public class Article {
     private Site site;
 
     @Column(columnDefinition = "text")
+    private String title;
+
+    private int score;
+
+    @Column(columnDefinition = "text")
     private String url;
 
     @Column(columnDefinition = "text")
@@ -54,7 +59,7 @@ public class Article {
 
     }
 
-    public Article(String digest, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String digest, String title, int score, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
         this.digest = digest;
         this.url = url;
         this.noFrameUrl = noFrameUrl;
@@ -62,6 +67,8 @@ public class Article {
         this.metadataUrl = metadataUrl;
         this.date = date;
         this.site = site;
+        this.title = title;
+        this.score = score;
     }
 
     public int getId() {
@@ -106,5 +113,21 @@ public class Article {
 
     public void setArticleEntityAssociation(Set<SearchEntity> articleEntityAssociation) {
         this.articleEntityAssociation = articleEntityAssociation;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

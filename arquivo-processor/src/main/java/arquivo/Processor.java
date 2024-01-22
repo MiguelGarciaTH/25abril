@@ -14,10 +14,10 @@ import org.springframework.util.backoff.FixedBackOff;
 
 @SpringBootApplication
 @EntityScan("arquivo")
-public class Application {
+public class Processor {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(Processor.class, args);
     }
 
 }

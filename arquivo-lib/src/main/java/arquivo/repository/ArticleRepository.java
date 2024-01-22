@@ -20,4 +20,12 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             )
             """)
     List<Article> findByAllBySearchEntityId(int entityId);
+
+    @Query(nativeQuery = true,
+            value = """
+                    select *
+                    from article a
+                    where a.url like %?1
+                    """)
+    Optional<Article> findByUrlLike(String queryKey);
 }
