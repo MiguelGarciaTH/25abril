@@ -4,13 +4,14 @@ import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ContextualTextScore {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextualTextScore.class);
 
-    private final Map<String, Integer> keywords = Map.ofEntries(
+    private static final Map<String, Integer> keywords = Map.ofEntries(
             Map.entry("revolução dos cravos", 10),
             Map.entry("estado novo", 10),
             Map.entry("1974", 10),
@@ -23,21 +24,25 @@ public class ContextualTextScore {
             Map.entry("facismo", 5)
     );
 
-
     public ContextualTextScore() {
 
     }
 
-    public int score(String text) {
+    public Score score(String text) {
         int score = 0;
+        final Map<String, Integer> individualScore = new HashMap<>();
         final String lowerCase = text.toLowerCase();
-        for (String keyword : keywords.keySet()) {
-            int counter = StringUtils.countMatches(lowerCase, keyword);
-            int keywordScore = keywords.get(keyword) * counter;
-            LOG.debug("Keyword={} Count={} Score={} Final score={}", keyword, counter, keywords.get(keyword), keywordScore);
+        for (var keyword : keywords.entrySet()) {
+            int counter = StringUtils.countMatches(lowerCase, keyword.getKey());
+            int keywordScore = keyword.getValue() * counter;
+            LOG.debug("Keyword={} Count={} Score={} Final score={}", keyword.getKey(), counter, keyword.getValue(), keywordScore);
+            individualScore.put(keyword.getKey(), keywordScore);
             score += keywordScore;
-
         }
-        return score;
+        return new Score(score, individualScore);
+    }
+
+    public record Score(int total, Map<String, Integer> individualScore){
+
     }
 }

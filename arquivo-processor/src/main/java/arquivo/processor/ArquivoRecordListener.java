@@ -7,6 +7,7 @@ import arquivo.repository.IntegrationLogRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -68,10 +69,9 @@ public class ArquivoRecordListener {
     @KafkaListener(topics = {"${processor.topic}"},
             containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        totalReceived++;
-        CrawlerRecord event = null;
         try {
-            event = objectMapper.readValue(record.value(), CrawlerRecord.class);
+            totalReceived++;
+            final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
             String queryKey;
@@ -80,6 +80,7 @@ public class ArquivoRecordListener {
             } else {
                 queryKey = event.url();
             }
+
             Article article = articleRepository.findByUrlLike(queryKey).orElse(null);
             if (article == null) {
                 final Site site = siteRepository.findById(event.siteId()).orElse(null);
@@ -89,22 +90,24 @@ public class ArquivoRecordListener {
 
                 text = removeAllStopwords(text);
 
-                int score = contextualTextScore.score(text);
-                if (score > 20) {
+                ContextualTextScore.Score score = contextualTextScore.score(text);
+                if (score.total() > 50) {
                     totalAccepted++;
-                    article = new Article(event.digest(), event.title(), score, event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site);
+                    article = new Article(event.digest(), event.title(), score.total(),
+                            objectMapper.convertValue(score.individualScore(), JsonNode.class),
+                            event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
+                            LocalDateTime.now(ZoneOffset.UTC), site);
                     article.setArticleEntityAssociation(Set.of(searchEntity));
                     articleRepository.save(article);
                 } else {
                     totalRejected++;
                 }
+
             } else {
                 LOG.debug("Article already exists article id {}", article.getId());
                 final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
                 article.setArticleEntityAssociation(Set.of(searchEntity));
                 articleRepository.save(article);
-                // do stuff later
-                // update
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -115,6 +118,7 @@ public class ArquivoRecordListener {
     }
 
     private String getText(String urlInput) {
+        final String inputTrim = urlInput.substring(0, Math.min(urlInput.length(), 240));
         try {
             final URL url = new URL(urlInput);
             final StringBuilder everything = new StringBuilder();
@@ -126,37 +130,35 @@ public class ArquivoRecordListener {
             rateLimiter.increment();
             in.close();
 
-            integrationLogRepository.save(new IntegrationLog(urlInput.substring(0, Math.min(urlInput.length(), 240)), LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));
+            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));
 
             return everything.toString();
         } catch (MalformedURLException e) {
             LOG.error("Mal formed url {}: {}", urlInput, e.getMessage());
-            integrationLogRepository.save(new IntegrationLog(urlInput.substring(0, Math.min(urlInput.length(), 240)), LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
+            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
         } catch (IOException e) {
             LOG.error("I/O error for url {}: {}", urlInput, e.getMessage());
-            integrationLogRepository.save(new IntegrationLog(urlInput.substring(0, Math.min(urlInput.length(), 240)), LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
+            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
         }
         return null;
     }
 
     private String removeAllStopwords(String data) {
-        ArrayList<String> allWords =
+        final ArrayList<String> allWords =
                 Stream.of(data.split(" "))
                         .collect(Collectors.toCollection(ArrayList<String>::new));
         allWords.removeAll(stopwords);
-        return allWords.stream().collect(Collectors.joining(" "));
+        return String.join(" ", allWords);
     }
 
     private List<String> load(String path) {
-        ClassLoader classLoader = ResourceLoader.class.getClassLoader();
-        File file = new File(classLoader.getResource(path).getFile());
-        List<String> lines = null;
+        final ClassLoader classLoader = ResourceLoader.class.getClassLoader();
+        final File file = new File(classLoader.getResource(path).getFile());
         try {
-            lines = Files.readAllLines(file.toPath());
+            return Files.readAllLines(file.toPath());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return lines;
+        return null;
     }
-
 }

@@ -2,6 +2,7 @@ package arquivo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -47,6 +48,10 @@ public class Article {
     @Column(length = 50)
     private String digest;
 
+    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
+    @Column(columnDefinition = "jsonb")
+    private JsonNode individualScore;
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "article_entity_association",
@@ -59,7 +64,7 @@ public class Article {
 
     }
 
-    public Article(String digest, String title, int score, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String digest, String title, int score, JsonNode individualScore, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
         this.digest = digest;
         this.url = url;
         this.noFrameUrl = noFrameUrl;
@@ -69,6 +74,7 @@ public class Article {
         this.site = site;
         this.title = title;
         this.score = score;
+        this.individualScore = individualScore;
     }
 
     public int getId() {

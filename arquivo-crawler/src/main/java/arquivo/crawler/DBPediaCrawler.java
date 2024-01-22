@@ -59,7 +59,7 @@ public class DBPediaCrawler {
             if (entity.getImageUrl() == null || entity.getImageUrl().isBlank() || entity.getImageUrl().isEmpty()) {
                 String nameDBPediaFormat = entity.getName().replaceAll(" ", "_");
                 final String url = String.format(dbPediaBaseUrl, nameDBPediaFormat);
-                final JsonNode response = get(1, url);
+                final JsonNode response = getDBPediaPage(1, url);
                 String imgUrl = null;
                 if (response != null && !response.isEmpty())
                     if (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat)) {
@@ -76,10 +76,9 @@ public class DBPediaCrawler {
     }
 
 
-    private JsonNode get(int step, String url) {
-        JsonNode response = null;
+    private JsonNode getDBPediaPage(int step, String url) {
         try {
-            response = objectMapper.readTree(webClient.get()
+            final JsonNode response = objectMapper.readTree(webClient.get()
                     .uri(url)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve().bodyToMono(String.class).block());
@@ -88,9 +87,7 @@ public class DBPediaCrawler {
             LOG.error("Problem fetching {}", url);
         } catch (WebClientResponseException e2) {
             LOG.error("Problem fetching {}", url, e2.getMessage());
-            return response;
         }
-        return response;
+        return null;
     }
-
 }
