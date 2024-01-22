@@ -30,6 +30,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,7 +47,7 @@ public class ArquivoRecordListener {
     private final SearchEntityRepository searchEntityRepository;
     private final List<String> stopwords;
     private final ContextualTextScore contextualTextScore;
-    private final Pattern articleDedupKey = Pattern.compile("https://arquivo.pt/wayback/\\d+/");
+    private final Pattern articleDedupKey = Pattern.compile("https://arquivo.pt/wayback/(\\d+)/(.*)");
     private final RateLimiter rateLimiter;
     private final IntegrationLogRepository integrationLogRepository;
     private int totalReceived = 0;
@@ -74,14 +75,16 @@ public class ArquivoRecordListener {
             final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
+            // catches the site source url part
+            final Matcher matcher = articleDedupKey.matcher(event.url());
             String queryKey;
-            if (articleDedupKey.matcher(event.url()).matches()) {
-                queryKey = articleDedupKey.matcher(event.url()).group(1);
+            if (matcher.find()) {
+                queryKey = matcher.group(2);
             } else {
                 queryKey = event.url();
             }
 
-            Article article = articleRepository.findByUrlLike(queryKey).orElse(null);
+            Article article = articleRepository.findByUrlKey(queryKey).orElse(null);
             if (article == null) {
                 final Site site = siteRepository.findById(event.siteId()).orElse(null);
                 final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
@@ -95,7 +98,7 @@ public class ArquivoRecordListener {
                     totalAccepted++;
                     article = new Article(event.digest(), event.title(), score.total(),
                             objectMapper.convertValue(score.individualScore(), JsonNode.class),
-                            event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
+                            queryKey, event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
                             LocalDateTime.now(ZoneOffset.UTC), site);
                     article.setArticleEntityAssociation(Set.of(searchEntity));
                     articleRepository.save(article);

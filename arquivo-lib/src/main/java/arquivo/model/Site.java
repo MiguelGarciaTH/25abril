@@ -26,8 +26,12 @@ public class Site {
     @Column(length = 255)
     private String url;
 
-    Site(){
+    Site() {
+    }
 
+    public Site(String name, String url) {
+        this.name = name;
+        this.url = url;
     }
 
     public int getId() {
