@@ -12,15 +12,17 @@ public class ContextualTextScore {
     private static final Logger LOG = LoggerFactory.getLogger(ContextualTextScore.class);
 
     private static final Map<String, Integer> keywords = Map.ofEntries(
-            Map.entry("revolução dos cravos", 10),
-            Map.entry("estado novo", 10),
-            Map.entry("1974", 10),
+            Map.entry("revolução cravos", 20),
+            Map.entry("estado novo", 20),
+            Map.entry("1974", 4),
             Map.entry("pide", 10),
             Map.entry("clandestinidade", 5),
-            Map.entry("25 de abril", 10),
-            Map.entry("revolução de abril", 10),
+            Map.entry("25 abril", 20),
+            Map.entry("revolução abril", 20),
             Map.entry("guerra colonial", 10),
             Map.entry("ditadura", 5),
+            Map.entry("salazarismo", 20),
+            Map.entry("salazarista", 20),
             Map.entry("fascismo", 5)
     );
 
