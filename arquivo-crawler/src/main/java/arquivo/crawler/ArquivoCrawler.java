@@ -156,16 +156,17 @@ public class ArquivoCrawler {
         final List<UrlRecord> urls = new ArrayList<>();
         for (SearchEntity entity : entities) {
             for (Site site : sites) {
-                UrlRecord url = buildUrl(entity, site);
-                if (url != null) {
-                    urls.add(url);
+                List<UrlRecord> urlsInt = buildUrl(entity, site);
+                if (!urlsInt.isEmpty()) {
+                    urls.addAll(urlsInt);
                 }
             }
         }
         return urls;
     }
 
-    private UrlRecord buildUrl(SearchEntity entity, Site site) {
+    private List<UrlRecord> buildUrl(SearchEntity entity, Site site) {
+        final List<UrlRecord> urls = new ArrayList<>();
         final LocalDateTime endDate = LocalDateTime.now(ZoneOffset.UTC);
         Changelog changeLog = changeLogRepository.findBySearchEntityIdAndSiteId(entity.getId(), site.getId())
                 .orElse(null);
@@ -176,14 +177,21 @@ public class ArquivoCrawler {
             startDate = LocalDateTime.parse("19960101000000", arquivoFormatter);
         } else {
             if (isSameDay(endDate, changeLog.getToTimestamp())) {
-                return null;
+                return urls;
             }
             startDate = changeLog.getToTimestamp();
         }
 
         final String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=2000";
-        final String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
-        return new UrlRecord(entity, site, changeLog, startDate, endDate, url);
+        String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
+        urls.add(new UrlRecord(entity, site, changeLog, startDate, endDate, url));
+        if (entity.getAliases() != null) {
+            for (String alias : entity.getAliases().split(",")) {
+                url = String.format(baseUrl, alias, site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
+                urls.add(new UrlRecord(entity, site, changeLog, startDate, endDate, url));
+            }
+        }
+        return urls;
     }
 
     public static boolean isSameDay(LocalDateTime timestamp,

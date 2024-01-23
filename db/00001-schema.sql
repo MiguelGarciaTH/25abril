@@ -28,10 +28,9 @@ CREATE SEQUENCE IF NOT EXISTS search_entity_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE IF NOT EXISTS search_entity (
     id integer NOT NULL DEFAULT nextval('search_entity_seq'),
     name varchar(255) NOT NULL,
-    abbreviation varchar(50),
-    keywords varchar(200),
     aliases text,
     type varchar(50) NOT NULL CHECK (type in ('POLITICO','ARTISTA','JORNAL','PARTIDO','MOVIMENTO','EVENTO','LOCAL','PRISAO')),
+    image_url text,
 
     CONSTRAINT search_entity_pk PRIMARY KEY (id)
 );
@@ -57,11 +56,15 @@ CREATE TABLE IF NOT EXISTS article (
     id integer NOT NULL DEFAULT nextval('article_seq'),
     "date" timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
     site_id integer NOT NULL,
+    title text NOT NULL,
+    url_key text NOT NULL,
     url text NOT NULL,
     metadata_url text NOT NULL,
     no_frame_url text NOT NULL,
     text_url text NOT NULL,
     digest varchar(50) NOT NULL,
+    score integer,
+    individual_score jsonb,
 
     CONSTRAINT article_pk PRIMARY KEY (id),
     CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
