@@ -11,12 +11,17 @@ const NavBar = () => {
             <br />
             <Link className="navbar-link" to="/entity/ARTISTA">Artistas</Link>
             <br />
+            <Link className="navbar-link" to="/entity/MOVIMENTO">Movimentos</Link>
+            <br />
             <Link className="navbar-link" to="/entity/POLITICO">Politicos</Link>
             <br />
             <Link className="navbar-link" to="/entity/PARTIDO">Partidos</Link>
             <br />
             <Link className="navbar-link" to="/entity/EVENTO">Eventos</Link>
             <br />
+            <Link className="navbar-link" to="/entity/JORNAL">Jornais</Link>
+            <br />
+            <Link className="navbar-link" to="/entity/PRISAO">Prisões</Link>
         </nav>
     )
 }
