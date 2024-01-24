@@ -20,5 +20,12 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     List<Article> findByAllBySearchEntityId(int entityId);
 
-    Optional<Article> findByUrlKey(String queryKey);
+    @Query(nativeQuery = true, value = """
+            select count(aes.article_id) 
+            from article_entity_association aes
+            where aes.search_entity_id = ?1
+            """)
+    int countByAllBySearchEntityId(int entityId);
+
+    Optional<Article> findByTitleAndSiteId(String title, int siteId);
 }

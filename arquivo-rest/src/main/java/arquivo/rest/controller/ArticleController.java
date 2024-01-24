@@ -23,4 +23,9 @@ public class ArticleController {
     List<Article> getSearchEntity(@PathVariable int entityId) {
         return articleRepository.findByAllBySearchEntityId(entityId);
     }
+
+    @GetMapping("/count/{entityId}")
+    Integer countArticlesBySearchEntity(@PathVariable int entityId) {
+        return articleRepository.countByAllBySearchEntityId(entityId);
+    }
 }
