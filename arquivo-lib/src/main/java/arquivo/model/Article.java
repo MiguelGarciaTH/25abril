@@ -33,9 +33,6 @@ public class Article {
     private int score;
 
     @Column(columnDefinition = "text")
-    private String urlKey;
-
-    @Column(columnDefinition = "text")
     private String url;
 
     @Column(columnDefinition = "text")
@@ -66,10 +63,9 @@ public class Article {
 
     }
 
-    public Article(String digest, String title, int score, JsonNode individualScore, String urlKey, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String digest, String title, int score, JsonNode individualScore, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
         this.digest = digest;
         this.url = url;
-        this.urlKey = urlKey;
         this.noFrameUrl = noFrameUrl;
         this.textUrl = textUrl;
         this.metadataUrl = metadataUrl;

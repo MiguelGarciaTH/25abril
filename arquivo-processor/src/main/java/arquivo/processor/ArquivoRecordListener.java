@@ -30,8 +30,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +45,6 @@ public class ArquivoRecordListener {
     private final SearchEntityRepository searchEntityRepository;
     private final List<String> stopwords;
     private final ContextualTextScore contextualTextScore;
-    private final Pattern articleDedupKey = Pattern.compile("https://arquivo.pt/wayback/(\\d+)/(.*)");
     private final RateLimiter rateLimiter;
     private final IntegrationLogRepository integrationLogRepository;
     private int totalReceived = 0;
@@ -71,47 +68,37 @@ public class ArquivoRecordListener {
             containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
         try {
-            totalReceived++;
             final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
-            // catches the site source url part
-            final Matcher matcher = articleDedupKey.matcher(event.url());
-            String queryKey;
-            if (matcher.find()) {
-                queryKey = matcher.group(2);
-            } else {
-                queryKey = event.url();
-            }
-
-            Article article = articleRepository.findByUrlKey(queryKey).orElse(null);
+            final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
+            Article article = articleRepository.findByTitleAndSiteId(event.title(), event.siteId()).orElse(null);
             if (article == null) {
-                final Site site = siteRepository.findById(event.siteId()).orElse(null);
-                final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
+                totalReceived++;
 
                 String text = getText(event.textUrl());
-
                 text = removeAllStopwords(text);
 
                 ContextualTextScore.Score score = contextualTextScore.score(text);
-                if (score.total() > 50) {
+                if (score.total() > 20) { // 20 just to discard totally unrelated. The real filter will be done via REST service
                     totalAccepted++;
+                    final Site site = siteRepository.findById(event.siteId()).orElse(null);
                     article = new Article(event.digest(), event.title(), score.total(),
                             objectMapper.convertValue(score.individualScore(), JsonNode.class),
-                            queryKey, event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
+                            event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
                             LocalDateTime.now(ZoneOffset.UTC), site);
                     article.setArticleEntityAssociation(Set.of(searchEntity));
-                    articleRepository.save(article);
                 } else {
                     totalRejected++;
+                    ack.acknowledge();
+                    return;
                 }
 
             } else {
                 LOG.debug("Article already exists article id {}", article.getId());
-                final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
                 article.setArticleEntityAssociation(Set.of(searchEntity));
-                articleRepository.save(article);
             }
+            articleRepository.save(article);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
