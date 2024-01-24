@@ -32,10 +32,10 @@ function getSiteImage(siteId) {
 const Articles = () => {
     const [articles, setPosts] = useState([]);
     const { id } = useParams();
-    const userId = id;
+    const entityId = id;
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/article/" + userId)
+        fetch("http://127.0.0.1:8082/article/" + entityId)
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);
@@ -57,8 +57,13 @@ const Articles = () => {
                                     {getSiteImage(post.site.id)}
                                 </div>
                                 <div class="l-card__userInfo">
+                                    
                                     <Link to={`${post.url}`}>Artigo</Link>
                                 </div>
+                                <div>
+                                    <p>Score: {post.score}</p>
+                                </div>
+                                
                             </section>
                         </main>
                     ))}
