@@ -83,7 +83,7 @@ public class ArquivoCrawler {
         this.objectMapper = new ObjectMapper();
     }
 
-    @EventListener(ApplicationReadyEvent.class)
+    //@EventListener(ApplicationReadyEvent.class)
     public void crawl() throws JsonProcessingException {
 
         final LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);

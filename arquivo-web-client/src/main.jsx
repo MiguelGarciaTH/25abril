@@ -10,7 +10,7 @@ import {
 
 
 import Home from './routes/Home.jsx'
-import Contact from './routes/Contact.jsx'
+import About from './routes/About.jsx'
 import ErrorPage from './routes/ErrorPage.jsx'
 import Articles from './routes/Articles.jsx'
 import Entity from './routes/Entity.jsx'
@@ -26,8 +26,8 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "contact",
-        element: <Contact />
+        path: "about",
+        element: <About />
       },
       {
         path: "/articles/:id",

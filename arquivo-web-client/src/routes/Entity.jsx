@@ -7,34 +7,32 @@ const Entity = () => {
     const { type } = useParams();
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/entity/type/"+type)
+        fetch("http://127.0.0.1:8082/entity/type/" + type)
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);
             });
     }, [type]);
 
+
     if (entities.length) {
         return (
             <div>
                 <h1>{type}</h1>
-                <div>
+                <ul class="team">
                     {entities.map((entity) => (
-
-                        <div class="box" key={entity.id}>
-                            {console.log("teste  " + entity.imageUrl)}
-                            <div class="box-top">
-                                <img class="box-image" src={entity.imageUrl} alt={`${entity.name}`}></img>
-                            <div class="title-flex">
-                            <h3 class="box-title">{entity.name}</h3>
-                            <p class="user-follow-info">{type}</p>
+                        <li class="member co-funder">
+                            <div class="thumb">
+                                <img src={entity.imageUrl} alt={`${entity.name}`}></img>
                             </div>
-                            <p class="description">Whipped steamed roast cream beans macchiato skinny grinder café. Iced grinder go mocha steamed grounds cultivar panna aroma.</p>
+                            <div class="description">
+                                <h3>{entity.name}</h3>
+                                <p>Chris is a front-end developer and designer. He writes a bunch of HTML, CSS, and JavaScript and shakes the pom-poms for CodePen.</p><br />
+                                <Link className="card__btn" to={`/articles/${entity.id}`}>Artigos</Link>
                             </div>
-                            <Link className="navbar-link" to={`/articles/${entity.id}`}>Artigos</Link>
-                        </div>
-                    ))}
-                </div>
+                        </li>
+                    ))};
+                </ul>
             </div>
         );
     }
