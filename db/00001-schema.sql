@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS article (
     "date" timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
     site_id integer NOT NULL,
     title text NOT NULL,
-    url_key text NOT NULL,
     url text NOT NULL,
     metadata_url text NOT NULL,
     no_frame_url text NOT NULL,
@@ -78,3 +77,14 @@ CREATE TABLE IF NOT EXISTS article_entity_association (
     CONSTRAINT article_entity_association_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
     CONSTRAINT article_entity_association_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id)
 );
+
+CREATE SEQUENCE IF NOT EXISTS quote_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS quote (
+    id integer NOT NULL DEFAULT nextval('quote_seq'),
+    "text" text NOT NULL,
+    author varchar(255),
+
+    CONSTRAINT quote_pk PRIMARY KEY (id)
+);
+
