@@ -1,5 +1,6 @@
 package arquivo.processor;
 
+import arquivo.ContextualTextScore;
 import arquivo.RateLimiter;
 import arquivo.model.*;
 import arquivo.repository.ArticleRepository;
