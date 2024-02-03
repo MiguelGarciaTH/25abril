@@ -1,4 +1,4 @@
-package arquivo;
+package arquivo.services;
 
 import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContextualTextScore {
+public class ContextualTextScoreService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContextualTextScore.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContextualTextScoreService.class);
 
     private static final Map<String, Integer> keywords = Map.ofEntries(
             Map.entry("revolução cravos", 20),
@@ -26,7 +26,7 @@ public class ContextualTextScore {
             Map.entry("fascismo", 5)
     );
 
-    public ContextualTextScore() {
+    public ContextualTextScoreService() {
 
     }
 

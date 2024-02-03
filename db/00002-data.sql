@@ -4,6 +4,9 @@ insert into quote(author, "text") values
 ('Sophia De Mello Breyner','Esta é a madrugada que eu esperava<br/>O dia inicial inteiro e limpo<br/>Onde emergimos da noite e do silêncio<br/>E livres habitamos a substância do tempo.<br/>'),
 ('Salgueiro Maia','Meus senhores, como todos sabem, há diversas modalidades de Estado. Os estados socialistas, os estados capitalistas e o estado a que chegámos. Ora, nesta noite solene, vamos acabar com o estado a que chegámos');
 
+insert into rate_limiter(description, counter, counter_limit, sleep_time, locked) values
+('arquivo.pt', 0, 240, 60000, false);
+
 insert into site(name, url) values
 ('Publico', 'http://www.publico.pt');
 --('Diário de Noticias', 'http://www.dn.pt'),

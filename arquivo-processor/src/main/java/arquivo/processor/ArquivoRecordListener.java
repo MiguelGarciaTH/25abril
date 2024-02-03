@@ -1,12 +1,9 @@
 package arquivo.processor;
 
-import arquivo.ContextualTextScore;
-import arquivo.RateLimiter;
+import arquivo.repository.*;
+import arquivo.services.ContextualTextScoreService;
+import arquivo.services.RateLimiterService;
 import arquivo.model.*;
-import arquivo.repository.ArticleRepository;
-import arquivo.repository.IntegrationLogRepository;
-import arquivo.repository.SearchEntityRepository;
-import arquivo.repository.SiteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,15 +42,16 @@ public class ArquivoRecordListener {
     private final SiteRepository siteRepository;
     private final SearchEntityRepository searchEntityRepository;
     private final List<String> stopwords;
-    private final ContextualTextScore contextualTextScore;
-    private final RateLimiter rateLimiter;
+    private final ContextualTextScoreService contextualTextScoreService;
+    private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
     private int totalReceived = 0;
     private int totalAccepted = 0;
     private int totalRejected = 0;
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
-                          SearchEntityRepository searchEntityRepository, IntegrationLogRepository integrationLogRepository) {
+                          SearchEntityRepository searchEntityRepository, IntegrationLogRepository integrationLogRepository,
+                          RateLimiterRepository rateLimiterRepository) {
         this.objectMapper = objectMapper;
         this.articleRepository = articleRepository;
         this.siteRepository = siteRepository;
@@ -61,8 +59,8 @@ public class ArquivoRecordListener {
         this.integrationLogRepository = integrationLogRepository;
 
         this.stopwords = load("portuguese_stopwords.txt");
-        this.contextualTextScore = new ContextualTextScore();
-        this.rateLimiter = new RateLimiter(240, 60_000L);
+        this.contextualTextScoreService = new ContextualTextScoreService();
+        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
     }
 
     @KafkaListener(topics = {"${processor.topic}"},
@@ -80,7 +78,7 @@ public class ArquivoRecordListener {
                 String text = getText(event.textUrl());
                 text = removeAllStopwords(text);
 
-                ContextualTextScore.Score score = contextualTextScore.score(text);
+                ContextualTextScoreService.Score score = contextualTextScoreService.score(text);
                 if (score.total() > 20) { // 20 just to discard totally unrelated. The real filter will be done via REST service
                     totalAccepted++;
                     final Site site = siteRepository.findById(event.siteId()).orElse(null);
@@ -111,6 +109,9 @@ public class ArquivoRecordListener {
     private String getText(String urlInput) {
         final String inputTrim = urlInput.substring(0, Math.min(urlInput.length(), 240));
         try {
+
+            rateLimiterService.increment("arquivo.pt");
+
             final URL url = new URL(urlInput);
             final StringBuilder everything = new StringBuilder();
             final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -118,7 +119,6 @@ public class ArquivoRecordListener {
             while ((line = in.readLine()) != null) {
                 everything.append(line);
             }
-            rateLimiter.increment();
             in.close();
 
             integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));

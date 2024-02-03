@@ -1,11 +1,8 @@
 package arquivo.crawler;
 
-import arquivo.RateLimiter;
+import arquivo.repository.*;
+import arquivo.services.RateLimiterService;
 import arquivo.model.*;
-import arquivo.repository.ChangelogRepository;
-import arquivo.repository.IntegrationLogRepository;
-import arquivo.repository.SearchEntityRepository;
-import arquivo.repository.SiteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +48,7 @@ public class ArquivoCrawler {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    private final RateLimiter rateLimiter;
+    private final RateLimiterService rateLimiterService;
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
 
     @Value("${crawler.topic}")
@@ -60,13 +57,14 @@ public class ArquivoCrawler {
     @Autowired
     public ArquivoCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
                           SiteRepository siteRepository, ChangelogRepository changeLogRepository,
+                          RateLimiterRepository rateLimiterRepository,
                           KafkaTemplate<String, String> kafkaTemplate) {
         this.integrationLogRepository = integrationLogRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.siteRepository = siteRepository;
         this.changeLogRepository = changeLogRepository;
         this.kafkaTemplate = kafkaTemplate;
-        this.rateLimiter = new RateLimiter(250, 60_000L);
+        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
@@ -83,7 +81,7 @@ public class ArquivoCrawler {
         this.objectMapper = new ObjectMapper();
     }
 
-    //@EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void crawl() throws JsonProcessingException {
 
         final LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);
@@ -97,6 +95,8 @@ public class ArquivoCrawler {
             LOG.info("Crawling: {} ({}) (site: {})", url.entity.getName(), url.entity.getType().name(), url.site.getName());
 
             try {
+
+                rateLimiterService.increment("arquivo.pt");
 
                 final JsonNode response = objectMapper.readTree(webClient.get()
                         .uri(url.url)
@@ -118,8 +118,6 @@ public class ArquivoCrawler {
 
                 // publish to kafka
                 publishToKafka(url, response.get("response_items"));
-
-                rateLimiter.increment();
 
             } catch (WebClientResponseException e) {
                 LOG.error("Failed to get {}", url);

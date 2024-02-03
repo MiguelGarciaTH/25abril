@@ -88,3 +88,17 @@ CREATE TABLE IF NOT EXISTS quote (
     CONSTRAINT quote_pk PRIMARY KEY (id)
 );
 
+CREATE SEQUENCE IF NOT EXISTS rate_limiter_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS rate_limiter (
+    id integer NOT NULL DEFAULT nextval('rate_limiter_seq'),
+    "description" text NOT NULL,
+    counter integer,
+    counter_limit integer,
+    sleep_time integer,
+    locked boolean,
+
+    CONSTRAINT rate_limiter_pk PRIMARY KEY (id)
+);
+
+

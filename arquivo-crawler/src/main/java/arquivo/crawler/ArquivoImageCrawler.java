@@ -1,13 +1,10 @@
 package arquivo.crawler;
 
-import arquivo.ContextualTextScore;
-import arquivo.RateLimiter;
+import arquivo.repository.*;
+import arquivo.services.ContextualTextScoreService;
+import arquivo.services.RateLimiterService;
 import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
-import arquivo.repository.ChangelogRepository;
-import arquivo.repository.IntegrationLogRepository;
-import arquivo.repository.SearchEntityRepository;
-import arquivo.repository.SiteRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,17 +43,18 @@ public class ArquivoImageCrawler {
     private final IntegrationLogRepository integrationLogRepository;
     private final SearchEntityRepository searchEntityRepository;
 
-    private final RateLimiter rateLimiter;
+    private final RateLimiterService rateLimiterService;
     private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=%s&offset=0&maxItems=200&prettyPrint=true";
-    private static final ContextualTextScore textScore = new ContextualTextScore();
+    private static final ContextualTextScoreService textScore = new ContextualTextScoreService();
 
     @Autowired
     public ArquivoImageCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
                                SiteRepository siteRepository, ChangelogRepository changeLogRepository,
+                               RateLimiterRepository rateLimiterRepository,
                                KafkaTemplate<String, String> kafkaTemplate) {
         this.integrationLogRepository = integrationLogRepository;
         this.searchEntityRepository = searchEntityRepository;
-        this.rateLimiter = new RateLimiter(250, 60_000L);
+        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
@@ -85,6 +83,9 @@ public class ArquivoImageCrawler {
             LOG.info("Crawling image for: {} ({})", entity.getName(), entity.getType().name());
 
             try {
+
+                rateLimiterService.increment("arquivo.pt");
+
                 final JsonNode response = objectMapper.readTree(webClient.get()
                         .uri(url)
                         .accept(MediaType.APPLICATION_JSON)
@@ -101,8 +102,6 @@ public class ArquivoImageCrawler {
                 // set entity image
                 entity.setImageUrl(imgSrc);
                 searchEntityRepository.save(entity);
-
-                rateLimiter.increment();
 
             } catch (WebClientResponseException e) {
                 LOG.error("Failed to get {}", url);
