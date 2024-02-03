@@ -17,6 +17,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                 from article_entity_association aes
                 where aes.search_entity_id = ?1
             )
+            order by a.score desc
             """)
     List<Article> findByAllBySearchEntityId(int entityId);
 
