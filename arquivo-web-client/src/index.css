@@ -7,8 +7,8 @@
   margin: 0 auto;
   padding: 50px;
   text-align: center;
-  --white: #2f313a;
-  --dark: #ffffff;
+  --dark: #2f313a;
+  --white: #ffffff;
   --red: #7f0d0d;
 }
 
@@ -18,8 +18,8 @@ body {
   font-size: 54px;
   font-weight: 300;
   margin: 0 0 58px;
-  background-color: var(--dark);
-  color: var(--white);
+  background-color: var(--white);
+  color: var(--dark);
 }
 
 h1 {
@@ -50,6 +50,18 @@ h1 {
 
 
 /*** NAVBAR START ***/
+.title-header1 {
+  font-size: 100px;
+  color: var(--red);
+    font-weight: 900;
+}
+
+.title-header2 {
+  font-size: 100px;
+  color: var(--black);
+    font-weight: 900;
+}
+
 .navbar {
   width: 150px;
   line-height: 48px;
@@ -70,13 +82,13 @@ h1 {
   text-decoration: none;
 }
 
+.navbar-link:focus {
+  color: var(--red) !important;
+  background: white !important;
+}
+
 .navbar-link:hover {
   color: var(--red);
-  /*
-  background: -webkit-linear-gradient(#fd4e4e, #181818);
-    -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-  */
   font-size: xx-large;
 }
 
@@ -110,7 +122,7 @@ h2 {
   float: left;
   margin-right: 1.25em;
   background: linear-gradient(var(--deg),
-      var(--dark) 0 70%,
+      var(--white) 0 70%,
       var(--yellow) 0% 100%);
   transition: var(--trans);
   border-radius: 0.25em;
@@ -124,7 +136,7 @@ h2 {
   height: 100%;
   border-radius: 0.25em;
   filter: grayscale(1);
-  background: var(--dark);
+  background: var(--white);
 }
 
 .member:hover {
@@ -146,36 +158,47 @@ h2 {
 }
 
 h3 {
-  background: linear-gradient(182deg, #fff0 60%, var(--dark) 0 100%);
+  background: linear-gradient(182deg, #fff0 60%, var(--white) 0 100%);
   display: inline;
   position: absolute;
   margin: 0;
   margin-top: -2.25em;
   left: 9vmin;
   padding: 0.5em 0.75em;
-  color: var(--white);
+  color: var(--dark);
   border-radius: 0.25em;
   font-size: 1.5em;
   transform-origin: left bottom;
 }
 
 .member:hover h3 {
-  background: linear-gradient(180deg, #fff0 59%, var(--dark) 0 100%);
+  background: linear-gradient(180deg, #fff0 59%, var(--white) 0 100%);
 }
 
 .co-funder:after {
   font-size: 0.75em;
   position: absolute;
   top: -1.5em;
-  background: var(--white);
+  background: var(--dark);
   right: 4em;
   padding: 0.35em 0.75em 0.5em;
   border-radius: 0.25em;
-  color: var(--dark);
+  color: var(--white);
   font-weight: bold;
 }
 
 .description p a {
+  display: inline-block;
+  margin: 0.5em 0 0 0;
+  background: var(--white);
+  color: var(--dark);
+  padding: 0.1em 0.5em 0.35em;
+  border-radius: 0.5em;
+  text-decoration: none;
+  transition: var(--trans);
+}
+
+.link-button {
   display: inline-block;
   margin: 0.5em 0 0 0;
   background: var(--dark);
@@ -187,8 +210,8 @@ h3 {
 }
 
 .description p a:hover {
-  color: var(--dark);
-  background: var(--white);
+  color: var(--white);
+  background: var(--dark);
   font-weight: bold;
 }
 
