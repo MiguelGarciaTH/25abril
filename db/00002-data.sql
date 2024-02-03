@@ -13,7 +13,6 @@ insert into site(name, url) values
 --('Sic Noticias','https://sicnoticias.pt/'),
 --('TSF', 'https://www.tsf.pt/');
 
-
 insert into search_entity (name, aliases, type) values
 ('Processo Estudantil', null, 'EVENTO'),
 ('Barbieri Cardoso', null, 'POLITICO'),
@@ -24,6 +23,7 @@ insert into search_entity (name, aliases, type) values
 ('Flama', null, 'JORNAL'),
 ('A Mosca', null, 'JORNAL'),
 ('Raul Rego', null,  'POLITICO'),
+('Henrique Galvão', null, 'POLITICO'),
 ('Prisão de Caxias', null, 'PRISAO'),
 ('Prisão do Aljube', null,  'PRISAO'),
 ('Prisão de Peniche', null, 'PRISAO'),
@@ -57,9 +57,10 @@ insert into search_entity (name, aliases, type) values
 ('Retornados', null, 'MOVIMENTO'),
 ('Oscar Carmona', null,'POLITICO'),
 ('Duarte Pacheco', null, 'POLITICO'),
+('Palma Inácio ', null, 'POLITICO'),
 ('Ala Liberal', null, 'MOVIMENTO'),
 ('Cardeal Manuel Gonçalves cerejeira', 'Cardeal Cerejeira', 'POLITICO'),
-('Polícia Internacional e de Defesa do Estado','PIDE, DGS, Direcção-Geral de Segurança, ', 'MOVIMENTO'),
+('Polícia Internacional e de Defesa do Estado','PIDE, DGS, Direcção-Geral de Segurança, P.I.D.E, rua antónio maria cardoso', 'MOVIMENTO'),
 ('António de Spínola', 'General Spínola',  'POLITICO'),
 ('Massacre de WiriyAmu', null, 'EVENTO'),
 ('José Ribeiro Santos',  null, 'POLITICO'),
@@ -109,7 +110,7 @@ insert into search_entity (name, aliases, type) values
 ('Maria Velho da Costa', 'Três Marias, Novas Cartas Portuguesas', 'ARTISTA'),
 ('Sophia de Mello Breyner Andresen', 'Sophia de Mello Breyner', 'ARTISTA'),
 ('Frank Carlucci', null, 'POLITICO'),
-('Isabel do carmo', null, 'POLITICO'),
+('Isabel do Carmo', null, 'POLITICO'),
 ('Camilo Mortágua', null, 'POLITICO'),
 ('António Barreto', null, 'POLITICO'),
 ('Medeiros Ferreira', null, 'POLITICO'),
