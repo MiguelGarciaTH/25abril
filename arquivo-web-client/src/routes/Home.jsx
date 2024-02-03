@@ -15,13 +15,16 @@ const Home = () => {
 
     return (
         <div>
-            <h1></h1>
-            <div className="quote">
-                <div dangerouslySetInnerHTML={{ __html: quote.text }} />
-            </div>
+            <h1>~</h1>
+            <div className="quote-div">
+                <h1></h1>
+                <div className="quote">
+                    <div dangerouslySetInnerHTML={{ __html: quote.text }} />
+                </div>
 
-            <div className="quote-author">
-                {quote.author}
+                <div className="quote-author">
+                    {quote.author}
+                </div>
             </div>
         </div>
     )
