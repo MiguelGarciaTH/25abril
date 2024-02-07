@@ -62,7 +62,6 @@ const Articles = () => {
                                 <Link className="navbar-link" to={`${post.url}`}>{post.title}</Link>
                             </section>
                             <section class="l-card__user">
-                                
                                 <div class="l-card__userInfo">
                                     Score: {post.score}
                                 </div>                               

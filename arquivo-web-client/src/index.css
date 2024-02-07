@@ -206,6 +206,7 @@ h3 {
 
 .link-button {
   display: inline-block;
+  width: 100px;
   margin: 0.5em 0 0 0;
   background: var(--dark);
   color: var(--white);
@@ -224,7 +225,7 @@ h3 {
   border-radius: 0.5em;
   text-decoration: none;
   transition: var(--trans);
-  filter: drop-shadow(0px 8px 8px var(--red));
+  filter: drop-shadow(0px 8px 8px var(--r));
 }
 
 .description p a:hover {
