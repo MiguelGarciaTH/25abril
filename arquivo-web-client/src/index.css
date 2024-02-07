@@ -32,11 +32,12 @@ h1 {
   color: var(--red);
 }
 
-.quote-div{
-    margin-top: 10%;
+.quote-div {
+  margin-top: 10%;
   width: 50%;
   margin-left: 30%;
 }
+
 .quote {
   margin-top: 10%;
   font-size: 34px;
@@ -59,13 +60,13 @@ h1 {
 .title-header1 {
   font-size: 100px;
   color: var(--red);
-    font-weight: 900;
+  font-weight: 900;
 }
 
 .title-header2 {
   font-size: 100px;
   color: var(--black);
-    font-weight: 900;
+  font-weight: 900;
 }
 
 .navbar {
@@ -146,7 +147,6 @@ h2 {
 }
 
 .member:hover {
-  filter: drop-shadow(0px 5px 5px #0008);
 }
 
 .member:hover .thumb img {
@@ -215,6 +215,18 @@ h3 {
   transition: var(--trans);
 }
 
+.link-button:hover {
+  display: inline-block;
+  margin: 0.5em 0 0 0;
+  background: var(--dark);
+  color: var(--white);
+  padding: 0.1em 0.5em 0.35em;
+  border-radius: 0.5em;
+  text-decoration: none;
+  transition: var(--trans);
+  filter: drop-shadow(0px 8px 8px var(--red));
+}
+
 .description p a:hover {
   color: var(--white);
   background: var(--dark);
@@ -229,4 +241,84 @@ h3 {
   padding: 2px;
   background: var(--w);
   margin-right: 2px;
+}
+
+/*** articles ***/
+.articles {
+  width: 50%;
+  margin-left: 30%;
+}
+
+.l-card {
+  width: auto;
+  min-width: 260px;
+  max-width: 3080px;
+  height: auto;
+  background: #f5f5f5;
+  color:var(--dark);
+  padding: 50px;
+  box-shadow: 0px 7px 24px rgba(100, 100, 100, 0.4);
+  text-decoration: none;
+}
+
+.l-card__text p {
+  font-size: 30px;
+  font-weight: 400;
+  color: #3f3f55;
+  text-align: left;
+}
+
+.l-card__text p::after {
+  content: "\201D";
+  display: inline;
+  color: #999;
+}
+
+.l-card__text p::before {
+  content: "\201C";
+  display: inline;
+  color: #999;
+}
+
+.l-card__user {
+  display: flex;
+  flex-direction: row;
+  padding-top: 24px;
+  margin-top: 12px;
+  /* border-top: 1px solid #c1c1c1; */
+  align-items: center;
+}
+
+.l-card__userImage {
+  width: 62px;
+  height: 62px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.l-card__userImage img {
+  width: 100%;
+  height: 100%;
+  object-filt: cover;
+}
+
+.l-card__userInfo {
+    font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 16px;
+}
+
+.l-card__userInfo span:nth-child(1) {
+  font-weight: bold;
+  font-family: sans-serif;
+  font-size: 14px;
+  color: #3f3f55;
+}
+
+.l-card__userInfo span:nth-child(2) {
+  color: #adada6;
+  font-family: sans-serif;
+  font-size: 12px;
+  margin-top: 2px;
 }

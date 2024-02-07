@@ -28,14 +28,14 @@ const Entity = () => {
                             <div class="description">
                                 <h3>{entity.name}</h3>
                                 <p>Chris is a front-end developer and designer. He writes a bunch of HTML, CSS, and JavaScript and shakes the pom-poms for CodePen.</p><br />
-                                <Link className="link-button" to={`/articles/${entity.id}`}>Artigos</Link>
+                                <Link className="link-button" to={`/articles/${entity.id}/${entity.name}`}>Artigos</Link>
                             </div>
                         </li>
-                    ))};
+                    ))}
                 </ul>
             </div>
-        );
+        )
     }
-};
+}
 
 export default Entity;
