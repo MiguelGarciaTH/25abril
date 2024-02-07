@@ -146,13 +146,6 @@ h2 {
   background: var(--white);
 }
 
-.member:hover {
-}
-
-.member:hover .thumb img {
-  filter: none;
-}
-
 .description {
   padding-top: 1vmin;
   font-size: 0.3em;
@@ -225,7 +218,7 @@ h3 {
   border-radius: 0.5em;
   text-decoration: none;
   transition: var(--trans);
-  filter: drop-shadow(0px 8px 8px var(--r));
+  filter: drop-shadow(0px 8px 8px var(--red));
 }
 
 .description p a:hover {
