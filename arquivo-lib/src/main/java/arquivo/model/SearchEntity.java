@@ -10,14 +10,13 @@ import javax.persistence.*;
 public class SearchEntity {
 
     public enum Type {
-        PARTIDO,
-        POLITICO,
-        ARTISTA,
-        JORNAL,
-        MOVIMENTO,
-        EVENTO,
-        LOCAL,
-        PRISAO
+        PARTIDOS,
+        POLITICOS,
+        ARTISTAS,
+        JORNAIS,
+        MOVIMENTOS,
+        EVENTOS,
+        LOCAIS
     }
 
     @Id
@@ -44,11 +43,20 @@ public class SearchEntity {
     @Column(columnDefinition = "text")
     private String imageUrl;
 
+    @Column(length = 50)
+    private String birthDate;
+
+    @Column(length = 50)
+    private String deathDate;
+
+    @Column(columnDefinition = "text")
+    private String biography;
+
     public SearchEntity(){
 
     }
 
-    public SearchEntity(String name, String abbreviation, String aliases, Type type) {
+    public SearchEntity(String name, String aliases, Type type) {
         this.name = name;
         this.aliases = aliases;
         this.type = type;
@@ -88,5 +96,29 @@ public class SearchEntity {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getDeathDate() {
+        return deathDate;
+    }
+
+    public void setDeathDate(String deathDate) {
+        this.deathDate = deathDate;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
     }
 }

@@ -79,33 +79,35 @@ public class ArquivoImageCrawler {
 
         int total = 0;
         for (SearchEntity entity : entities) {
-            String url = String.format(ARQUIVO_IMAGE_API_BASE_URL, entity.getName());
-            LOG.info("Crawling image for: {} ({})", entity.getName(), entity.getType().name());
+            if (entity.getImageUrl() == null) {
+                String url = String.format(ARQUIVO_IMAGE_API_BASE_URL, entity.getName());
+                LOG.info("Crawling image for: {} ({})", entity.getName(), entity.getType().name());
 
-            try {
+                try {
 
-                rateLimiterService.increment("arquivo.pt");
+                    rateLimiterService.increment("arquivo.pt");
 
-                final JsonNode response = objectMapper.readTree(webClient.get()
-                        .uri(url)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .retrieve().bodyToMono(String.class).block());
+                    final JsonNode response = objectMapper.readTree(webClient.get()
+                            .uri(url)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .retrieve().bodyToMono(String.class).block());
 
-                int responseSize = response.get("responseItems").size();
-                LOG.debug("Response for {}: {}", url, response.toPrettyString());
-                LOG.info("Crawling image results: {}: {}", entity.getName(), responseSize);
-                integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler-image", IntegrationLog.Status.TS, "", "Total responses: " + responseSize));
+                    int responseSize = response.get("responseItems").size();
+                    LOG.debug("Response for {}: {}", url, response.toPrettyString());
+                    LOG.info("Crawling image results: {}: {}", entity.getName(), responseSize);
+                    integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler-image", IntegrationLog.Status.TS, "", "Total responses: " + responseSize));
 
-                total += responseSize;
+                    total += responseSize;
 
-                String imgSrc = getBestImage(entity, response.get("responseItems"));
-                // set entity image
-                entity.setImageUrl(imgSrc);
-                searchEntityRepository.save(entity);
+                    String imgSrc = getBestImage(entity, response.get("responseItems"));
+                    // set entity image
+                    entity.setImageUrl(imgSrc);
+                    searchEntityRepository.save(entity);
 
-            } catch (WebClientResponseException e) {
-                LOG.error("Failed to get {}", url);
-                integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TR, "", e.getMessage()));
+                } catch (WebClientResponseException e) {
+                    LOG.error("Failed to get {}", url);
+                    integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TR, "", e.getMessage()));
+                }
             }
         }
 

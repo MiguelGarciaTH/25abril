@@ -12,19 +12,19 @@ const NavBar = () => {
             <br />
             <Link className="navbar-link" to="/about">SOBRE</Link>
             <br />
-            <Link className="navbar-link" to="/entity/ARTISTA">ARTISTAS</Link>
+            <Link className="navbar-link" to="/entity/ARTISTAS">ARTISTAS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/MOVIMENTO">MOVIMENTOS</Link>
+            <Link className="navbar-link" to="/entity/MOVIMENTOS">MOVIMENTOS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/POLITICO">POLITICOS</Link>
+            <Link className="navbar-link" to="/entity/POLITICOS">POLITICOS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/PARTIDO">PARTIDOS</Link>
+            <Link className="navbar-link" to="/entity/PARTIDOS">PARTIDOS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/EVENTO">EVENTOS</Link>
+            <Link className="navbar-link" to="/entity/EVENTOS">EVENTOS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/JORNAL">JORNAIS</Link>
+            <Link className="navbar-link" to="/entity/JORNAIS">JORNAIS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/PRISAO">PRISÕES</Link>
+            <Link className="navbar-link" to="/entity/LOCAIS">LOCAIS</Link>
         </nav>
     )
 }

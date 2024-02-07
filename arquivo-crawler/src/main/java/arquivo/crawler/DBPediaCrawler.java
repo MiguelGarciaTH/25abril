@@ -1,7 +1,9 @@
 package arquivo.crawler;
 
 import arquivo.model.SearchEntity;
+import arquivo.repository.RateLimiterRepository;
 import arquivo.repository.SearchEntityRepository;
+import arquivo.services.RateLimiterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +23,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -30,12 +35,14 @@ public class DBPediaCrawler {
     private static final Logger LOG = LoggerFactory.getLogger(DBPediaCrawler.class);
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
-    private final static String dbPediaBaseUrl = "https://dbpedia.org/data/%s.json";
-    private SearchEntityRepository searchEntityRepository;
+    private static final String dbPediaBaseUrl = "https://dbpedia.org/data/%s.json";
+    private final SearchEntityRepository searchEntityRepository;
+    private final RateLimiterService rateLimiterService;
 
     @Autowired
-    public DBPediaCrawler(SearchEntityRepository searchEntityRepository) {
+    public DBPediaCrawler(SearchEntityRepository searchEntityRepository, RateLimiterRepository rateLimiterRepository) {
         this.searchEntityRepository = searchEntityRepository;
+        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
@@ -54,35 +61,54 @@ public class DBPediaCrawler {
 
     @EventListener(ApplicationReadyEvent.class)
     public void crawl() {
+        final LocalDateTime today = LocalDateTime.now(ZoneOffset.UTC);
+        int total = 0;
         final List<SearchEntity> entities = searchEntityRepository.findAll();
         for (SearchEntity entity : entities) {
-            if (entity.getImageUrl() == null || entity.getImageUrl().isBlank() || entity.getImageUrl().isEmpty()) {
+            if (entity.getBiography() == null) {
+                LOG.info("Crawling bio for: {} ({})", entity.getName(), entity.getType().name());
+
                 String nameDBPediaFormat = entity.getName().replaceAll(" ", "_");
                 final String url = String.format(dbPediaBaseUrl, nameDBPediaFormat);
-                final JsonNode response = getDBPediaPage(1, url);
-                String imgUrl = null;
-                if (response != null && !response.isEmpty())
+
+                rateLimiterService.increment("dbpedia");
+
+                final JsonNode response = getDBPediaPage(url);
+                String biography = null;
+                if (response != null && !response.isEmpty()) {
                     if (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat)) {
                         JsonNode rootNode = response.get("http://dbpedia.org/resource/" + nameDBPediaFormat);
-                        if (rootNode.has("http://dbpedia.org/ontology/thumbnail")) {
-                            imgUrl = rootNode.get("http://dbpedia.org/ontology/thumbnail").get(0).get("value").asText().replace("?width=300", "");
-                            LOG.info("Entity {} has image {}", entity.getName(), imgUrl);
+                        //if (SearchEntity.Type.ARTISTAS == entity.getType() || SearchEntity.Type.POLITICOS == entity.getType()) {
+                        if (rootNode.has("http://dbpedia.org/ontology/abstract")) {
+                            JsonNode bioArray = rootNode.get("http://dbpedia.org/ontology/abstract");
+                            for (var bio : bioArray) {
+                                if ("pt".equals(bio.get("lang").asText())) {
+                                    biography = bio.get("value").asText();
+                                    LOG.debug("Entity {} has bio", entity.getName());
+                                    total++;
+                                }
+                            }
                         }
+                        //}
                     }
-                entity.setImageUrl(imgUrl);
+                }
+                entity.setBiography(biography);
                 searchEntityRepository.save(entity);
             }
         }
+        LocalDateTime finished = LocalDateTime.now(ZoneOffset.UTC);
+        LOG.info("Finished: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
     }
 
 
-    private JsonNode getDBPediaPage(int step, String url) {
+    private JsonNode getDBPediaPage(String url) {
         try {
             final JsonNode response = objectMapper.readTree(webClient.get()
                     .uri(url)
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve().bodyToMono(String.class).block());
-            LOG.debug("[{}] Response for {} : {}", step, url, response);
+            LOG.debug("Response for {} : {}", url, response);
+            return response;
         } catch (JsonProcessingException e) {
             LOG.error("Problem fetching {}", url);
         } catch (WebClientResponseException e2) {

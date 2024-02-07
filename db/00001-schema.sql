@@ -29,8 +29,11 @@ CREATE TABLE IF NOT EXISTS search_entity (
     id integer NOT NULL DEFAULT nextval('search_entity_seq'),
     name varchar(255) NOT NULL,
     aliases text,
-    type varchar(50) NOT NULL CHECK (type in ('POLITICO','ARTISTA','JORNAL','PARTIDO','MOVIMENTO','EVENTO','LOCAL','PRISAO')),
+    type varchar(50) NOT NULL CHECK (type in ('POLITICOS','ARTISTAS','JORNAIS','PARTIDOS','MOVIMENTOS','EVENTOS','LOCAIS')),
     image_url text,
+    biography text,
+    birth_date varchar(50),
+    death_date varchar(50),
 
     CONSTRAINT search_entity_pk PRIMARY KEY (id)
 );
