@@ -1,6 +1,8 @@
 package arquivo.crawler;
 
+import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
+import arquivo.repository.IntegrationLogRepository;
 import arquivo.repository.RateLimiterRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.services.RateLimiterService;
@@ -26,6 +28,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -38,10 +42,13 @@ public class DBPediaCrawler {
     private static final String dbPediaBaseUrl = "https://dbpedia.org/data/%s.json";
     private final SearchEntityRepository searchEntityRepository;
     private final RateLimiterService rateLimiterService;
+    private final IntegrationLogRepository integrationLogRepository;
 
     @Autowired
-    public DBPediaCrawler(SearchEntityRepository searchEntityRepository, RateLimiterRepository rateLimiterRepository) {
+    public DBPediaCrawler(SearchEntityRepository searchEntityRepository, RateLimiterRepository rateLimiterRepository,
+                          IntegrationLogRepository integrationLogRepository) {
         this.searchEntityRepository = searchEntityRepository;
+        this.integrationLogRepository = integrationLogRepository;
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         final HttpClient httpClient = HttpClient.create()
@@ -68,38 +75,48 @@ public class DBPediaCrawler {
             if (entity.getBiography() == null) {
                 LOG.info("Crawling bio for: {} ({})", entity.getName(), entity.getType().name());
 
-                String nameDBPediaFormat = entity.getName().replaceAll(" ", "_");
-                final String url = String.format(dbPediaBaseUrl, nameDBPediaFormat);
-
-                rateLimiterService.increment("dbpedia");
-
-                final JsonNode response = getDBPediaPage(url);
-                String biography = null;
-                if (response != null && !response.isEmpty()) {
-                    if (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat)) {
-                        JsonNode rootNode = response.get("http://dbpedia.org/resource/" + nameDBPediaFormat);
-                        //if (SearchEntity.Type.ARTISTAS == entity.getType() || SearchEntity.Type.POLITICOS == entity.getType()) {
-                        if (rootNode.has("http://dbpedia.org/ontology/abstract")) {
-                            JsonNode bioArray = rootNode.get("http://dbpedia.org/ontology/abstract");
-                            for (var bio : bioArray) {
-                                if ("pt".equals(bio.get("lang").asText())) {
-                                    biography = bio.get("value").asText();
-                                    LOG.debug("Entity {} has bio", entity.getName());
-                                    total++;
-                                }
-                            }
-                        }
-                        //}
+                final List<String> names = new ArrayList<>();
+                names.add(entity.getName());
+                if (entity.getAliases() != null) {
+                    Collections.addAll(names, entity.getAliases().split(","));
+                }
+                for (String name : names) {
+                    String nameDBPediaFormat = name.replaceAll(" ", "_");
+                    String url = String.format(dbPediaBaseUrl, nameDBPediaFormat);
+                    rateLimiterService.increment("dbpedia");
+                    JsonNode response = getDBPediaPage(url);
+                    String biography = getDBPediaBio(nameDBPediaFormat, response);
+                    integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "dbPediaCrawler", IntegrationLog.Status.TS, "", response.toString()));
+                    if (biography != null) {
+                        total++;
+                        LOG.debug("Entity {} has bio", entity.getName());
+                        entity.setBiography(biography);
+                        searchEntityRepository.save(entity);
+                        break;
                     }
                 }
-                entity.setBiography(biography);
-                searchEntityRepository.save(entity);
             }
         }
         LocalDateTime finished = LocalDateTime.now(ZoneOffset.UTC);
         LOG.info("Finished: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
     }
 
+    private String getDBPediaBio(String nameDBPediaFormat, JsonNode response) {
+        if (response != null && !response.isEmpty()) {
+            if (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat)) {
+                JsonNode rootNode = response.get("http://dbpedia.org/resource/" + nameDBPediaFormat);
+                if (rootNode.has("http://dbpedia.org/ontology/abstract")) {
+                    JsonNode bioArray = rootNode.get("http://dbpedia.org/ontology/abstract");
+                    for (var bio : bioArray) {
+                        if ("pt".equals(bio.get("lang").asText())) {
+                            return bio.get("value").asText();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     private JsonNode getDBPediaPage(String url) {
         try {
@@ -112,7 +129,7 @@ public class DBPediaCrawler {
         } catch (JsonProcessingException e) {
             LOG.error("Problem fetching {}", url);
         } catch (WebClientResponseException e2) {
-            LOG.error("Problem fetching {}", url, e2.getMessage());
+            LOG.error("Problem fetching {}: {}", url, e2.getMessage());
         }
         return null;
     }
