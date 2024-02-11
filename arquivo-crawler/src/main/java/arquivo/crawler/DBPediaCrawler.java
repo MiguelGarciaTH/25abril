@@ -6,6 +6,7 @@ import arquivo.repository.IntegrationLogRepository;
 import arquivo.repository.RateLimiterRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.services.RateLimiterService;
+import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,33 +38,17 @@ import java.util.List;
 public class DBPediaCrawler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DBPediaCrawler.class);
-    private final WebClient webClient;
-    private final ObjectMapper objectMapper;
     private static final String dbPediaBaseUrl = "https://dbpedia.org/data/%s.json";
     private final SearchEntityRepository searchEntityRepository;
-    private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
+    private final WebClientService webClientService;
 
     @Autowired
     public DBPediaCrawler(SearchEntityRepository searchEntityRepository, RateLimiterRepository rateLimiterRepository,
                           IntegrationLogRepository integrationLogRepository) {
         this.searchEntityRepository = searchEntityRepository;
         this.integrationLogRepository = integrationLogRepository;
-        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
-
-        final HttpClient httpClient = HttpClient.create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
-                .responseTimeout(Duration.ofSeconds(5000));
-
-        webClient = WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .codecs(codecs -> codecs
-                        .defaultCodecs()
-                        .maxInMemorySize(1500 * 1024))
-                .build();
-
-        this.objectMapper = new ObjectMapper();
+        this.webClientService = new WebClientService(rateLimiterRepository);
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -83,8 +68,7 @@ public class DBPediaCrawler {
                 for (String name : names) {
                     String nameDBPediaFormat = name.replaceAll(" ", "_");
                     String url = String.format(dbPediaBaseUrl, nameDBPediaFormat);
-                    rateLimiterService.increment("dbpedia");
-                    JsonNode response = getDBPediaPage(url);
+                    JsonNode response = webClientService.get(url, "dbpedia");
                     String biography = getDBPediaBio(nameDBPediaFormat, response);
                     integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "dbPediaCrawler", IntegrationLog.Status.TS, "", response.toString()));
                     if (biography != null) {
@@ -102,34 +86,16 @@ public class DBPediaCrawler {
     }
 
     private String getDBPediaBio(String nameDBPediaFormat, JsonNode response) {
-        if (response != null && !response.isEmpty()) {
-            if (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat)) {
-                JsonNode rootNode = response.get("http://dbpedia.org/resource/" + nameDBPediaFormat);
-                if (rootNode.has("http://dbpedia.org/ontology/abstract")) {
-                    JsonNode bioArray = rootNode.get("http://dbpedia.org/ontology/abstract");
-                    for (var bio : bioArray) {
-                        if ("pt".equals(bio.get("lang").asText())) {
-                            return bio.get("value").asText();
-                        }
+        if (response != null && !response.isEmpty() && (response.has("http://dbpedia.org/resource/" + nameDBPediaFormat))) {
+            JsonNode rootNode = response.get("http://dbpedia.org/resource/" + nameDBPediaFormat);
+            if (rootNode.has("http://dbpedia.org/ontology/abstract")) {
+                JsonNode bioArray = rootNode.get("http://dbpedia.org/ontology/abstract");
+                for (var bio : bioArray) {
+                    if ("pt".equals(bio.get("lang").asText())) {
+                        return bio.get("value").asText();
                     }
                 }
             }
-        }
-        return null;
-    }
-
-    private JsonNode getDBPediaPage(String url) {
-        try {
-            final JsonNode response = objectMapper.readTree(webClient.get()
-                    .uri(url)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .retrieve().bodyToMono(String.class).block());
-            LOG.debug("Response for {} : {}", url, response);
-            return response;
-        } catch (JsonProcessingException e) {
-            LOG.error("Problem fetching {}", url);
-        } catch (WebClientResponseException e2) {
-            LOG.error("Problem fetching {}: {}", url, e2.getMessage());
         }
         return null;
     }

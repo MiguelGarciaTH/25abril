@@ -75,6 +75,7 @@ public class ArquivoRecordListener {
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
             final Site site = siteRepository.findById(event.siteId()).orElse(null);
             final String trimmedTitle = trimTitle(event.title(), site.getName());
+
             Article article = articleRepository.findByTitleAndSiteId(trimmedTitle, event.siteId()).orElse(null);
             if (article == null) {
                 totalReceived++;
