@@ -10,11 +10,11 @@ insert into rate_limiter(description, counter, counter_limit, sleep_time, locked
 
 insert into site(name, url) values
 ('Publico', 'http://www.publico.pt'),
-('Diário de Noticias', 'http://www.dn.pt'),
-('JORNAIS de Noticias', 'http://www.jn.pt'),
+('Diário de Notícias', 'http://www.dn.pt'),
+('Jornal de Notícias', 'http://www.jn.pt'),
 ('Expresso', 'http://www.expresso.pt'),
 ('Observador','https://observador.pt/'),
-('Sic Noticias','https://sicnoticias.pt/'),
+('Sic Notícias','https://sicnoticias.pt/'),
 ('TSF', 'https://www.tsf.pt/');
 
 insert into search_entity (name, aliases, type) values
