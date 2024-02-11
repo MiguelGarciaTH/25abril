@@ -73,7 +73,9 @@ public class ArquivoRecordListener {
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
-            Article article = articleRepository.findByTitleAndSiteId(event.title(), event.siteId()).orElse(null);
+            final Site site = siteRepository.findById(event.siteId()).orElse(null);
+            final String trimmedTitle = trimTitle(event.title(), site.getName());
+            Article article = articleRepository.findByTitleAndSiteId(trimmedTitle, event.siteId()).orElse(null);
             if (article == null) {
                 totalReceived++;
 
@@ -87,9 +89,8 @@ public class ArquivoRecordListener {
                 final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), names);
                 if (score.total() > 20) { // 20 just to discard totally unrelated. The real filter will be done via REST service
                     totalAccepted++;
-                    final Site site = siteRepository.findById(event.siteId()).orElse(null);
-                    article = new Article(event.digest(), event.title(), score.total(),
-                            objectMapper.convertValue(score.individualScore(), JsonNode.class),
+                    article = new Article(event.digest(), trimmedTitle, score.total(),
+                            objectMapper.convertValue(score.individualScore(), JsonNode.class), event.title(),
                             event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
                             LocalDateTime.now(ZoneOffset.UTC), site);
                     article.setArticleEntityAssociation(Set.of(searchEntity));
@@ -147,6 +148,31 @@ public class ArquivoRecordListener {
                         .collect(Collectors.toCollection(ArrayList<String>::new));
         allWords.removeAll(stopwords);
         return String.join(" ", allWords);
+    }
+
+    private String trimTitle(String title, String siteName) {
+        if (title.contains("|")) {
+            String[] titleParts = title.split("\\|");
+            int maxLen = 0;
+            int maxLenIndex = 0;
+            int i = 0;
+            for (String part : titleParts) {
+                if (part.length() > maxLen) {
+                    maxLen = part.length();
+                    maxLenIndex = i;
+                    i++;
+                }
+            }
+            title = titleParts[maxLenIndex];
+        }
+        if (title.contains(" – " + siteName)) {
+            title = title.replaceAll(" – " + siteName, "");
+        } else if (title.contains(siteName + " – ")) {
+            title = title.replaceAll(siteName + " – ", "");
+        } else if (title.contains(siteName)) {
+            title = title.replaceAll(siteName, "");
+        }
+        return title;
     }
 
     private List<String> load(String path) {

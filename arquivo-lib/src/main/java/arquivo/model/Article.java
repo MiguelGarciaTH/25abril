@@ -30,6 +30,9 @@ public class Article {
     @Column(columnDefinition = "text")
     private String title;
 
+    @Column(columnDefinition = "text")
+    private String originalTitle;
+
     private int score;
 
     @Column(columnDefinition = "text")
@@ -63,7 +66,7 @@ public class Article {
 
     }
 
-    public Article(String digest, String title, int score, JsonNode individualScore, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String digest, String title, int score, JsonNode individualScore, String originalTitle, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
         this.digest = digest;
         this.url = url;
         this.noFrameUrl = noFrameUrl;
@@ -72,6 +75,7 @@ public class Article {
         this.date = date;
         this.site = site;
         this.title = title;
+        this.originalTitle = originalTitle;
         this.score = score;
         this.individualScore = individualScore;
     }
@@ -126,6 +130,14 @@ public class Article {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
     public int getScore() {

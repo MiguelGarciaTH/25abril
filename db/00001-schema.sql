@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS article (
     "date" timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
     site_id integer NOT NULL,
     title text NOT NULL,
+    original_title text NOT NULL,
     url text NOT NULL,
     metadata_url text NOT NULL,
     no_frame_url text NOT NULL,
