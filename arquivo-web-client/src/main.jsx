@@ -13,7 +13,7 @@ import Home from './routes/Home.jsx'
 import About from './routes/About.jsx'
 import ErrorPage from './routes/ErrorPage.jsx'
 import Articles from './routes/Articles.jsx'
-import Entity from './routes/Entity.jsx'
+import Entities from './routes/Entities.jsx'
 
 const router = createBrowserRouter([
   {
@@ -35,7 +35,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/entity/:type",
-        element: <Entity />
+        element: <Entities />
       }
     ]
   }

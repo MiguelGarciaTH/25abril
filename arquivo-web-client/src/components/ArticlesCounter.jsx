@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
 
 function ArticlesCounter({ entityId }) {
     const [counter, setPosts] = useState([]);
