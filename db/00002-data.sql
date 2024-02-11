@@ -15,6 +15,7 @@ insert into site(name, url) values
 ('Expresso', 'http://www.expresso.pt'),
 ('Observador','https://observador.pt/'),
 ('Sic Notícias','https://sicnoticias.pt/'),
+('Visão', 'http://visao.pt/'),
 ('TSF', 'https://www.tsf.pt/');
 
 insert into search_entity (name, aliases, type) values
