@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public class ArquivoRecordListener {
     private int totalReceived = 0;
     private int totalAccepted = 0;
     private int totalRejected = 0;
+    private int totalDuplicates = 0;
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository, IntegrationLogRepository integrationLogRepository,
@@ -77,8 +79,12 @@ public class ArquivoRecordListener {
 
                 String text = getText(event.textUrl());
                 text = removeAllStopwords(text);
-
-                ContextualTextScoreService.Score score = contextualTextScoreService.score(text);
+                final List<String> names = new ArrayList<>();
+                names.add(searchEntity.getName());
+                if (searchEntity.getAliases() != null) {
+                    Collections.addAll(names, searchEntity.getAliases().split(","));
+                }
+                final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), names);
                 if (score.total() > 20) { // 20 just to discard totally unrelated. The real filter will be done via REST service
                     totalAccepted++;
                     final Site site = siteRepository.findById(event.siteId()).orElse(null);
@@ -94,6 +100,7 @@ public class ArquivoRecordListener {
                 }
 
             } else {
+                totalDuplicates++;
                 LOG.debug("Article already exists article id {}", article.getId());
                 article.setArticleEntityAssociation(Set.of(searchEntity));
             }
@@ -103,7 +110,7 @@ public class ArquivoRecordListener {
         }
 
         ack.acknowledge();
-        LOG.info("Accepted articles: {}/{} Rejected articles: {}/{} ", totalAccepted, totalReceived, totalRejected, totalReceived);
+        LOG.info("Accepted articles: {}/{} Rejected articles: {}/{} Duplicated articles {}/{}", totalAccepted, totalReceived, totalRejected, totalReceived, totalDuplicates, totalReceived);
     }
 
     private String getText(String urlInput) {
