@@ -55,6 +55,11 @@ h1 {
   color: var(--red);
 }
 
+.space-top{
+  vertical-align: bottom;
+  margin-top: 50px;
+  margin-left: 10px;
+}
 
 /*** NAVBAR START ***/
 .title-header1 {
@@ -251,9 +256,13 @@ h3 {
   height: auto;
   background: #f5f5f5;
   color:var(--dark);
-  padding: 50px;
+  padding: 30px;
   box-shadow: 0px 7px 24px rgba(100, 100, 100, 0.4);
   text-decoration: none;
+  margin-bottom: 15px;
+}
+.l-card:hover{
+    filter: drop-shadow(0px 6px 6px var(--dark));
 }
 
 .l-card__text p {

@@ -22,12 +22,12 @@ function getSiteImage(siteId) {
     let imageSrc;
     switch (siteId) {
         case 1: imageSrc = publico; break;
-        case 2: imageSrc = dn; break; 
-        case 3: imageSrc = jn; break; 
-        case 4: imageSrc = expresso; break; 
-        case 5: imageSrc = observador;break;
-        case 6: imageSrc = sic_noticias; break; 
-        case 7: imageSrc = tsf; break; 
+        case 2: imageSrc = dn; break;
+        case 3: imageSrc = jn; break;
+        case 4: imageSrc = expresso; break;
+        case 5: imageSrc = observador; break;
+        case 6: imageSrc = sic_noticias; break;
+        case 7: imageSrc = tsf; break;
         default: imageSrc = publico;
     }
 
@@ -64,13 +64,19 @@ const Articles = () => {
                             <section class="l-card__user">
                                 <div class="l-card__userInfo">
                                     Score: {post.score}
-                                </div>                               
+                                </div>
                             </section>
                         </main>
                     ))}
                 </div>
             </div>
         );
+    }else{
+        return (
+            <div className="space-top">
+                Não foram econtrados artigos sobre {entityName}
+            </div>
+        )
     }
 };
 
