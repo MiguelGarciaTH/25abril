@@ -19,7 +19,7 @@ const Entities = () => {
         return (
             <div>
                 <h1>{type}</h1>
-                <ul class="team">
+                <ul>
                     {entities.map((entity) => (
                         <Entity entityId={entity.id} entityName={entity.name} entityBio={entity.biography} entityImage={entity.imageUrl}/>
                     ))}

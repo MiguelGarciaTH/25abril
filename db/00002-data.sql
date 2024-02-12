@@ -28,7 +28,7 @@ insert into search_entity (name, aliases, type) values
 -- Artistas
 ('Sérgio Godinho', null, 'ARTISTAS'),
 ('Fausto Bordalo Dias', 'Fausto', 'ARTISTAS'),
-('José Mário Branco', 'Zé Mario Branco', 'ARTISTAS'),
+('José Mário Branco', 'Zé Mário Branco', 'ARTISTAS'),
 ('Adriano Correia de Oliveira', null, 'ARTISTAS'),
 ('Fernando Tordo', null, 'ARTISTAS'),
 ('Francisco Fanhais', 'Padre Fanhais', 'ARTISTAS'),
