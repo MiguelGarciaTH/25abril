@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS article_entity_association (
     search_entity_id integer NOT NULL,
 
     CONSTRAINT article_entity_association_pk PRIMARY KEY (article_id, search_entity_id),
+    CONSTRAINT article_entity_association_uq UNIQUE (article_id, search_entity_id),
     CONSTRAINT article_entity_association_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
     CONSTRAINT article_entity_association_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id)
 );
