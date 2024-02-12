@@ -81,7 +81,7 @@ public class ArquivoRecordListener {
                 totalReceived++;
 
                 String text = getText(event.textUrl());
-                text = removeAllStopwords(text);
+                //text = removeAllStopwords(text);
                 final List<String> names = new ArrayList<>();
                 names.add(searchEntity.getName());
                 if (searchEntity.getAliases() != null) {
