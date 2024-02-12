@@ -6,7 +6,6 @@ import publico from '../images/publico.png';
 import jn from '../images/jn.png';
 import expresso from '../images/expresso.jpg';
 import sic_noticias from '../images/sic_noticias.png';
-import visao from '../images/visao.png';
 import tsf from '../images/tsf.png';
 
 /*
@@ -28,8 +27,7 @@ function getSiteImage(siteId) {
         case 4: imageSrc = expresso; break;
         case 5: imageSrc = observador; break;
         case 6: imageSrc = sic_noticias; break;
-        case 7: imageSrc = visao; break;
-        case 8: imageSrc = tsf; break;
+        case 7: imageSrc = tsf; break;
         default: imageSrc = publico;
     }
 
