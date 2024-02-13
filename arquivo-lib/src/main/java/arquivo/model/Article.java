@@ -1,13 +1,10 @@
 package arquivo.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
 public class Article {
@@ -33,8 +30,6 @@ public class Article {
     @Column(columnDefinition = "text")
     private String originalTitle;
 
-    private int score;
-
     @Column(columnDefinition = "text")
     private String url;
 
@@ -50,23 +45,11 @@ public class Article {
     @Column(length = 50)
     private String digest;
 
-    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
-    @Column(columnDefinition = "jsonb")
-    private JsonNode individualScore;
-
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "article_entity_association",
-            joinColumns = {@JoinColumn(name = "article_id")},
-            inverseJoinColumns = {@JoinColumn(name = "search_entity_id")}
-    )
-    private Set<SearchEntity> articleEntityAssociation;
-
     public Article() {
 
     }
 
-    public Article(String digest, String title, int score, JsonNode individualScore, String originalTitle, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String digest, String title, String originalTitle, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
         this.digest = digest;
         this.url = url;
         this.noFrameUrl = noFrameUrl;
@@ -76,8 +59,6 @@ public class Article {
         this.site = site;
         this.title = title;
         this.originalTitle = originalTitle;
-        this.score = score;
-        this.individualScore = individualScore;
     }
 
     public int getId() {
@@ -116,14 +97,6 @@ public class Article {
         this.digest = digest;
     }
 
-    public Set<SearchEntity> getArticleEntityAssociation() {
-        return articleEntityAssociation;
-    }
-
-    public void setArticleEntityAssociation(Set<SearchEntity> articleEntityAssociation) {
-        this.articleEntityAssociation = articleEntityAssociation;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -138,13 +111,5 @@ public class Article {
 
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
     }
 }

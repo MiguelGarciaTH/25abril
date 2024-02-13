@@ -25,10 +25,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +40,7 @@ public class ArquivoRecordListener {
     private final ArticleRepository articleRepository;
     private final SiteRepository siteRepository;
     private final SearchEntityRepository searchEntityRepository;
+    private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
     private final List<String> stopwords;
     private final ContextualTextScoreService contextualTextScoreService;
     private final RateLimiterService rateLimiterService;
@@ -51,14 +50,18 @@ public class ArquivoRecordListener {
     private int totalAccepted = 0;
     private int totalRejected = 0;
     private int totalDuplicates = 0;
+    private static final String noTitle = "Sem titulo %s";
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
-                          SearchEntityRepository searchEntityRepository, IntegrationLogRepository integrationLogRepository,
+                          SearchEntityRepository searchEntityRepository,
+                          ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
+                          IntegrationLogRepository integrationLogRepository,
                           RateLimiterRepository rateLimiterRepository) {
         this.objectMapper = objectMapper;
         this.articleRepository = articleRepository;
         this.siteRepository = siteRepository;
         this.searchEntityRepository = searchEntityRepository;
+        this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.integrationLogRepository = integrationLogRepository;
 
         this.stopwords = load("portuguese_stopwords.txt");
@@ -68,7 +71,8 @@ public class ArquivoRecordListener {
 
     @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        final String noTitle = "Sem titulo %s";
+        totalReceived++;
+
         try {
             final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
@@ -89,45 +93,43 @@ public class ArquivoRecordListener {
                 article = articleRepository.findByTitleAndSiteId(title, event.siteId()).orElse(null);
             }
 
-            if (article == null) {
-                totalReceived++;
-
-                String text = getText(event.textUrl());
-                //text = removeAllStopwords(text);
-                final List<String> names = new ArrayList<>();
-                names.add(searchEntity.getName().toLowerCase());
-                if (searchEntity.getAliases() != null) {
-                    String[] namesArrays = searchEntity.getAliases().split(",");
-                    for (String name : namesArrays)
-                        names.add(name.toLowerCase());
-                }
-                final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), searchEntity.getId(), names);
-                if (score.total() > 20) { // 20 just to discard totally unrelated. The real filter will be done via REST service
-                    totalAccepted++;
-                    article = new Article(event.digest(), title, score.total(),
-                            objectMapper.convertValue(score.keywordCounter(), JsonNode.class), event.title(),
+            String text = getText(event.textUrl());
+            final List<String> names = new ArrayList<>();
+            names.add(searchEntity.getName().toLowerCase());
+            if (searchEntity.getAliases() != null) {
+                String[] namesArrays = searchEntity.getAliases().split(",");
+                for (String name : namesArrays)
+                    names.add(name.toLowerCase());
+            }
+            final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), searchEntity.getId(), names);
+            if (score.total() > 0) {
+                totalAccepted++;
+                if (article == null) {
+                    article = new Article(event.digest(), title, event.title(),
                             event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
                             LocalDateTime.now(ZoneOffset.UTC), site);
-                    article.setArticleEntityAssociation(Set.of(searchEntity));
+                    article = articleRepository.save(article);
                 } else {
-                    totalRejected++;
-                    ack.acknowledge();
-                    return;
+                    totalDuplicates++;
+                    LOG.info("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
+                }
+                ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
+                if (articleSearchEntityAssociation == null) {
+                    articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
+                            objectMapper.convertValue(score.keywordCounter(), JsonNode.class)));
                 }
 
             } else {
-                totalDuplicates++;
-                LOG.info("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
-                article.setArticleEntityAssociation(Set.of(searchEntity));
+                totalRejected++;
+                ack.acknowledge();
+                return;
             }
-            articleRepository.save(article);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
         ack.acknowledge();
         LOG.info("Accepted articles: {}/{} Rejected articles: {}/{} Duplicated articles {}/{}", totalAccepted, totalReceived, totalRejected, totalReceived, totalDuplicates, totalReceived);
-
     }
 
     private String getText(String urlInput) {

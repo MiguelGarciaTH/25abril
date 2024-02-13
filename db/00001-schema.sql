@@ -66,18 +66,21 @@ CREATE TABLE IF NOT EXISTS article (
     no_frame_url text NOT NULL,
     text_url text NOT NULL,
     digest varchar(50) NOT NULL,
-    score integer,
-    individual_score jsonb,
 
     CONSTRAINT article_pk PRIMARY KEY (id),
     CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
 );
 
-CREATE TABLE IF NOT EXISTS article_entity_association (
+CREATE SEQUENCE IF NOT EXISTS article_search_entity_association_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS article_search_entity_association (
+    id integer NOT NULL DEFAULT nextval('article_search_entity_association_seq'),
     article_id integer NOT NULL,
     search_entity_id integer NOT NULL,
+    score integer,
+    individual_score jsonb,
 
-    CONSTRAINT article_entity_association_pk PRIMARY KEY (article_id, search_entity_id),
+    CONSTRAINT article_entity_association_pk PRIMARY KEY (id),
     CONSTRAINT article_entity_association_uq UNIQUE (article_id, search_entity_id),
     CONSTRAINT article_entity_association_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
     CONSTRAINT article_entity_association_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id)
