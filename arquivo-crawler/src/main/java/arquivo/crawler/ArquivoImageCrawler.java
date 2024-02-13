@@ -33,7 +33,7 @@ public class ArquivoImageCrawler {
     private final SearchEntityRepository searchEntityRepository;
 
     private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=%s&offset=0&maxItems=200&prettyPrint=true";
-    private static final ContextualTextScoreService textScore = new ContextualTextScoreService();
+    private static final ContextualTextScoreService textScore = ContextualTextScoreService.getInstance();
 
     private final WebClientService webClientService;
 
@@ -114,7 +114,7 @@ public class ArquivoImageCrawler {
         if (node.has("imgCaption")) {
             String caption = node.get("imgCaption").get(0).asText();
             score += scoreElem(name, caption);
-            score += textScore.score(caption, null).total();
+            score += textScore.score(caption, 0,null).total();
         }
         return score;
     }

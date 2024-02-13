@@ -1,9 +1,9 @@
 package arquivo.processor;
 
+import arquivo.model.*;
 import arquivo.repository.*;
 import arquivo.services.ContextualTextScoreService;
 import arquivo.services.RateLimiterService;
-import arquivo.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,8 +25,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,6 +46,7 @@ public class ArquivoRecordListener {
     private final ContextualTextScoreService contextualTextScoreService;
     private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
+    private int noTitleCounter = 0;
     private int totalReceived = 0;
     private int totalAccepted = 0;
     private int totalRejected = 0;
@@ -61,37 +62,50 @@ public class ArquivoRecordListener {
         this.integrationLogRepository = integrationLogRepository;
 
         this.stopwords = load("portuguese_stopwords.txt");
-        this.contextualTextScoreService = new ContextualTextScoreService();
+        this.contextualTextScoreService = ContextualTextScoreService.getInstance();
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
     }
 
-    @KafkaListener(topics = {"${processor.topic}"},
-            containerFactory = "kafkaListenerContainerFactory")
+    @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
+        final String noTitle = "Sem titulo %s";
         try {
             final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
             final Site site = siteRepository.findById(event.siteId()).orElse(null);
-            final String trimmedTitle = trimTitle(event.title(), site.getName());
 
-            Article article = articleRepository.findByTitleAndSiteId(trimmedTitle, event.siteId()).orElse(null);
+            Article article = null;
+            String title;
+
+            if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
+                title = String.format(noTitle, noTitleCounter++);
+            } else {
+                title = trimTitle(event.title(), site.getName());
+                if (title == null || title.isBlank() || title.isEmpty()) {
+                    title = String.format(noTitle, noTitleCounter++);
+                }
+                article = articleRepository.findByTitleAndSiteId(title, event.siteId()).orElse(null);
+            }
+
             if (article == null) {
                 totalReceived++;
 
                 String text = getText(event.textUrl());
                 //text = removeAllStopwords(text);
                 final List<String> names = new ArrayList<>();
-                names.add(searchEntity.getName());
+                names.add(searchEntity.getName().toLowerCase());
                 if (searchEntity.getAliases() != null) {
-                    Collections.addAll(names, searchEntity.getAliases().split(","));
+                    String[] namesArrays = searchEntity.getAliases().split(",");
+                    for (String name : namesArrays)
+                        names.add(name.toLowerCase());
                 }
-                final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), names);
+                final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), searchEntity.getId(), names);
                 if (score.total() > 20) { // 20 just to discard totally unrelated. The real filter will be done via REST service
                     totalAccepted++;
-                    article = new Article(event.digest(), trimmedTitle, score.total(),
-                            objectMapper.convertValue(score.individualScore(), JsonNode.class), event.title(),
+                    article = new Article(event.digest(), title, score.total(),
+                            objectMapper.convertValue(score.keywordCounter(), JsonNode.class), event.title(),
                             event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
                             LocalDateTime.now(ZoneOffset.UTC), site);
                     article.setArticleEntityAssociation(Set.of(searchEntity));
@@ -103,7 +117,7 @@ public class ArquivoRecordListener {
 
             } else {
                 totalDuplicates++;
-                LOG.debug("Article already exists article id {}", article.getId());
+                LOG.info("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
                 article.setArticleEntityAssociation(Set.of(searchEntity));
             }
             articleRepository.save(article);
@@ -113,6 +127,7 @@ public class ArquivoRecordListener {
 
         ack.acknowledge();
         LOG.info("Accepted articles: {}/{} Rejected articles: {}/{} Duplicated articles {}/{}", totalAccepted, totalReceived, totalRejected, totalReceived, totalDuplicates, totalReceived);
+
     }
 
     private String getText(String urlInput) {

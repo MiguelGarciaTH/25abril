@@ -134,7 +134,7 @@ insert into search_entity (name, aliases, type) values
 ('Diretório Democrato-Social', null, 'MOVIMENTOS'),
 ('Resistência Republicana Socialista', null, 'MOVIMENTOS'),
 ('Frente Portuguesa de Libertação Nacional', 'FPLN', 'MOVIMENTOS'),
-('Estado Novo', null, 'MOVIMENTOS'),
+--('Estado Novo', null, 'MOVIMENTOS'),
 ('Retornados', null, 'MOVIMENTOS'),
 ('Ala Liberal', null, 'MOVIMENTOS'),
 ('Polícia Internacional e de Defesa do Estado','PIDE, DGS, Direcção-Geral de Segurança, P.I.D.E, Rua António Maria cardoso', 'MOVIMENTOS'),
