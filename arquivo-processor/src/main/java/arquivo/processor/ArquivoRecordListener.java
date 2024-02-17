@@ -27,8 +27,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @EnableKafka
@@ -41,7 +39,6 @@ public class ArquivoRecordListener {
     private final SiteRepository siteRepository;
     private final SearchEntityRepository searchEntityRepository;
     private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
-    private final List<String> stopwords;
     private final ContextualTextScoreService contextualTextScoreService;
     private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
@@ -64,7 +61,6 @@ public class ArquivoRecordListener {
         this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.integrationLogRepository = integrationLogRepository;
 
-        this.stopwords = load("portuguese_stopwords.txt");
         this.contextualTextScoreService = ContextualTextScoreService.getInstance();
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
     }
@@ -158,14 +154,6 @@ public class ArquivoRecordListener {
             integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
         }
         return null;
-    }
-
-    private String removeAllStopwords(String data) {
-        final ArrayList<String> allWords =
-                Stream.of(data.split(" "))
-                        .collect(Collectors.toCollection(ArrayList<String>::new));
-        allWords.removeAll(stopwords);
-        return String.join(" ", allWords);
     }
 
     private String trimTitle(String title, String siteName) {
