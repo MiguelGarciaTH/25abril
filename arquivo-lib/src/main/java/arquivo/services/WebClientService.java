@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -24,6 +23,7 @@ public class WebClientService {
     private final WebClient webClient;
     private final RateLimiterService rateLimiterService;
     private final ObjectMapper objectMapper;
+    private int retryCounter = 0;
 
     public WebClientService(RateLimiterRepository rateLimiterRepository) {
         final HttpClient httpClient = HttpClient.create()
@@ -43,6 +43,10 @@ public class WebClientService {
     }
 
     public JsonNode get(String url, String service) {
+        if (retryCounter > 2) {
+            retryCounter = 0;
+            return null;
+        }
         try {
             rateLimiterService.increment(service);
 
@@ -51,11 +55,19 @@ public class WebClientService {
                     .accept(MediaType.APPLICATION_JSON)
                     .retrieve().bodyToMono(String.class).block());
             LOG.debug("Response for {} : {}", url, response);
+            retryCounter = 0;
             return response;
         } catch (JsonProcessingException e) {
             LOG.error("Problem fetching {}", url);
         } catch (WebClientResponseException e2) {
             LOG.error("Problem fetching {}: {}", url, e2.getMessage());
+            try {
+                Thread.sleep(500L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            LOG.info("Will retry {}^nt attempt (max 2): {}", retryCounter, url);
+            return get(url, service);
         }
         return null;
     }
