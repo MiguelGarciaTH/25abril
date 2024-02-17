@@ -57,6 +57,7 @@ insert into search_entity (name, aliases, type) values
 ('Tarrafal', 'Campo de Concetração do Tarrafal, Campo da Morte Lenta', 'LOCAIS'),
 --- Politicos
 ('Margarida Tengarrinha',null, 'POLITICOS'),
+('Catarina Eufémia', null, 'POLITICOS'),
 ('José Dias Coelho', null, 'POLITICOS'),
 ('José Manuel Tengarrinha', null, 'POLITICOS'),
 ('Raul Rego', null,  'POLITICOS'),
