@@ -14,16 +14,16 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             from article a
             where a.id in (
                 select aes.article_id 
-                from article_entity_association aes
+                from article_search_entity_association aes
                 where aes.search_entity_id = ?1
+                order by aes.score desc
             )
-            order by a.score desc
             """)
     List<Article> findByAllBySearchEntityId(int entityId);
 
     @Query(nativeQuery = true, value = """
             select count(aes.article_id) 
-            from article_entity_association aes
+            from article_search_entity_association aes
             where aes.search_entity_id = ?1
             """)
     int countByAllBySearchEntityId(int entityId);

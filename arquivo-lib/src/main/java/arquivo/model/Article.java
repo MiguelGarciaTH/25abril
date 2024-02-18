@@ -45,11 +45,14 @@ public class Article {
     @Column(length = 50)
     private String digest;
 
+    @Column(columnDefinition = "text")
+    private String text;
+
     public Article() {
 
     }
 
-    public Article(String digest, String title, String originalTitle, String url, String noFrameUrl, String textUrl, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String digest, String title, String originalTitle, String url, String noFrameUrl, String textUrl,  String text, String metadataUrl, LocalDateTime date, Site site) {
         this.digest = digest;
         this.url = url;
         this.noFrameUrl = noFrameUrl;
@@ -59,6 +62,7 @@ public class Article {
         this.site = site;
         this.title = title;
         this.originalTitle = originalTitle;
+        this.text = text;
     }
 
     public int getId() {
@@ -111,5 +115,13 @@ public class Article {
 
     public void setOriginalTitle(String originalTitle) {
         this.originalTitle = originalTitle;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

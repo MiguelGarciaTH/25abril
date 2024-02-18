@@ -19,12 +19,12 @@ insert into site(name, url) values
 
 insert into search_entity (name, aliases, type) values
 -- Jornais
-('Seara Nova', null, 'JORNAIS'),
-('República', null, 'JORNAIS'),
-('O Século Ilustrado', null, 'JORNAIS'),
-('Diário Popular', null, 'JORNAIS'),
-('Flama', null, 'JORNAIS'),
-('A Mosca', null, 'JORNAIS'),
+--('Seara Nova', null, 'JORNAIS'),
+--('República', null, 'JORNAIS'),
+--('O Século Ilustrado', null, 'JORNAIS'),
+--('Diário Popular', null, 'JORNAIS'),
+--('Flama', null, 'JORNAIS'),
+--('A Mosca', null, 'JORNAIS'),
 -- Artistas
 ('Sérgio Godinho', null, 'ARTISTAS'),
 ('Fausto Bordalo Dias', 'Fausto', 'ARTISTAS'),
@@ -54,7 +54,7 @@ insert into search_entity (name, aliases, type) values
 ('Prisão de Caxias', null, 'LOCAIS'),
 ('Prisão do Aljube', null,  'LOCAIS'),
 ('Prisão de Peniche', null, 'LOCAIS'),
-('Tarrafal', 'Campo de Concetração do Tarrafal, Campo da Morte Lenta', 'LOCAIS'),
+('Tarrafal', 'Campo de Concentração do Tarrafal, Campo da Morte Lenta', 'LOCAIS'),
 --- Politicos
 ('Margarida Tengarrinha',null, 'POLITICOS'),
 ('Catarina Eufémia', null, 'POLITICOS'),

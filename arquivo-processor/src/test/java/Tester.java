@@ -26,11 +26,13 @@ public class Tester {
     @Autowired
     private SiteRepository siteRepository;
 
-    private final Pattern articleDedupKey = Pattern.compile("https://arquivo.pt/wayback/(\\d+)/(.*)");
+    private final Pattern pattern = Pattern.compile("António Oliveira Salazar", Pattern.CASE_INSENSITIVE);
 
     @Test
     public void test() {
-
+        final Matcher matcher = pattern.matcher("teste texto António Oliveira Salazar teste texto");
+        long counter = matcher.results().count();
+        System.out.println(counter);
 
     }
 }

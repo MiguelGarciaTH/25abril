@@ -114,7 +114,7 @@ public class ArquivoImageCrawler {
         if (node.has("imgCaption")) {
             String caption = node.get("imgCaption").get(0).asText();
             score += scoreElem(name, caption);
-            score += textScore.score(caption, 0,null).total();
+            score += textScore.score(null, null, caption, 0,null).total();
         }
         return score;
     }

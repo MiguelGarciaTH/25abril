@@ -47,6 +47,8 @@ public class ArquivoRecordListener {
     private int totalAccepted = 0;
     private int totalRejected = 0;
     private int totalDuplicates = 0;
+    private int totalTextFromWeb = 0;
+    private int totalTextFromDB = 0;
     private static final String noTitle = "Sem titulo %s";
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
@@ -88,28 +90,25 @@ public class ArquivoRecordListener {
                 }
                 article = articleRepository.findByTitleAndSiteId(title, event.siteId()).orElse(null);
             }
-
-            String text = getText(event.textUrl());
-            final List<String> names = new ArrayList<>();
-            names.add(searchEntity.getName().toLowerCase());
-            if (searchEntity.getAliases() != null) {
-                String[] namesArrays = searchEntity.getAliases().split(",");
-                for (String name : namesArrays)
-                    names.add(name.toLowerCase());
+            String text;
+            if (article == null) {
+                text = getText(event.textUrl()).toLowerCase();
+                totalTextFromWeb++;
+            } else {
+                text = article.getText();
+                totalTextFromDB++;
             }
-            final ContextualTextScoreService.Score score = contextualTextScoreService.score(text.toLowerCase(), searchEntity.getId(), names);
+
+            final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text, searchEntity.getId(), mergeNamesToList(searchEntity));
             if (score.total() > 0) {
                 totalAccepted++;
                 if (article == null) {
-                    article = new Article(event.digest(), title, event.title(),
-                            event.url(), event.noFrameUrl(), event.textUrl(), event.metaDataUrl(),
-                            LocalDateTime.now(ZoneOffset.UTC), site);
-                    article = articleRepository.save(article);
+                    article = articleRepository.save(new Article(event.digest(), title, event.title(), event.url(), event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
                 } else {
                     totalDuplicates++;
                     LOG.info("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
                 }
-                ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
+                final ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
                 if (articleSearchEntityAssociation == null) {
                     articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
                             objectMapper.convertValue(score.keywordCounter(), JsonNode.class)));
@@ -117,15 +116,23 @@ public class ArquivoRecordListener {
 
             } else {
                 totalRejected++;
-                ack.acknowledge();
-                return;
             }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
         ack.acknowledge();
-        LOG.info("Accepted articles: {}/{} Rejected articles: {}/{} Duplicated articles {}/{}", totalAccepted, totalReceived, totalRejected, totalReceived, totalDuplicates, totalReceived);
+        LOG.info("Received: {} Accepted: {} Rejected: {} Duplicates: {} Text loaded from Web: {} Text loaded from DB:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB);
+    }
+
+    private List<String> mergeNamesToList(SearchEntity searchEntity) {
+        final List<String> names = new ArrayList<>();
+        names.add(searchEntity.getName().toLowerCase());
+        if (searchEntity.getAliases() != null) {
+            String[] namesArrays = searchEntity.getAliases().split(",");
+            for (String name : namesArrays)
+                names.add(name.toLowerCase());
+        }
+        return names;
     }
 
     private String getText(String urlInput) {
