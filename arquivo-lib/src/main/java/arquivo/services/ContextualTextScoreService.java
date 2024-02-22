@@ -54,27 +54,27 @@ public class ContextualTextScoreService {
 
         // score by contextual keywords
         final Map<String, Long> keywordTextCounter = getKeywordTextCounter(text);
-        for (var entry : keywordTextCounter.entrySet()) {
+        // remove to avoid non entity articles being score
+        /*for (var entry : keywordTextCounter.entrySet()) {
             score += entry.getValue() * keywordsScoreMap.get(entry.getKey());
-        }
+        }*/
 
         // score by entity names
         if (entityNames != null) {
-            Map<String, Long> entityNamesTextCounter = getEntityNamesTextCounter(text, entityId, entityNames);
+            final Map<String, Long> entityNamesTextCounter = getEntityNamesTextCounter(text, entityId, entityNames);
             for (var entry : entityNamesTextCounter.entrySet()) {
                 for (var entry2 : keywordTextCounter.entrySet()) {
                     // multiple the entity in the text by the contextual scores raising exponentially the score for real articles
-                    score += entry.getValue() * entry2.getValue();
+                    score += (entry.getValue() * entry2.getValue());
                 }
             }
             // merge both counter maps
             keywordTextCounter.putAll(entityNamesTextCounter);
 
             if (title != null && url != null) {
-                Map<String, Long> entityNamesUrlAndTitleCounter = getEntityNameTitleAndUrlCounter(entityId, title, url, entityNames);
+                final Map<String, Long> entityNamesUrlAndTitleCounter = getEntityNameTitleAndUrlCounter(entityId, title, url, entityNames);
                 for (var entry : entityNamesUrlAndTitleCounter.entrySet()) {
-                    score += entry.getValue() * 10;
-
+                    score += (entry.getValue() * 30);
                 }
                 keywordTextCounter.putAll(entityNamesUrlAndTitleCounter);
             }
@@ -89,7 +89,7 @@ public class ContextualTextScoreService {
             final Matcher matcher = pattern.matcher(text);
             long counter = matcher.results().count();
             keywordCounter.put(keyword.getKey(), counter);
-            LOG.debug("Keyword={} Count={}", keyword.getKey(), counter);
+            LOG.debug("Text keywords: Keyword={} Count={}", keyword.getKey(), counter);
         }
         return keywordCounter;
     }
@@ -110,8 +110,8 @@ public class ContextualTextScoreService {
             final Pattern pattern = searchEntityNamePatternMap.get(name);
             final Matcher matcher = pattern.matcher(text);
             long counter = matcher.results().count();
-            keywordCounter.put(name, counter);
-            LOG.debug("Keyword={} Count={}", name, counter);
+            keywordCounter.put(name + "(text)", counter);
+            LOG.debug("Text entity name: Keyword={} Count={}", name, counter);
         }
         return keywordCounter;
     }
@@ -123,9 +123,9 @@ public class ContextualTextScoreService {
             final Pattern pattern = searchEntityNamePatternMap.get(name);
             final Matcher matcher = pattern.matcher(title);
             final Matcher matcher2 = pattern.matcher(url.replaceAll("-", " "));
-            long counter = matcher.results().count() + matcher2.results().count() + 100;
-            keywordCounter.put(name, counter);
-            LOG.debug("Keyword={} Count={}", name, counter);
+            long counter = (matcher.results().count() + matcher2.results().count());
+            keywordCounter.put(name + "(title)", counter);
+            LOG.debug("Text title and url: Keyword={} Count={} url={}", name, counter, url);
         }
         return keywordCounter;
     }

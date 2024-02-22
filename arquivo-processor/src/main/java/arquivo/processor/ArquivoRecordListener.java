@@ -10,19 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -49,7 +45,9 @@ public class ArquivoRecordListener {
     private int totalDuplicates = 0;
     private int totalTextFromWeb = 0;
     private int totalTextFromDB = 0;
+    private int totalErrors = 0;
     private static final String noTitle = "Sem titulo %s";
+    private int retryCounter = 0;
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
@@ -92,7 +90,13 @@ public class ArquivoRecordListener {
             }
             String text;
             if (article == null) {
-                text = getText(event.textUrl()).toLowerCase();
+                text = getText(event.textUrl());
+                if (text == null) {
+                    totalErrors++;
+                    ack.acknowledge();
+                    return;
+                }
+                text = text.toLowerCase();
                 totalTextFromWeb++;
             } else {
                 text = article.getText();
@@ -121,7 +125,7 @@ public class ArquivoRecordListener {
             e.printStackTrace();
         }
         ack.acknowledge();
-        LOG.info("Received: {} Accepted: {} Rejected: {} Duplicates: {} Text loaded from Web: {} Text loaded from DB:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB);
+        LOG.info("Received:{} Accepted:{} Rejected:{} Duplicates:{} Text loaded from Web:{} Text loaded from DB:{} Errors:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB, totalErrors);
     }
 
     private List<String> mergeNamesToList(SearchEntity searchEntity) {
@@ -136,31 +140,43 @@ public class ArquivoRecordListener {
     }
 
     private String getText(String urlInput) {
+        if (retryCounter > 2) {
+            retryCounter = 0;
+            return null;
+        }
         final String inputTrim = urlInput.substring(0, Math.min(urlInput.length(), 240));
+        rateLimiterService.increment("arquivo.pt");
         try {
+            return get(inputTrim, urlInput);
+        } catch (IOException e) {
+            LOG.error("IOException url {}: {}", urlInput, e.getMessage());
+            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
+            LOG.info("Will retry {}^nt attempt (max 2): {}", retryCounter, urlInput);
+            try {
+                Thread.sleep(500L);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            try {
+                retryCounter++;
+                return get(inputTrim, urlInput);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
+    }
 
-            rateLimiterService.increment("arquivo.pt");
-
-            final URL url = new URL(urlInput);
-            final StringBuilder everything = new StringBuilder();
-            final BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+    private String get(String inputTrim, String urlInput) throws IOException {
+        final StringBuilder everything = new StringBuilder();
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(new URL(urlInput).openStream()))) {
             String line;
             while ((line = in.readLine()) != null) {
                 everything.append(line);
             }
-            in.close();
-
             integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));
-
             return everything.toString();
-        } catch (MalformedURLException e) {
-            LOG.error("Mal formed url {}: {}", urlInput, e.getMessage());
-            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
-        } catch (IOException e) {
-            LOG.error("I/O error for url {}: {}", urlInput, e.getMessage());
-            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
         }
-        return null;
     }
 
     private String trimTitle(String title, String siteName) {
@@ -186,16 +202,5 @@ public class ArquivoRecordListener {
             title = title.replaceAll(siteName, "");
         }
         return title;
-    }
-
-    private List<String> load(String path) {
-        final ClassLoader classLoader = ResourceLoader.class.getClassLoader();
-        final File file = new File(classLoader.getResource(path).getFile());
-        try {
-            return Files.readAllLines(file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

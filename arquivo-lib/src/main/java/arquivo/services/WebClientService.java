@@ -66,6 +66,7 @@ public class WebClientService {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            retryCounter++;
             LOG.info("Will retry {}^nt attempt (max 2): {}", retryCounter, url);
             return get(url, service);
         }
