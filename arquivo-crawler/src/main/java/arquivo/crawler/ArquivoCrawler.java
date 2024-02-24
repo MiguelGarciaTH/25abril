@@ -124,8 +124,9 @@ public class ArquivoCrawler {
             final String arquivoUrl = node.get("linkToArchive").asText();
             final String arquivoText = node.get("linkToExtractedText").asText();
             final String arquivoNoFrame = node.get("linkToNoFrame").asText();
+            final String originalUrl = node.get("originalUrl").asText();
 
-            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoTitle, arquivoUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
+            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoTitle, arquivoUrl, originalUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
             try {
                 kafkaTemplate.send(topic, arquivoDigest, objectMapper.writeValueAsString(record));
                 LOG.debug("Sent to topic {} the key={} and value={}", topic, arquivoDigest, record);

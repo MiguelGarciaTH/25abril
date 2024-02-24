@@ -86,7 +86,7 @@ public class ArquivoRecordListener {
                 if (title == null || title.isBlank() || title.isEmpty()) {
                     title = String.format(noTitle, noTitleCounter++);
                 }
-                article = articleRepository.findByTitleAndSiteId(title, event.siteId()).orElse(null);
+                article = articleRepository.findByOriginalUrl(event.originalUrl()).orElse(null);
             }
             String text;
             if (article == null) {
@@ -107,7 +107,7 @@ public class ArquivoRecordListener {
             if (score.total() > 0) {
                 totalAccepted++;
                 if (article == null) {
-                    article = articleRepository.save(new Article(event.digest(), title, event.title(), event.url(), event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
+                    article = articleRepository.save(new Article(event.digest(), title, event.title(), event.url(), event.originalUrl(), event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
                 } else {
                     totalDuplicates++;
                     LOG.info("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);

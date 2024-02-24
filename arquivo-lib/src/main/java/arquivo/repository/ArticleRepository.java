@@ -2,7 +2,6 @@ package arquivo.repository;
 
 import arquivo.model.Article;
 import arquivo.model.ArticleRecord;
-import arquivo.model.ArticleSearchEntityAssociation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -28,5 +27,5 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     int countByAllBySearchEntityId(int entityId);
 
-    Optional<Article> findByTitleAndSiteId(String title, int siteId);
+    Optional<Article> findByOriginalUrl(String originalUrl);
 }
