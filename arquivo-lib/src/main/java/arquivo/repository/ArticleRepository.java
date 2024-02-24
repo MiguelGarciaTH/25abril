@@ -1,6 +1,8 @@
 package arquivo.repository;
 
 import arquivo.model.Article;
+import arquivo.model.ArticleRecord;
+import arquivo.model.ArticleSearchEntityAssociation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -9,17 +11,15 @@ import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
-    @Query(nativeQuery = true, value = """
-            select * 
-            from article a
-            where a.id in (
-                select aes.article_id 
-                from article_search_entity_association aes
-                where aes.search_entity_id = ?1
-                order by aes.score desc
-            )
+    //Integer articleId, Integer siteId, Long score, String url, String title
+    @Query(value = """
+            select new arquivo.model.ArticleRecord(a.id, a.site.id, asa.score, a.url, a.title) 
+            from ArticleSearchEntityAssociation asa
+            inner join Article a on a.id = asa.article.id
+            where asa.searchEntity.id = ?1
+            order by asa.score desc
             """)
-    List<Article> findByAllBySearchEntityId(int entityId);
+    List<ArticleRecord> findByAllBySearchEntityId(int entityId);
 
     @Query(nativeQuery = true, value = """
             select count(aes.article_id) 

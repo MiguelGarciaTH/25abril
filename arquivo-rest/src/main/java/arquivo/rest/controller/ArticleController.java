@@ -1,6 +1,7 @@
 package arquivo.rest.controller;
 
-import arquivo.model.Article;
+import arquivo.model.ArticleRecord;
+import arquivo.model.ArticleSearchEntityAssociation;
 import arquivo.repository.ArticleRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +21,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{entityId}")
-    List<Article> getSearchEntity(@PathVariable int entityId) {
+    List<ArticleRecord> getSearchEntity(@PathVariable int entityId) {
         return articleRepository.findByAllBySearchEntityId(entityId);
     }
 

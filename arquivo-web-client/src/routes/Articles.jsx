@@ -22,7 +22,7 @@ const Articles = () => {
                 <h1>Artigos sobre {entityName}</h1>
                 <div className="articles">
                     {articles.map((post) => (
-                        <Article siteId={post.site.id} postTitle={post.title} postUrl={post.url} postScore={post.score} />
+                        <Article siteId={post.siteId} postTitle={post.title} postUrl={post.url} postScore={post.score} />
                     ))}
                 </div>
             </div>
