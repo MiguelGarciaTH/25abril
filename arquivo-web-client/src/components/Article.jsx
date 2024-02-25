@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ArticleCardNewsPaper from "./ArticleCardNewsPaper";
 
 import observador from '../images/observador.png';
 import dn from '../images/dn.png';
@@ -36,20 +37,10 @@ function getSiteImage(siteId) {
     );
 }
 
-function Article({ siteId, postTitle, postUrl, postScore }) {
+function Article({ siteId, siteName, postTitle, postUrl, postScore, postText }) {
 
     return (
-        <main class="l-card">
-            <section class="l-card__text">
-                <div class="l-card__userImage">{getSiteImage(siteId)}</div>
-                <Link className="navbar-link" to={`${postUrl}`}>{postTitle}</Link>
-            </section>
-            <section class="l-card__user">
-                <div class="l-card__userInfo">
-                    Score: {postScore}
-                </div>
-            </section>
-        </main>
+        <ArticleCardNewsPaper siteId={siteId} siteName={siteName} postTitle={postTitle} postUrl={postUrl} postScore={postScore} imageUrl={getSiteImage(siteId)} postText={postText} />
     );
 
 };
