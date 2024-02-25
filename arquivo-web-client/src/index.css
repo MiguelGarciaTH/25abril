@@ -285,7 +285,7 @@ h1 {
   background-color: #f9f7f1;
 }
 
-.news-paper-header {
+header {
   font-family: 'Playfair Display', serif;
   font-weight: 900;
   font-size: 80px;
@@ -293,7 +293,6 @@ h1 {
   display: inline-block;
   line-height: 72px;
   margin-bottom: 20px;
-
 }
 
 .news-paper-p {

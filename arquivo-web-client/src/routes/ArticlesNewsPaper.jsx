@@ -18,11 +18,12 @@ const ArticlesNewsPaper = () => {
 
     if (articles.length) {
         return (
+            
             <div class="news-paper-head">
                 <div class="headerobjectswrapper">
-                    <header>{entityName}</header>
+                    <header class="news-paper-header">{randomName()}</header>
                 </div>
-                <div class="subhead">York, MA - Thursday August 30, 1978 - Seven Pages</div>
+                <div class="subhead"> {entityName}</div>
                 <div class="content">
                     <div class="collumns">
                         {articles.map((post) => (<Article siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.text} />))}
@@ -32,5 +33,22 @@ const ArticlesNewsPaper = () => {
         );
     }
 };
+
+
+
+function randomName() {
+    let idx = Math.floor(Math.random() * (4) + 1);
+    let name;
+    switch (idx) {
+        case 1: name = "Diário Popular"; break;
+        case 2: name = "República"; break;
+        case 3: name = "A Mosca"; break;
+        case 4: name = "Seara Nova"; break;
+    }
+
+    return (
+        name
+    );
+}
 
 export default ArticlesNewsPaper;
