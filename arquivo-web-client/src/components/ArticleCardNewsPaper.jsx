@@ -6,7 +6,7 @@ function trimText(text) {
     
 }
 
-function ArticleCardNewsPaper({ siteId, siteName, postTitle, postUrl, postScore, imageUrl, postText }) {
+function ArticleCardNewsPaper({ siteId, siteName, postTitle, postUrl, postScore, postText }) {
 
     return (
         <div class="collumn">

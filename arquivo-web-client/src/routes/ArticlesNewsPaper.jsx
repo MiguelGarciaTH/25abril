@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Article from "../components/Article";
+import ArticleCardNewsPaper from "../components/ArticleCardNewsPaper"
 
 const ArticlesNewsPaper = () => {
     const [articles, setPosts] = useState([]);
@@ -26,7 +26,7 @@ const ArticlesNewsPaper = () => {
                 <div class="subhead"> {entityName}</div>
                 <div class="content">
                     <div class="collumns">
-                        {articles.map((post) => (<Article siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.text} />))}
+                        {articles.map((post) => (<ArticleCardNewsPaper siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.text} />))}
                     </div>
                 </div>
             </div>
