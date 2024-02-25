@@ -23,6 +23,9 @@ public class Site {
     @Column(length = 255)
     private String name;
 
+    @Column(length = 5)
+    private String acronym;
+
     @Column(length = 255)
     private String url;
 
@@ -44,5 +47,13 @@ public class Site {
 
     public String getUrl() {
         return url;
+    }
+
+    public String getAcronym() {
+        return acronym;
+    }
+
+    public void setAcronym(String acronym) {
+        this.acronym = acronym;
     }
 }
