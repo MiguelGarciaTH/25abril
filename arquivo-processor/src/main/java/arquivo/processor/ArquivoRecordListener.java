@@ -82,7 +82,7 @@ public class ArquivoRecordListener {
             if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
                 title = String.format(noTitle, noTitleCounter++);
             } else {
-                title = trimTitle(event.title(), site.getName());
+                title = trimTitle(event.title(), site.getName(), site.getAcronym());
                 if (title == null || title.isBlank() || title.isEmpty()) {
                     title = String.format(noTitle, noTitleCounter++);
                 }
@@ -96,14 +96,13 @@ public class ArquivoRecordListener {
                     ack.acknowledge();
                     return;
                 }
-                text = text.toLowerCase();
                 totalTextFromWeb++;
             } else {
                 text = article.getText();
                 totalTextFromDB++;
             }
 
-            final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text, searchEntity.getId(), mergeNamesToList(searchEntity));
+            final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text.toLowerCase(), searchEntity.getId(), mergeNamesToList(searchEntity));
             if (score.total() > 0) {
                 totalAccepted++;
                 if (article == null) {
@@ -179,7 +178,7 @@ public class ArquivoRecordListener {
         }
     }
 
-    private String trimTitle(String title, String siteName) {
+    private String trimTitle(String title, String siteName, String acronym) {
         if (title.contains("|")) {
             String[] titleParts = title.split("\\|");
             int maxLen = 0;
@@ -194,12 +193,26 @@ public class ArquivoRecordListener {
             }
             title = titleParts[maxLenIndex];
         }
-        if (title.contains(" – " + siteName)) {
-            title = title.replaceAll(" – " + siteName, "");
-        } else if (title.contains(siteName + " – ")) {
-            title = title.replaceAll(siteName + " – ", "");
-        } else if (title.contains(siteName)) {
+        if (title.contains(siteName)) {
             title = title.replaceAll(siteName, "");
+        }
+        if (acronym != null && title.contains(acronym)) {
+            title = title.replaceAll(acronym, "");
+        }
+        if (title.contains(siteName.toUpperCase())) {
+            title = title.replaceAll(siteName.toUpperCase(), "");
+        }
+        if (acronym != null && title.contains(acronym.toUpperCase())) {
+            title = title.replaceAll(acronym.toUpperCase(), "");
+        }
+        if (title.contains(" - ")) {
+            title = title.replaceAll(" – ", "");
+        }
+        if (title.contains(" \\- ")) {
+            title = title.replaceAll(" \\– ", "");
+        }
+        if (title.contains(" \\| ")) {
+            title = title.replaceAll(" \\| ", "");
         }
         return title;
     }

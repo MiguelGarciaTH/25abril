@@ -4,7 +4,7 @@ CREATE SEQUENCE IF NOT EXISTS site_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE IF NOT EXISTS site (
     id integer NOT NULL DEFAULT nextval('site_seq'),
     name varchar(255) NOT NULL,
-    acronym varchar(5) NOT NULL,
+    acronym varchar(5),
     url varchar(255) NOT NULL,
 
     CONSTRAINT site_pk PRIMARY KEY (id)

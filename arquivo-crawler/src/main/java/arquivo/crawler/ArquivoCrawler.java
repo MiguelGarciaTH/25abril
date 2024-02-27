@@ -15,7 +15,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.time.LocalDateTime;
@@ -124,7 +123,7 @@ public class ArquivoCrawler {
             final String arquivoUrl = node.get("linkToArchive").asText();
             final String arquivoText = node.get("linkToExtractedText").asText();
             final String arquivoNoFrame = node.get("linkToNoFrame").asText();
-            final String originalUrl = node.get("originalUrl").asText();
+            final String originalUrl = node.get("originalURL").asText();
 
             final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoTitle, arquivoUrl, originalUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
             try {
