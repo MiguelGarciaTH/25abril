@@ -46,7 +46,7 @@ public class ArquivoRecordListener {
     private int totalTextFromWeb = 0;
     private int totalTextFromDB = 0;
     private int totalErrors = 0;
-    private static final String noTitle = "Sem titulo %s";
+    private static final String noTitle = "Sem título (\\#%s)";
     private int retryCounter = 0;
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
@@ -179,6 +179,7 @@ public class ArquivoRecordListener {
     }
 
     private String trimTitle(String title, String siteName, String acronym) {
+        boolean containsSiteOnTitle = false;
         if (title.contains("|")) {
             String[] titleParts = title.split("\\|");
             int maxLen = 0;
@@ -197,22 +198,30 @@ public class ArquivoRecordListener {
             title = title.replaceAll(siteName, "");
         }
         if (acronym != null && title.contains(acronym)) {
+            containsSiteOnTitle = true;
             title = title.replaceAll(acronym, "");
         }
         if (title.contains(siteName.toUpperCase())) {
+            containsSiteOnTitle = true;
             title = title.replaceAll(siteName.toUpperCase(), "");
         }
         if (acronym != null && title.contains(acronym.toUpperCase())) {
+            containsSiteOnTitle = true;
             title = title.replaceAll(acronym.toUpperCase(), "");
         }
-        if (title.contains(" - ")) {
-            title = title.replaceAll(" – ", "");
+        if(containsSiteOnTitle) {
+            if (title.contains(" - ")) {
+                title = title.replaceAll(" - ", "");
+            }
+            if (title.contains(" \\- ")) {
+                title = title.replaceAll(" \\– ", "");
+            }
+            if (title.contains(" \\| ")) {
+                title = title.replaceAll(" \\| ", "");
+            }
         }
-        if (title.contains(" \\- ")) {
-            title = title.replaceAll(" \\– ", "");
-        }
-        if (title.contains(" \\| ")) {
-            title = title.replaceAll(" \\| ", "");
+        if (title.startsWith(" ")) {
+            title = title.replaceFirst(" ", "");
         }
         return title;
     }
