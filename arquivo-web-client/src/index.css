@@ -369,6 +369,10 @@ h1 {
   vertical-align: top;
   margin-bottom: 50px;
   transition: all .7s;
+    min-height: 900px;
+  max-height: 900px;
+  min-width: 250px;
+  overflow: hidden;
 }
 
 .collumn+.collumn {

@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 
 function trimText(text) {
-    const result = text.substring(560, 1000);
-    return result;
+    //const result = text[0].substring(0, 500);
+    return text;
     
 }
 

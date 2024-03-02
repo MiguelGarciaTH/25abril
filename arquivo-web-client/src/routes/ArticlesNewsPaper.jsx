@@ -26,7 +26,7 @@ const ArticlesNewsPaper = () => {
                 <div class="subhead"> {entityName}</div>
                 <div class="content">
                     <div class="collumns">
-                        {articles.map((post) => (<ArticleCardNewsPaper siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.text} />))}
+                        {articles.map((post) => (<ArticleCardNewsPaper siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.texts} />))}
                     </div>
                 </div>
             </div>
