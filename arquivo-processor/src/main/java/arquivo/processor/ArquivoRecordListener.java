@@ -132,8 +132,9 @@ public class ArquivoRecordListener {
         names.add(searchEntity.getName().toLowerCase());
         if (searchEntity.getAliases() != null) {
             String[] namesArrays = searchEntity.getAliases().split(",");
-            for (String name : namesArrays)
+            for (String name : namesArrays) {
                 names.add(name.toLowerCase());
+            }
         }
         return names;
     }

@@ -22,4 +22,6 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
             order by s.type asc
             """)
     List<String> findAllTypes();
+
+    SearchEntity findByName(String mário_soares);
 }

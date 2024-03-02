@@ -1,16 +1,18 @@
 import arquivo.Processor;
+import arquivo.model.ArticleRecord;
+import arquivo.model.SearchEntity;
 import arquivo.repository.ArticleRepository;
+import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @SpringBootTest(classes = Processor.class)
 @ContextConfiguration
@@ -20,24 +22,52 @@ public class Tester {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private SiteRepository siteRepository;
+    private SearchEntityRepository searchEntityRepository;
 
-    private final Pattern pattern = Pattern.compile("António Oliveira Salazar", Pattern.CASE_INSENSITIVE);
+    @Autowired
+    private SiteRepository siteRepository;
 
     @Test
     public void test() {
-        String t1 = " Xico da CUF - Observador";
-        String res = trimTitle(t1, "Observador", null);
-        System.out.println(res);
-        assertFalse(res.contains("-"));
-        assertFalse(res.startsWith(" "));
+        final SearchEntity entity = searchEntityRepository.findByName("José Afonso");
+        Pattern p;
+        if (entity.getAliases() == null) {
+            p = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + entity.getName() + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
+        } else {
+            String[] namesArrays = entity.getAliases().split(",");
+            String pattern = entity.getName() + "|";
+            for (String name : namesArrays) {
+                pattern += name + "|";
+            }
+            p = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + pattern + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
+        }
+        final List<ArticleRecord> articles = articleRepository.findByAllBySearchEntityId(entity.getId());
+        int i = 0;
+        for (ArticleRecord article : articles) {
+           // List<String> texts = getRelevantSentences(article.text(), p);
 
-        String t2 = " Xico da CUF - Comida";
-        String res2 = trimTitle(t2, "Observador", null);
-        System.out.println(res2);
-        assertTrue(res2.contains("-"));
-        assertFalse(res2.startsWith(" "));
+        }
+    }
 
+    private List<String> getRelevantSentences(String text, String name, String aliases) {
+        final Pattern pattern;
+        if (aliases == null) {
+            pattern = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + name + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
+        } else {
+            final String[] namesArrays = aliases.split(",");
+            String patternStr = name + "|";
+            for (String n : namesArrays) {
+                patternStr += n + "|";
+            }
+            pattern = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + patternStr + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
+        }
+
+        final Matcher match = pattern.matcher(text);
+        final List<String> sentences = new ArrayList<>();
+        while (match.find()) {
+            sentences.add(match.group(0));
+        }
+        return sentences;
     }
 
     private String trimTitle(String title, String siteName, String acronym) {
@@ -71,7 +101,7 @@ public class Tester {
             containsSiteOnTitle = true;
             title = title.replaceAll(acronym.toUpperCase(), "");
         }
-        if(containsSiteOnTitle) {
+        if (containsSiteOnTitle) {
             if (title.contains(" - ")) {
                 title = title.replaceAll(" - ", "");
             }
