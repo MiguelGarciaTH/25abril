@@ -16,6 +16,7 @@ function ArticleCardNewsPaper({ siteId, siteName, postTitle, postUrl, postScore,
                 </span>
                 <p>
                     <span class="headline hl4">fonte {siteName}</span>
+                    Score: {postScore}
                 </p>
             </div>
             <p>
