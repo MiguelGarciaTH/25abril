@@ -61,6 +61,7 @@ insert into search_entity (name, aliases, type) values
 ('José Dias Coelho', null, 'POLITICOS'),
 ('José Manuel Tengarrinha', null, 'POLITICOS'),
 ('Raul Rego', null,  'POLITICOS'),
+('Domingos Abrantes', null,  'POLITICOS'),
 ('Henrique Galvão', null, 'POLITICOS'),
 ('Barbieri Cardoso', null, 'POLITICOS'),
 ('Carlos Antunes', null, 'POLITICOS'),
