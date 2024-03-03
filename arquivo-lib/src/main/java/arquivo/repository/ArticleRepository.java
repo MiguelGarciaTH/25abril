@@ -13,7 +13,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     //Integer articleId, Integer siteId, Long score, String url, String title
     @Query(value = """
-            select new arquivo.model.ArticleRecord(a.id, a.site.id, s.name, asa.score, a.url, a.title, a.text) 
+            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, a.text) 
             from ArticleSearchEntityAssociation asa
             inner join Article a on a.id = asa.article.id
             inner join Site s on s.id = a.site.id
@@ -21,6 +21,18 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             order by asa.score desc
             """)
     List<ArticleRecord> findByAllBySearchEntityId(int entityId);
+
+    @Query(value = """
+            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, a.text) 
+            from ArticleSearchEntityAssociation asa
+            inner join Article a on a.id = asa.article.id
+            inner join Site s on s.id = a.site.id
+            where asa.searchEntity.id = ?1
+            and asa.article.id = ?2
+            order by asa.score desc
+            """)
+    ArticleRecord findByAllBySearchEntityIdAndArticleId(int entityId, int articleId);
+
 
     @Query(nativeQuery = true, value = """
             select count(aes.article_id) 

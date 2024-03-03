@@ -26,15 +26,13 @@ const Articles = () => {
                 <div class="subhead"> {entityName}</div>
                 <div class="content">
                     <div class="collumns">
-                        {articles.map((post) => (<ArticlePreview siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.texts} />))}
+                        {articles.map((post) => (<ArticlePreview item={post} />))}
                     </div>
                 </div>
             </div>
         );
     }
 };
-
-
 
 function randomName() {
     let idx = Math.floor(Math.random() * (4) + 1);
