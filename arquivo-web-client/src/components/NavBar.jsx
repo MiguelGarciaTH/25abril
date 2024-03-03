@@ -6,7 +6,7 @@ const NavBar = () => {
     return (
         
         <nav className="navbar">
-            <Link className="navbar-link" to="/"> <span className="title-header1">25</span><span className="title-header2">ABRIL</span></Link>
+            <Link class="navbar-link" to="/"> <span class="title-header1">25</span><span class="title-header2">ABRIL</span></Link>
             <br />
             <br />
             <br />
@@ -23,8 +23,6 @@ const NavBar = () => {
             <Link className="navbar-link" to="/entity/PARTIDOS">PARTIDOS</Link>
             <br />
             <Link className="navbar-link" to="/entity/EVENTOS">EVENTOS</Link>
-            <br />
-            <Link className="navbar-link" to="/entity/JORNAIS">JORNAIS</Link>
             <br />
             <Link className="navbar-link" to="/entity/LOCAIS">LOCAIS</Link>
         </nav>

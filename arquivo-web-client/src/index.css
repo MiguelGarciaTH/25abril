@@ -1,5 +1,5 @@
 * {
-  font-family: 'Lato', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 #root {
@@ -20,6 +20,19 @@ body {
   margin: 0 0 58px;
   background-color: var(--white);
   color: var(--dark);
+}
+
+.text{
+  margin-top: 100px;
+  font-size: large;
+  font-weight: 400;
+  max-width: 65%;
+  display: inline-block;
+  text-align: justify;
+}
+
+.text h2{
+    color: var(--red);
 }
 
 h1 {
