@@ -29,6 +29,11 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     int countByAllBySearchEntityId(int entityId);
 
+    @Query(nativeQuery = true, value = """
+            select *
+            from article a
+            where a.original_url like CONCAT('%', ?1, '%')
+            """)
     Optional<Article> findByOriginalUrl(String originalUrl);
 
     @Query("""

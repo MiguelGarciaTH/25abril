@@ -29,24 +29,11 @@ public class Tester {
 
     @Test
     public void test() {
-        final SearchEntity entity = searchEntityRepository.findByName("José Afonso");
-        Pattern p;
-        if (entity.getAliases() == null) {
-            p = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + entity.getName() + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
-        } else {
-            String[] namesArrays = entity.getAliases().split(",");
-            String pattern = entity.getName() + "|";
-            for (String name : namesArrays) {
-                pattern += name + "|";
-            }
-            p = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + pattern + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
-        }
-        final List<ArticleRecord> articles = articleRepository.findByAllBySearchEntityId(entity.getId());
-        int i = 0;
-        for (ArticleRecord article : articles) {
-           // List<String> texts = getRelevantSentences(article.text(), p);
 
-        }
+        String site1 = "https://www.tsf.pt/desporto/interior/amp/zidane-regressa-ao-real-madrid-quase-um-ano-depois-10667009.html";
+        String site2 = "http://www.tsf.pt/desporto/interior/zidane-garante-que-ronaldo-vai-ficar-no-real-madrid-8656623.html";
+
+        System.out.println(trimTitle("SIC Notícias | Visíveis - Ruca", "Sic Notícias", null));
     }
 
     private List<String> getRelevantSentences(String text, String name, String aliases) {
@@ -68,6 +55,14 @@ public class Tester {
             sentences.add(match.group(0));
         }
         return sentences;
+    }
+
+    private String trimUrl(String originalUrl) {
+        originalUrl = originalUrl.split("//")[1];
+        if (originalUrl.contains("/amp/")) {
+            originalUrl = originalUrl.replace("/amp/", "/");
+        }
+        return originalUrl;
     }
 
     private String trimTitle(String title, String siteName, String acronym) {

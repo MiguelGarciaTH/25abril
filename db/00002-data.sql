@@ -9,12 +9,12 @@ insert into rate_limiter(description, counter, counter_limit, sleep_time, locked
 ('dbpedia', 0, 95, 60000, false);
 
 insert into site(name, acronym, url) values
-('Publico', null, 'http://www.publico.pt'),
+('Público', null, 'http://www.publico.pt'),
 ('Diário de Notícias', 'DN', 'http://www.dn.pt'),
 ('Jornal de Notícias', 'JN', 'http://www.jn.pt'),
 ('Expresso', null, 'http://www.expresso.pt'),
 ('Observador',null,'https://observador.pt/'),
-('Sic Notícias',null,'https://sicnoticias.pt/'),
+('SIC Notícias',null,'https://sicnoticias.pt/'),
 ('TSF', null, 'https://www.tsf.pt/');
 
 insert into search_entity (name, aliases, type) values

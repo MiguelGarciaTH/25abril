@@ -46,8 +46,9 @@ public class ArquivoRecordListener {
     private int totalTextFromWeb = 0;
     private int totalTextFromDB = 0;
     private int totalErrors = 0;
-    private static final String noTitle = "Sem título (\\#%s)";
     private int retryCounter = 0;
+
+    private static final String noTitleTemplate = "Sem título (#%s)";
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
@@ -80,13 +81,13 @@ public class ArquivoRecordListener {
             String title;
 
             if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
-                title = String.format(noTitle, noTitleCounter++);
+                title = String.format(noTitleTemplate, noTitleCounter++);
             } else {
                 title = trimTitle(event.title(), site.getName(), site.getAcronym());
                 if (title == null || title.isBlank() || title.isEmpty()) {
-                    title = String.format(noTitle, noTitleCounter++);
+                    title = String.format(noTitleTemplate, noTitleCounter++);
                 }
-                article = articleRepository.findByOriginalUrl(event.originalUrl()).orElse(null);
+                article = articleRepository.findByOriginalUrl(trimUrl(event.originalUrl())).orElse(null);
             }
             String text;
             if (article == null) {
@@ -179,6 +180,14 @@ public class ArquivoRecordListener {
         }
     }
 
+    private String trimUrl(String originalUrl) {
+        originalUrl = originalUrl.split("//")[1];
+        if (originalUrl.contains("/amp/")) {
+            originalUrl = originalUrl.replace("/amp/", "/");
+        }
+        return originalUrl;
+    }
+
     private String trimTitle(String title, String siteName, String acronym) {
         boolean containsSiteOnTitle = false;
         if (title.contains("|")) {
@@ -210,7 +219,7 @@ public class ArquivoRecordListener {
             containsSiteOnTitle = true;
             title = title.replaceAll(acronym.toUpperCase(), "");
         }
-        if(containsSiteOnTitle) {
+        if (containsSiteOnTitle) {
             if (title.contains(" - ")) {
                 title = title.replaceAll(" - ", "");
             }
