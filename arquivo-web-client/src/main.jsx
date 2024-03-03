@@ -12,8 +12,8 @@ import {
 import Home from './routes/Home.jsx'
 import About from './routes/About.jsx'
 import ErrorPage from './routes/ErrorPage.jsx'
-import ArticlesNewsPaper from './routes/ArticlesNewsPaper.jsx'
-import Entities from './routes/Entities.jsx'
+import Articles from './components/Articles.jsx'
+import Entities from './components/Entities.jsx'
 
 const router = createBrowserRouter([
   {
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/articles/:id/:name",
-        element: <ArticlesNewsPaper />
+        element: <Articles />
       },
       {
         path: "/entity/:type",

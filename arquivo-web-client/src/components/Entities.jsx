@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Entity from "../components/Entity";
+import Entity from "./Entity";
 
 const Entities = () => {
     const [entities, setPosts] = useState([]);

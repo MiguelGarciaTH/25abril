@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import ArticleCardNewsPaper from "../components/ArticleCardNewsPaper"
+import ArticlePreview from "./ArticlePreview"
 
-const ArticlesNewsPaper = () => {
+const Articles = () => {
     const [articles, setPosts] = useState([]);
     const { id, name } = useParams();
     const entityId = id;
@@ -26,7 +26,7 @@ const ArticlesNewsPaper = () => {
                 <div class="subhead"> {entityName}</div>
                 <div class="content">
                     <div class="collumns">
-                        {articles.map((post) => (<ArticleCardNewsPaper siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.texts} />))}
+                        {articles.map((post) => (<ArticlePreview siteId={post.siteId} siteName={post.siteName} postTitle={post.title} postUrl={post.url} postScore={post.score} postText={post.texts} />))}
                     </div>
                 </div>
             </div>
@@ -51,4 +51,4 @@ function randomName() {
     );
 }
 
-export default ArticlesNewsPaper;
+export default Articles;

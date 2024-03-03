@@ -6,7 +6,7 @@ function trimText(text) {
     
 }
 
-function ArticleCardNewsPaper({ siteId, siteName, postTitle, postUrl, postScore, postText }) {
+function ArticlePreview({ siteId, siteName, postTitle, postUrl, postScore, postText }) {
 
     return (
         <div class="collumn">
@@ -27,7 +27,7 @@ function ArticleCardNewsPaper({ siteId, siteName, postTitle, postUrl, postScore,
 
 };
 
-export default ArticleCardNewsPaper;
+export default ArticlePreview;
 
 
 
