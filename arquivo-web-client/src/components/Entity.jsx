@@ -14,7 +14,7 @@ function Entity({ entityId, entityName, entityImage, entityBio }) {
                 <div class="polaroid"><img src={entityImage} alt={`${entityName}`}></img></div>
             </div>
         </div>
-        
+
     );
 };
 

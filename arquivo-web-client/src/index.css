@@ -240,6 +240,20 @@ h1 {
   z-index: 2;
 }
 
+.item-2 {
+  width: 30%;
+  display: content;
+  float: left;
+  margin-top: 1rem;
+  filter: grayscale(100%);
+  position: relative;
+  z-index: 2;
+}
+
+.caption {
+  font-size: 1rem;
+  text-align: center;
+}
 
 .item:nth-of-type(4n+1) {
   transform: scale(0.8, 0.8) rotate(5deg);
@@ -350,6 +364,13 @@ h1 {
 
 }
 
+.subhead-2 {
+  border-bottom: 2px solid #2f2f2f;
+  border-top: 2px solid #2f2f2f;
+  padding: 12px 0 12px 0;
+
+}
+
 .weatherforcastbox {
   position: relative;
   width: 12%;
@@ -382,10 +403,25 @@ h1 {
   vertical-align: top;
   margin-bottom: 50px;
   transition: all .7s;
-    min-height: 900px;
-  max-height: 900px;
+    min-height: 700px;
+  max-height: 700px;
   min-width: 250px;
   overflow: hidden;
+}
+
+.collumn-2 {
+  font-size: 14px;
+  line-height: 20px;
+  width: 17.5%;
+  display: inline-block;
+  padding: 0 1% 0 1%;
+  vertical-align: top;
+  margin-bottom: 50px;
+  transition: all .7s;
+  min-height: 700px;
+  max-height: 700px;
+  min-width: 850px;
+  overflow: auto;
 }
 
 .collumn+.collumn {
@@ -398,8 +434,6 @@ h1 {
   font-family: 'Playfair Display', serif;
   display: block;
   margin: 0 auto;
-
-
 }
 
 .collumn .headline.hl1 {
@@ -459,6 +493,13 @@ h1 {
 .collumn .headline.hl4 {
   font-weight: 700;
   font-size: 12px;
+  box-sizing: border-box;
+  padding: 10px 0 10px 0;
+}
+
+.collumn-2 .headline.hl4-2 {
+  font-weight: 700;
+  font-size: 32px;
   box-sizing: border-box;
   padding: 10px 0 10px 0;
 }
