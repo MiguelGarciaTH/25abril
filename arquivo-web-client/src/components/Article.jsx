@@ -56,7 +56,7 @@ const Article = () => {
             <br/>
             <Link class="navbar-link" to={item.url}>Ver este artigo no Arquivo.pt</Link>
             
-            <ArticleEntities articleId={aId} />
+            <ArticleEntities articleId={aId} entityId={item.entityId}/>
         </div>
     )
 

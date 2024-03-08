@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import EntityThumb from "./EntityThumb";
 
-const ArticleEntities = ({articleId}) => {
+const ArticleEntities = ({articleId, entityId}) => {
     const [entities, setPosts] = useState([]);
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const ArticleEntities = ({articleId}) => {
                 <h1>Outras entidades mencionadas neste artigo:</h1>
                 <ul>
                     {entities.map((entity) => (
-                        <EntityThumb entityId={entity.id} entityName={entity.name} entityImage={entity.imageUrl}/>
+                        <EntityThumb currentEntityId={entityId} entityId={entity.id} entityName={entity.name} entityImage={entity.imageUrl}/>
                     ))}
                 </ul>
             </div>
