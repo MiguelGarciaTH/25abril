@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import ArticleEntities from './ArticleEntities';
 import { Link } from "react-router-dom";
 
-function myFunction(jsonData){
-    var button = document.getElementById("text");
-    var res;
-    for (var key in jsonData) {
-        res += jsonData[key];
-        console.log(jsonData[key])        
+function arr(array) {
+    console.log(">>"+array);
+    var myArray = JSON.parse(array);
+    console.log(">"+myArray)
+    for (let i = 0; i < myArray.length; i++) {
+        console.log(myArray[i]);
+        x += myArray[i] + "<br>";
     }
-    button.innerHTML = res;
+    //document.getElementById("my-div").innerHTML = x;
 }
 
 const Article = () => {
@@ -28,8 +29,9 @@ const Article = () => {
                 setPosts(res);
             });
     }, []);
-
+    
     return (
+
         <div class="news-paper-head">
             <div class="headerobjectswrapper">
                 <header class="news-paper-header">{item.siteName}</header>
@@ -42,21 +44,17 @@ const Article = () => {
                     </span>
                     <p>
                         <span class="headline hl4-2">{item.entityName}</span>
-                        <br/>
+                        <br />
                         Score: {item.score}
                     </p>
                 </div>
-                
-                <div id="text">
-                    {item.texts}
-                </div>
-                
 
-                        </div>
-            <br/>
+                {item.texts}
+            </div>
+            <br />
             <Link class="navbar-link" to={item.url}>Ver este artigo no Arquivo.pt</Link>
-            
-            <ArticleEntities articleId={aId} entityId={item.entityId}/>
+
+            <ArticleEntities articleId={aId} entityId={item.entityId} />
         </div>
     )
 
