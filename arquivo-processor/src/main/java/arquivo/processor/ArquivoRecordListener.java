@@ -205,6 +205,7 @@ public class ArquivoRecordListener {
             title = titleParts[maxLenIndex];
         }
         if (title.contains(siteName)) {
+            containsSiteOnTitle = true;
             title = title.replaceAll(siteName, "");
         }
         if (acronym != null && title.contains(acronym)) {
