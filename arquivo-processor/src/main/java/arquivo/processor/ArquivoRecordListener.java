@@ -77,29 +77,31 @@ public class ArquivoRecordListener {
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
             final Site site = siteRepository.findById(event.siteId()).orElse(null);
 
-            Article article = null;
-            String title;
+            final String trimmedUrl= trimUrl(event.originalUrl());
+            Article article = articleRepository.findByOriginalUrl(trimmedUrl).orElse(null);
 
-            if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
-                title = String.format(noTitleTemplate, noTitleCounter++);
-            } else {
-                title = trimTitle(event.title(), site.getName(), site.getAcronym());
-                if (title == null || title.isBlank() || title.isEmpty()) {
-                    title = String.format(noTitleTemplate, noTitleCounter++);
-                }
-                article = articleRepository.findByOriginalUrl(trimUrl(event.originalUrl())).orElse(null);
-            }
             String text;
+            String title;
             if (article == null) {
                 text = getText(event.textUrl());
                 if (text == null) {
                     totalErrors++;
                     ack.acknowledge();
                     return;
+                } else {
+                    if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
+                        title = String.format(noTitleTemplate, noTitleCounter++);
+                    } else {
+                        title = trimTitle(event.title(), site.getName(), site.getAcronym());
+                        if (title == null || title.isBlank() || title.isEmpty()) {
+                            title = String.format(noTitleTemplate, noTitleCounter++);
+                        }
+                    }
+                    totalTextFromWeb++;
                 }
-                totalTextFromWeb++;
             } else {
                 text = article.getText();
+                title = article.getTitle();
                 totalTextFromDB++;
             }
 
@@ -107,17 +109,18 @@ public class ArquivoRecordListener {
             if (score.total() > 0) {
                 totalAccepted++;
                 if (article == null) {
-                    article = articleRepository.save(new Article(event.digest(), title, event.title(), event.url(), event.originalUrl(), event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
+                    article = articleRepository.saveAndFlush(new Article(event.digest(), title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
+                    LOG.debug("New article articleId={} title={} url={}", article.getId(), title, event.originalUrl());
                 } else {
                     totalDuplicates++;
-                    LOG.info("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
+                    LOG.debug("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
                 }
                 final ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
                 if (articleSearchEntityAssociation == null) {
-                    articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
+                    LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
+                    articleSearchEntityAssociationRepository.saveAndFlush(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
                             objectMapper.convertValue(score.keywordCounter(), JsonNode.class)));
                 }
-
             } else {
                 totalRejected++;
             }
@@ -221,6 +224,9 @@ public class ArquivoRecordListener {
             title = title.replaceAll(acronym.toUpperCase(), "");
         }
         if (containsSiteOnTitle) {
+            if (title.contains(" – ")) {
+                title = title.replaceAll(" – ", "");
+            }
             if (title.contains(" - ")) {
                 title = title.replaceAll(" - ", "");
             }
