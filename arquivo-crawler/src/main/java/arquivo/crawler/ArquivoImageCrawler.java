@@ -114,7 +114,40 @@ public class ArquivoImageCrawler {
         if (node.has("imgCaption")) {
             String caption = node.get("imgCaption").get(0).asText();
             score += scoreElem(name, caption);
-            score += textScore.score(null, null, caption, 0,null).total();
+            score += textScore.score(null, null, caption, 0, null).total();
+        }
+        if (node.has("imgHeight") && node.has("imgWidth")) {
+            score += scoreImageSize(node.get("imgHeight").asInt(), node.get("imgWidth").asInt());
+        }
+        return score;
+    }
+
+    private int scoreImageSize(int height, int width) {
+        int imageArea = height * width;
+        int score = 0;
+        if (imageArea <= 2500) { // 50*50
+            return score;
+        }
+        if (imageArea > 2500 && imageArea <= 10000) { // 100*100
+            score = 1;
+        }
+        if (imageArea > 10000 && imageArea <= 40000) { // 200*200
+            score = 3;
+        }
+        if (imageArea > 40000 && imageArea <= 90000) { // 300*300
+            score = 4;
+        }
+        if (imageArea > 90000 && imageArea <= 160000) { // 400*400
+            score = 5;
+        }
+        if (imageArea > 160000 && imageArea <= 250000) { // 500*500
+            score = 6;
+        }
+        if (imageArea > 250000 && imageArea <= 360000) { // 600*600
+            score = 7;
+        }
+        if (imageArea >= 360000) { // > 600*600
+            score = 10;
         }
         return score;
     }
