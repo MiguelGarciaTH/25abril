@@ -4,15 +4,22 @@ import { useEffect, useState } from "react";
 import ArticleEntities from './ArticleEntities';
 import { Link } from "react-router-dom";
 
-function arr(array) {
-    console.log(">>"+array);
-    var myArray = JSON.parse(array);
-    console.log(">"+myArray)
-    for (let i = 0; i < myArray.length; i++) {
-        console.log(myArray[i]);
-        x += myArray[i] + "<br>";
+function myFunction(myArray) {
+    if (myArray != undefined) {
+        console.log(myArray);
+        console.log(myArray.length);
+        var initI= 0;
+        var maxI = myArray.length-1;
+        if (myArray.length == 1){
+            initI = 0;
+            maxI = myArray.length;
+        }
+        for (let i = initI; i <= maxI; i++) {
+            document.getElementById("text-div")
+                .innerHTML += myArray[i] + "<br/><br/>"
+        }
     }
-    //document.getElementById("my-div").innerHTML = x;
+
 }
 
 const Article = () => {
@@ -29,9 +36,12 @@ const Article = () => {
                 setPosts(res);
             });
     }, []);
-    
-    return (
 
+    console.log("HERE");
+    const myArray = item.texts;
+    myFunction(myArray);
+
+    return (
         <div class="news-paper-head">
             <div class="headerobjectswrapper">
                 <header class="news-paper-header">{item.siteName}</header>
@@ -45,11 +55,12 @@ const Article = () => {
                     <p>
                         <span class="headline hl4-2">{item.entityName}</span>
                         <br />
-                        Score: {item.score}
+                        Relevância: {item.score}
                     </p>
                 </div>
+                <div id="text-div" class="text2">
 
-                {item.texts}
+                </div>
             </div>
             <br />
             <Link class="navbar-link" to={item.url}>Ver este artigo no Arquivo.pt</Link>

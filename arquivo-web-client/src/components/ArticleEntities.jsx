@@ -13,10 +13,10 @@ const ArticleEntities = ({articleId, entityId}) => {
     }, []);
 
 
-    if (entities.length) {
+    if (entities.length > 1) {
         return (
             <div>
-                <h1>Outras entidades mencionadas neste artigo:</h1>
+                <div class="article-h1">Outras entidades mencionadas neste artigo:</div>
                 <ul>
                     {entities.map((entity) => (
                         <EntityThumb currentEntityId={entityId} entityId={entity.id} entityName={entity.name} entityImage={entity.imageUrl}/>

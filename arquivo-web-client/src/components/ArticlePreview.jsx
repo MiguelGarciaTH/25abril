@@ -15,8 +15,8 @@ function ArticlePreview({ item }) {
                     <Link class="headline hl3" to={`/article/${item.articleId}/${item.entityId}`}>{item.title}</Link>
                 </span>
                 <p>
-                    <span class="headline hl4">fonte {item.siteName}</span>
-                    Score: {item.score}
+                    <span class="headline hl4">{item.siteName}</span>
+                    Relevância: {item.score}
                 </p>
             </div>
             <p>

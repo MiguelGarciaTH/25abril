@@ -16,13 +16,12 @@ const Home = () => {
     return (
         <div>
             <h1>~</h1>
-            <div className="quote-div">
-                <h1></h1>
-                <div className="quote">
-                    <div dangerouslySetInnerHTML={{ __html: quote.text }} />
-                </div>
+            <div class="quote-div">
+                
+                    <div class="quote" dangerouslySetInnerHTML={{ __html: quote.text }} />
+                
 
-                <div className="quote-author">
+                <div class="quote-author">
                     {quote.author}
                 </div>
             </div>
