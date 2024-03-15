@@ -1,0 +1,8 @@
+Package: [[name]]
+Version: [[version]]
+Priority: optional
+Architecture: all
+Depends: java17-runtime | java17-runtime-headless
+Maintainer: Miguel Garcia <miguel.garcia.th@gmail.com>
+Homepage: https://github.com/MiguelGarciaTH/25abril
+Description: [[description]]

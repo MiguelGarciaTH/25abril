@@ -62,10 +62,10 @@
                             </data>
                             <data>
                                 <type>file</type>
-                                <src>deb/data/opt/arquivo/arquivo-crawler/run.sh</src>
+                                <src>deb/data/opt/25abril/arquivo-crawler/run.sh</src>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/opt/sensei/arquivo-crawler</prefix>
+                                    <prefix>/opt/25abril/arquivo-crawler</prefix>
                                     <filemode>755</filemode>
                                     <user>arquivo</user>
                                     <group>arquivo</group>

@@ -1,0 +1,14 @@
+[Unit]
+Description=Arquivo Rest
+After=network.target multi-user.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/arquivo-rest
+ExecStart=/opt/25abril/arquivo-rest/run.sh
+User=arquivo
+SyslogIdentifier=ArquivoRest
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

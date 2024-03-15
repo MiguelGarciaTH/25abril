@@ -1,0 +1,14 @@
+[Unit]
+Description=Arquivo Processor
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/arquivo-processor
+ExecStart=/opt/25abril/arquivo-processor/run.sh
+User=arquivoUser
+SyslogIdentifier=ArquivoProcessor
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -58,17 +58,17 @@
                                 <src>${project.build.directory}/${project.build.finalName}.jar</src>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/opt/25abril/arquivo-crawler</prefix>
+                                    <prefix>/opt/25abril/arquivo-rest</prefix>
                                     <user>arquivo</user>
                                     <group>arquivo</group>
                                 </mapper>
                             </data>
                             <data>
                                 <type>file</type>
-                                <src>deb/data/opt/arquivo/arquivo-crawler/run.sh</src>
+                                <src>deb/data/opt/25abril/arquivo-rest/run.sh</src>
                                 <mapper>
                                     <type>perm</type>
-                                    <prefix>/opt/sensei/arquivo-crawler</prefix>
+                                    <prefix>/opt/25abril/arquivo-rest</prefix>
                                     <filemode>755</filemode>
                                     <user>arquivo</user>
                                     <group>arquivo</group>
