@@ -1,6 +1,6 @@
 insert into quote(author, "text") values
 ('Jorge Sampaio', '25 de Abril sempre'),
-('Manuel Alegre', '"Foram dias foram anos a esperar por um só dia.<br/>Alegrias. Desenganos.<br/>Foi o tempo que doía com seus riscos e seus danos.<br/>Foi a noite e foi o dia na esperança de um só dia."'),
+('Manuel Alegre', 'Foram dias foram anos a esperar por um só dia.<br/>Alegrias. Desenganos.<br/>Foi o tempo que doía com seus riscos e seus danos.<br/>Foi a noite e foi o dia na esperança de um só dia.'),
 ('Sophia De Mello Breyner','Esta é a madrugada que eu esperava<br/>O dia inicial inteiro e limpo<br/>Onde emergimos da noite e do silêncio<br/>E livres habitamos a substância do tempo.<br/>'),
 ('Salgueiro Maia','Meus senhores, como todos sabem, há diversas modalidades de Estado. Os estados socialistas, os estados capitalistas e o estado a que chegámos. Ora, nesta noite solene, vamos acabar com o estado a que chegámos');
 
@@ -84,7 +84,7 @@ insert into search_entity (name, aliases, type) values
 ('Humberto Delgado', 'General sem medo', 'POLITICOS'),
 ('Miller Guerra', null, 'POLITICOS'),
 ('Cazal Ribeiro', null, 'POLITICOS'),
-('Ramalho Eanes', null, 'POLITICOS'),
+('António Ramalho Eanes','Ramalho Eanes', 'POLITICOS'),
 ('Vasco Lourenço', null, 'POLITICOS'),
 ('Firmino Miguel', null, 'POLITICOS'),
 ('Costa Gomes', null, 'POLITICOS'),
@@ -110,7 +110,6 @@ insert into search_entity (name, aliases, type) values
 ('Francisco Sousa Tavares', null, 'POLITICOS'),
 ('Veiga Simão', null, 'POLITICOS'),
 ('Baltasar Rebelo de Sousa', null, 'POLITICOS'),
-('José Miguel Júdice', null, 'POLITICOS'),
 ('Eduardo Fontes', null, 'POLITICOS'),
 ('Adelino da Silva Tinoco', 'Inspector Tinoco', 'POLITICOS'),
 ('Manuel Tengarrinha', null, 'POLITICOS'),
