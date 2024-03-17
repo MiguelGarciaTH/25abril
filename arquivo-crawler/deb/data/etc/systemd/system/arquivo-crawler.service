@@ -1,12 +1,12 @@
 [Unit]
 Description=Arquivo crawler
-After=network.target
+After=network.target multi-user.target
 
 [Service]
 Type=simple
 EnvironmentFile=/etc/default/arquivo-crawler
 ExecStart=/opt/25abril/arquivo-crawler/run.sh
-User=arquivoUser
+User=arquivo
 SyslogIdentifier=ArquivoCrawler
 Restart=always
 

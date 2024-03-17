@@ -53,6 +53,11 @@ h1 {
   color: var(--red);
 }
 
+.arch{
+  text-align: center;
+  width: 90%;
+}
+
 .quote-div {
   margin-top: 10%;
   width: 50%;
