@@ -5,7 +5,7 @@ const ArticleEntities = ({articleId, entityId}) => {
     const [entities, setPosts] = useState([]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/article/" + articleId+"/entities")
+        fetch(import.meta.env.VITE_REST_URL +"/article/" + articleId+"/entities")
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);

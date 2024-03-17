@@ -9,7 +9,7 @@ const Articles = () => {
     const entityName = name;
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/article/" + entityId)
+        fetch(import.meta.env.VITE_REST_URL + "/article/" + entityId)
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);

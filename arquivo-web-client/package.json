@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "http://localhost:8082",
   "scripts": {
     "dev": "export SET NODE_OPTIONS=--openssl-legacy-provider && vite",
     "build": "export SET NODE_OPTIONS=--openssl-legacy-provider && vite build",

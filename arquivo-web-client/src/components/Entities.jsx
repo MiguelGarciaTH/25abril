@@ -7,7 +7,7 @@ const Entities = () => {
     const { type } = useParams();
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/entity/type/" + type)
+        fetch(import.meta.env.VITE_REST_URL + "/entity/type/" + type)
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);

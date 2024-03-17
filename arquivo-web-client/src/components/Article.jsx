@@ -30,7 +30,7 @@ const Article = () => {
     const eId = entityId;
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/article/" + eId + "/" + aId)
+        fetch(import.meta.env.VITE_REST_URL+"/article/" + eId + "/" + aId)
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);

@@ -6,7 +6,7 @@ const Home = () => {
     const [quote, setPosts] = useState([]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8082/quotes")
+        fetch(import.meta.env.VITE_REST_URL +"/quotes")
             .then((res) => res.json())
             .then((res) => {
                 setPosts(res);
