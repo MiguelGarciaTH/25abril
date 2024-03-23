@@ -34,3 +34,4 @@ build/
 
 ### npm modules
 arquivo-web-client/node_modules/*
+arquivo-web-client/.env
