@@ -11,6 +11,7 @@ import {
 
 import Home from './routes/Home.jsx'
 import About from './routes/About.jsx'
+import Architecture from './routes/Architecture.jsx'
 import ErrorPage from './routes/ErrorPage.jsx'
 import Articles from './components/Articles.jsx'
 import Article from './components/Article.jsx'
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "about",
         element: <About />
+      },
+      {
+        path: "architecture",
+        element: <Architecture />
       },
       {
         path: "/articles/:id/:name",
