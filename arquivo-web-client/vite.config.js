@@ -12,6 +12,7 @@ export default defineConfig({
   //  cors: false,
     host: true,
     port: 80,
+    origin: 'http://13.50.15.148'
   },
 })
 
