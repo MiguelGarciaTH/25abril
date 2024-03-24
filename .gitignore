@@ -48,6 +48,7 @@ arquivo-web-client/build
 
 # misc
 arquivo-web-client/.env
+arquivo-web-client/vite.config.js
 arquivo-web-client/.DS_Store
 arquivo-web-client/.env.local
 arquivo-web-client/.env.development.local
