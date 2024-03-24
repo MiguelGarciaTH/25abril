@@ -33,5 +33,52 @@ build/
 .vscode/
 
 ### npm modules
-arquivo-web-client/node_modules/*
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+arquivo-web-client/node_modules
+arquivo-web-client/.pnp
+arquivo-web-client/.pnp.js
+
+# testing
+arquivo-web-client/coverage
+
+# production
+arquivo-web-client/build
+
+# misc
 arquivo-web-client/.env
+arquivo-web-client/.DS_Store
+arquivo-web-client/.env.local
+arquivo-web-client/.env.development.local
+arquivo-web-client/.env.test.local
+arquivo-web-client/.env.production.local
+
+arquivo-web-client/npm-debug.log*
+arquivo-web-client/yarn-debug.log*
+arquivo-web-client/yarn-error.log*
+
+# Logs
+arquivo-web-client/logs
+arquivo-web-client/*.log
+arquivo-web-client/npm-debug.log*
+arquivo-web-client/yarn-debug.log*
+arquivo-web-client/yarn-error.log*
+arquivo-web-client/pnpm-debug.log*
+arquivo-web-client/lerna-debug.log*
+
+node_modules
+arquivo-web-client/dist
+arquivo-web-client/dist-ssr
+arquivo-web-client/*.local
+
+# Editor directories and files
+arquivo-web-client/.vscode/*
+arquivo-web-client/!.vscode/extensions.json
+arquivo-web-client/.idea
+arquivo-web-client/.DS_Store
+arquivo-web-client/*.suo
+arquivo-web-client/*.ntvs*
+arquivo-web-client/*.njsproj
+arquivo-web-client/*.sln
+arquivo-web-client/*.sw?

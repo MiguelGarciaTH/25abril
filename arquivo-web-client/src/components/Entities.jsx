@@ -6,6 +6,7 @@ const Entities = () => {
     const [entities, setPosts] = useState([]);
     const { type } = useParams();
 
+    console.log("HERE=>" + import.meta.env.VITE_REST_URL + "/entity/type/" + type);
     useEffect(() => {
         fetch(import.meta.env.VITE_REST_URL + "/entity/type/" + type)
             .then((res) => res.json())
