@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     cors: false,
-    host: arquivo25abril.com,
+    host: "13.50.15.148",
     port: 80,
   },
 })
