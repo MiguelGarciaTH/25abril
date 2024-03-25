@@ -7,7 +7,8 @@ const Architecture = () => {
             <div class="text">
 
                 <h2>Descrição</h2>
-                Este projecto é uma aplicação web que é servida por um backend que integra várias tecnologias e várias fontes de dados. 
+                Este project é suportado por uma arquitectura cliente e servidor. O client é uma aplicação web que faz pedidos REST a um backend aplicacional servid por uma base 
+                de dados SQL.
 
                 <h3>Stack</h3>
                 <li>Aplicação web: React;</li>
@@ -17,33 +18,68 @@ const Architecture = () => {
 
                 <h2>Arquitectura e Processamento</h2>
 
+                Antes de descrever a arquitectura do sistema é importante clarificar que existiu uma fase manual inicial de criação de dados. 
+                Para alimentar todo o sistema foi necessário definir um conjunto de sites de pesquisa para direcionar o Arquivo.pt a fazer recolhas penas nesses sites, e foi necessário
+                definir quais os termos queriamos fazer pesquisas no Arquivo.pt. Estes termos são as várias pessoas, eventos, sitios, partidos que foram definidos com critérios pessoais
+                do autor, no entanto, tendo como objectivo manter critérios objectivos de relevância histórica. Sem entrar em detalhes do esquema da BD, é importante explicar que 
+                para cada um destes termos foi definida uma categoria e "aliases" para aumentar a cobetura de pesquisa. Por exemplo:
+                <br /><br />
+                <li>Nome: José Afonso</li>
+                <li>Alias: Zeca Afonso</li>
+                <li>Tipo: Artista</li>
+                <br />
+                Além destes campos pré-preenchidos cada entidade de pesquisa tem um campo para uma imagem e uma biografia. 
+
+
                 <img class="arch" src="../src/images/arch.png"/>
-                Antes de qualquer tipo de processamento, foi feito um trabalho manual de levantamento e selecção de fontes de dados noticiosas e de 
-                entidades de pesquisa. Estes dados foram inseridos na BD e são elas que alimentam todo o processamento. 
 
                 <br /><br />
-                <h3>Crawler:</h3> 
-                Este é o primeiro componente da cadeia de processamento, periódicamente verifica se há novas entidades para processar.
-                Este processamento é feito ao nível da entidade:
+                <h3>Crawler</h3> 
+                O <strong>Crawler</strong> é o primeiro componente do fluxO de proessamento de dados. Periódicamente o Crawler procura na BD termos de pesquisa para enriquecer com 
+                dados externos. Os dados externos são fornecidos de três fontes com três finalidades diferentes:
+                
                 <li>Procura de bigorafia que descreveam entidade (2) - fonte: DBPedia;</li>
                 <li>Procura de imagens que representem a entidade (3) - fonte: Imagens do Arquivo.pt;</li>
-                Sendo estes dados armazenados na tabela das entidades. 
-
-                E depois são preparados URLs de pesquisa para o Arquivo.pt. Estes URLs são feitos para todas as entidades, para cada site de noticias, e desde a primeira data do Arquivo.pt até ao próprio dia. 
-                Para cada pedido feito ao Arquivo.pt é guardado o intervalo consultado, desta forma é mantido um changelog que permite fasear a recolha e manter os dados sempre actualizados.
-                Exemplo de um URL:
-                <pre>
-                https://arquivo.pt/textsearch?q=Salgueiro Maia&siteSearch=www.publico.pt&from=19960101000000&to=20151022163016&maxItems=500
-                </pre>
-
-                Este componente lista todas as entidades (1) previamente guardadas na BD e para cada entidade vai fazer três recolhas
-                <li>(2)DBPedia: Para recolher dados biográficos sobre cada entidade;</li>
-                <li>(3)Imagens Arquivo.pt: Para recolher dados biográficos sobre cada entidade;</li>
-                <li>(4)Arquivo.pt: Para recolher páginas arquivadas para cada entidade;</li>
-                <br/>
-                Para cada entidade a imagem e biografia são persistidas na BD, e cada resultado recolhido do Arquivo.pt é enviado (5) para o Kafka para ser 
-                processado depois.
+                <li>Procura de artigos jornalisticos que correspondam à pesquisa por palavra chave num determinado site (4) - fonte: Arquivo.pt;</li>
                 
+                A biografia e fotografia são logo persistidos na BD. Em particular, para tentar selecionar a melhor fotografia, foram usados dois critérios: o tamanho da image, e se o URL e 
+                a legenda da imagem contêm o nome ou alias da entidade de pesquisa. 
+                
+                Em relação à pesquisa no Arquivo.pt: Foram construídos URLs para cada entidade em cada site de pesquisa com o intervalo máximo temporal (i.e., desde 1996 até ao dia corrente), 
+                utilizando a paginação do Arquivo.pt para iterar sobre os resultados. Para cada resultado com sucesso é guardado o intervalo da pesquisa. Desta forma é possivel parar e retomar 
+                as pesquisas, além do mais este changelog permite actualizar o projecto ao longo do tempo partindo sempre da última data guardada com sucesso.
+
+                Exemplo de um URL pedido à API do Arquivo.pt 
+                <br /><br />
+
+                <pre>
+                    https://arquivo.pt/textsearch?q=Salgueiro Maia&siteSearch=www.publico.pt&from=19960101000000&to=20151022163016&maxItems=500
+                </pre>
+                
+                A API do Arquivo.pt retorna uma lista de resultados com os vários URLs de cada referência arquivada. Para cada um destes resultados é criada uma mensagem que associa uma entidade a um site (dos 
+                sites de noticias) devolvidos pelo Arquvio.pt e envia esta mensagem para o Kafa, desta forma separamos o processo de recolha de artigos e o seu processamento. 
+                
+
+                <h3>Processor</h3> 
+                O <strong>Processor</strong> é o componente que está à escuta de eventos de Kafka (6) e que vai processar realmente cada resultado. A primeira coisa que este componente vai fazer é normalizar o URL 
+                da notícia devolvido pelo Arquivo.pt. Desta forma conseguimos evitar guardar registo duplicados. Se o registo ainda não existir fazemos todo o processamento, se já existir utilizamos dados já 
+                procesados e fazemos apenas algum processamento se o registo repetido for referente a uma outra entidade. No caso de ser um registo novo, então fazemos a recolha de todo o texto contido na página
+                que é fornecido Arquivo.pt (i.e., linkToExtractedText). Através desse URL recolhemos todo o texto da página e começamos a fazer uma avaliação de relevância do texto. 
+                Este processo - que é uma das partes mais relevantes do projecto - consistem em identificar as referências no texto à entidade de pesquisa mas também de enquadrar estas referências no tema do 
+                projecto. Para isto definimos algumas palavras chave que definem este contexto histórico (e.g., revolução dos cravos, estado novo, 25 de abril, revolução abril ,guerra colonial, salazarismo, 
+                salazarista, salazaristas, clandestinidade, abril de 1974). Esta "scoring" é feito com pattern matching utilizando regex.
+                Em suma, quanto maior for o "score" resultante desta combinação maior é a relevância da noticia neste contexto.
+                Se este "score" for maior do que zero guardamos a noticia, se não descartamos por não ser considerada relevante para o projecto. Nota: a mesma noticia pode ter uma relevância diferente para duas 
+                entidades de pesquisa.
+
+                No fim do processamento guardamos o score de cada relação (noticia, entidade) assim como alguns metadados da noticia, por exemplo, o texto em bruto recolhido pelo Arquivo.pt, na BD (7).
+
+                
+                <h3>REST</h3> 
+                O <strong>REST</strong> é um servidor REST que vai através de uma API bem definida servir os dados já processados e armazeados na BD (8) a um cliente. 
+
+                <h3>Web</h3> 
+                O <strong>Web</strong> é uma aplicação web que apresenta de uma forma estruturada e útil os dados servidos pelo componente REST (9).
 
                 <h2>Limitações</h2>
                 A primeira limitação identificada neste proejcto é o próprio autor. A sua formação e experiência não abrange áreas como Processamento de 

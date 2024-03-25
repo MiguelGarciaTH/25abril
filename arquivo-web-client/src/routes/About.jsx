@@ -30,7 +30,7 @@ const About = () => {
                  com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como 
                  o tema exige.
                 
-                <h2>Agradecimentos</h2>
+                {/* <h2>Agradecimentos</h2> */}
                 
 
                 <h2>Referências</h2>
