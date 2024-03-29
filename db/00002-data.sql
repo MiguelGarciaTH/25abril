@@ -26,6 +26,9 @@ insert into search_entity (name, aliases, type) values
 --('Flama', null, 'JORNAIS'),
 --('A Mosca', null, 'JORNAIS'),
 -- Artistas
+('Luís de Sttau Monteiro', 'Stau Monteiro', 'ARTISTAS'),
+('José Cardoso Pires', null, 'ARTISTAS'),
+('Bernardo Santareno', null, 'ARTISTAS'),
 ('Sérgio Godinho', null, 'ARTISTAS'),
 ('Fausto Bordalo Dias', null, 'ARTISTAS'),
 ('José Mário Branco', 'Zé Mário Branco', 'ARTISTAS'),
