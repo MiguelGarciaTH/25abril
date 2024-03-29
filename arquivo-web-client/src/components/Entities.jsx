@@ -3,18 +3,10 @@ import { useParams } from "react-router";
 import Entity from "./Entity";
 
 const Entities = () => {
-    const [entities, setPosts] = useState([]);
+
     const { type } = useParams();
 
-    console.log("HERE=>" + import.meta.env.VITE_REST_URL + "/entity/type/" + type);
-    useEffect(() => {
-        fetch(import.meta.env.VITE_REST_URL + "/entity/type/" + type)
-            .then((res) => res.json())
-            .then((res) => {
-                setPosts(res);
-            });
-    }, [type]);
-
+    let entities = getEntities(type);
 
     if (entities.length) {
         return (
@@ -29,6 +21,22 @@ const Entities = () => {
             </div>
         )
     }
+}
+
+function getEntities(type) {
+    const [entities, setEntities] = useState([]);
+
+    useEffect(() => {
+        setEntities([])
+        async function fetchData() {
+            const result = await fetch(import.meta.env.VITE_REST_URL + "/entity/type/" + type);
+            const body = await result.json();
+            setEntities(body);
+        }
+        fetchData();
+    }, [type]);
+
+    return entities;
 }
 
 function getDescription(type) {
