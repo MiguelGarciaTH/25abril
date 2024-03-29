@@ -41,12 +41,14 @@ const About = () => {
                 <li>Os Últimos do Estado Novo. José Pedro Castanheira</li>
                 <li>1973: Uma Cronologia do Ano Zero. Os Factos, as Figuras e os Figurantes do Último Ano do Estado Novo. Tiago Beato</li>
                 <li>Ensaios de Abril. Fernando Rosas</li>
+                
                 <h3>Podcasts</h3>
                 <li>Histórias da Classe Trabalhadora</li>
                 <li>De Cravo ao Peito</li>
                 <li>Antes da Revolução</li>
                 <li>Inquietação, inquietação!</li>
                 <li>Avenida da Liberdade</li>
+                <li>Retratos de Abril</li>
             
                 <h3>Documentários</h3>
                 <li>A Pide Leninha (RTP Play)</li>
