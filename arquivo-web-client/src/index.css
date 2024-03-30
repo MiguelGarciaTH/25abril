@@ -1,5 +1,35 @@
+@media screen and (max-width: 1024px) {
+  html {
+    font-size: 100%;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  html {
+    font-size: 80%;
+  }
+}
+
+@media screen and (max-width: 650px) {
+  html {
+    font-size: 50%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  html {
+    font-size: 50%;
+  }
+}
+
 * {
   font-family: 'Helvetica', sans-serif;
+}
+
+.centered {
+  display: inline-block;
+  position: absolute;
+  text-align: center;
 }
 
 #root {
@@ -15,7 +45,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-size: 54px;
+  font-size: 1rem;
   font-weight: 300;
   margin: 0 0 58px;
   background-color: var(--white);
@@ -24,21 +54,22 @@ body {
 
 .text {
   margin-top: 100px;
-  font-size: large;
+  font-size: 1rem;
   font-weight: 400;
-  max-width: 65%;
-  display: inline-block;
+  display: block;
   text-align: justify;
+  margin-left: 30%;
+  word-wrap: break-word;
 }
 
 .text2 {
   margin-top: 100px;
-  font-size: large;
+  font-size: 1rem;
   font-weight: 400;
-  max-width: 100%;
   display: inline-block;
   text-align: justify;
 }
+
 .text h2 {
   color: var(--red);
 }
@@ -46,20 +77,21 @@ body {
 h1 {
   margin: 0;
   padding: 0;
-  font-size: 54px;
+  font-size: 5rem;
   font-weight: 500;
   margin: 0 0 58px;
   background-color: white;
   color: var(--red);
+    display: inline-block;
+  
 }
 
-.arch{
+.arch {
   text-align: center;
-  width: 90%;
+  width: 100%;
 }
 
 .quote-div {
-  margin-top: 10%;
   width: 50%;
   margin-left: 30%;
 }
@@ -67,53 +99,50 @@ h1 {
 .quote {
   font-family: 'Courier New', Courier, monospace;
   margin-top: 10%;
-  font-size: 34px;
+  font-size: 4rem;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 
 .quote-author {
-    font-family: 'Courier New', Courier, monospace;
-  font-size: 32px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 4rem;
   font-style: italic;
   white-space: pre-wrap;
   word-wrap: break-word;
   color: var(--red);
 }
 
-.space-top {
-  vertical-align: bottom;
-  margin-top: 50px;
-  margin-left: 10px;
-}
-
 /*** NAVBAR START ***/
 .title-header1 {
   font-family: 'Helvetica', sans-serif;
-  font-size: 100px;
+  font-size: 6rem;
   color: var(--red);
   font-weight: 900;
+  display: inline;
+  /* same as above */
+  white-space: nowrap;
+  /* ensure no wrapping */
 }
 
 .title-header2 {
   font-family: 'Helvetica', sans-serif;
-  font-size: 100px;
+  font-size: 6rem;
   color: var(--black);
   font-weight: 500;
+  display: inline;
+  /* same as above */
+  white-space: nowrap;
+  /* ensure no wrapping */
 }
 
 .navbar {
-  width: 0px;
-  line-height: 48px;
+  min-width: 100px;
+  line-height: 250%;
   float: left;
-  display: inline;
-  margin: 0;
-  padding: 0;
-  margin-right: 0px;
   font-weight: 300;
   text-align: left;
   color: black;
-  font-size: xx-large;
 }
 
 .navbar-link {
@@ -121,16 +150,18 @@ h1 {
   font-size: xx-large;
   font-weight: 500;
   text-decoration: none;
+  font-size: 3rem;
 }
 
 .navbar-link:focus {
   color: var(--red) !important;
   background: white !important;
+  font-size: 3rem;
 }
 
 .navbar-link:hover {
   color: var(--red);
-  font-size: xx-large;
+  font-size: 3rem;
 }
 
 /*** NAVBAR END ***/
@@ -138,36 +169,12 @@ h1 {
 /*________________________________________________________________________________________________________________________________*/
 /*** Entities new ***/
 
-.paper-button {
-  display: inline-block;
-  width: 150px;
-  background: var(--red);
-  color: var(--white);
-  padding: 0.1em 0.5em 0.35em;
-  border-radius: 0.5em;
-  font-size: x-large;
-  text-decoration: none;
-}
-
-.paper-button:hover {
-  display: inline-block;
-  margin: 0.5em 0 0 0;
-  background: var(--dark);
-  color: var(--white);
-  padding: 0.1em 0.5em 0.35em;
-  border-radius: 0.5em;
-  text-decoration: none;
-  transition: var(--trans);
-  filter: drop-shadow(0px 8px 8px var(--dark));
-}
-
 .paper {
+  display: block;
+  margin-left: 40%;
   position: relative;
-  width: 90%;
   max-width: 1100px;
-  min-width: 400px;
   height: 400px;
-  margin: 0 auto;
   background: #fafafa;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .3);
@@ -201,15 +208,14 @@ h1 {
 .paper-content h1 {
   width: 100%;
   text-align: left;
+  line-height: 30px;
   max-width: 95%;
   height: 100%;
   max-height: 0%;
-  line-height: 30px;
-  margin-left: 10px;
   background: transparent;
   color: var(--red);
   font-family: 'Courier New', monospace;
-  font-size: 25px;
+  font-size: 2rem;
   box-sizing: border-box;
 }
 
@@ -221,12 +227,11 @@ h1 {
   line-height: 30px;
   padding: 0 10px;
   border: 0;
-  float: left;
   outline: 0;
   background: transparent;
   color: black;
   font-family: 'Courier New', monospace;
-  font-size: 18px;
+  font-size: 1.1rem;
   resize: none;
 
 }
@@ -264,6 +269,28 @@ h1 {
   filter: grayscale(100%);
   position: relative;
   z-index: 2;
+}
+
+.paper-button {
+  display: inline-block;
+  width: 10%;
+  background: var(--red);
+  color: var(--white);
+  padding: 0.1em 0.5em 0.35em;
+  border-radius: 0.5em;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+.paper-button:hover {
+  display: inline-block;
+  background: var(--dark);
+  color: var(--white);
+  padding: 0.1em 0.5em 0.35em;
+  border-radius: 0.5em;
+  text-decoration: none;
+  transition: var(--trans);
+  filter: drop-shadow(0px 8px 8px var(--dark));
 }
 
 .caption {
@@ -332,10 +359,6 @@ h1 {
   opacity: 0.3;
   transition: 0.3s;
 }
-
-
-
-
 /*________________________________________________________________________________________________________________________________*/
 
 
@@ -344,7 +367,7 @@ h1 {
 /*________________________________________________________________________________________________________________________________*/
 .news-paper-body {
   font-family: 'Droid Serif', serif;
-  font-size: 14px;
+  font-size: 2rem;
   color: #2f2f2f;
   background-color: #f9f7f1;
 }
@@ -352,12 +375,11 @@ h1 {
 .news-paper-header {
   font-family: 'Playfair Display', serif;
   font-weight: 900;
-  font-size: 80px;
+  font-size: 5rem;
   text-transform: uppercase;
   display: inline-block;
   line-height: 72px;
   margin-bottom: 20px;
-
 }
 
 .news-paper-p {
@@ -370,14 +392,11 @@ h1 {
   padding-left: 400px;
 }
 
-.headerobjectswrapper {}
-
 .subhead {
   text-transform: uppercase;
   border-bottom: 2px solid #2f2f2f;
   border-top: 2px solid #2f2f2f;
   padding: 12px 0 12px 0;
-
 }
 
 .subhead-2 {
@@ -385,15 +404,12 @@ h1 {
   border-bottom: 2px solid #2f2f2f;
   border-top: 2px solid #2f2f2f;
   padding: 12px 0 12px 0;
-
   font-weight: 400;
   font-style: italic;
-  font-size: 36px;
-
+  font-size: 2rem;
   padding: 10px 0 10px 0;
   text-decoration: none;
   color: var(--black) !important;
-
 }
 
 .weatherforcastbox {
@@ -413,14 +429,10 @@ h1 {
   word-spacing: -.31em;
   display: inline-block;
   margin: 30px 2% 0 2%;
-
-
 }
 
-.collumns {}
-
 .collumn {
-  font-size: 14px;
+  font-size: 1rem;
   line-height: 20px;
   width: 17.5%;
   display: inline-block;
@@ -435,7 +447,7 @@ h1 {
 }
 
 .collumn-2 {
-  font-size: 14px;
+  font-size: 1rem;
   line-height: 20px;
   width: 17.5%;
   display: inline-block;
@@ -462,36 +474,9 @@ h1 {
 
 .collumn .headline.hl1 {
   font-weight: 700;
-  font-size: 30px;
+  font-size: 3rem;
   text-transform: uppercase;
   padding: 10px 0 10px 0;
-
-}
-
-.collumn .headline.hl2 {
-  font-weight: 400;
-  font-style: italic;
-  font-size: 24px;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .headline.hl2:before {
-  border-top: 1px solid #2f2f2f;
-  content: '';
-  width: 100px;
-  height: 7px;
-  display: block;
-  margin: 0 auto;
-}
-
-.collumn .headline.hl2:after {
-  border-bottom: 1px solid #2f2f2f;
-  content: '';
-  width: 100px;
-  height: 13px;
-  display: block;
-  margin: 0 auto;
 
 }
 
@@ -511,7 +496,6 @@ h1 {
 
 .collumn .headline.hl3:focus {
   color: var(--red) !important;
-  ;
 }
 
 .collumn .headline.hl4 {
@@ -544,168 +528,14 @@ h1 {
   height: 10px;
   display: block;
   margin: 0 auto;
-
-}
-
-.collumn .headline.hl5 {
-  font-weight: 400;
-  font-size: 42px;
-  text-transform: uppercase;
-  font-style: italic;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .headline.hl6 {
-  font-weight: 400;
-  font-size: 18px;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .headline.hl6:before {
-  border-top: 1px solid #2f2f2f;
-  content: '';
-  width: 100px;
-  height: 7px;
-  display: block;
-  margin: 0 auto;
-}
-
-.collumn .headline.hl6:after {
-  border-bottom: 1px solid #2f2f2f;
-  content: '';
-  width: 100px;
-  height: 10px;
-  display: block;
-  margin: 0 auto;
-
-}
-
-.collumn .headline.hl7 {
-  font-weight: 700;
-  font-size: 12px;
-  box-sizing: border-box;
-  display: block;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .headline.hl8 {
-  font-weight: 700;
-  font-size: 12px;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .headline.hl9 {
-  font-weight: 700;
-  font-size: 12px;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .headline.hl10 {
-  font-weight: 700;
-  font-size: 12px;
-  box-sizing: border-box;
-  padding: 10px 0 10px 0;
-}
-
-.collumn .citation {
-  font-family: 'Playfair Display', serif;
-  font-size: 36px;
-  line-height: 44px;
-  /*font-style: italic;*/
-  text-align: center;
-  font-weight: 400;
-  display: block;
-  margin: 40px 0 40px 0;
-  font-feature-settings: "liga", "dlig";
-
-}
-
-.collumn .citation:before {
-  border-top: 1px solid #2f2f2f;
-  content: '';
-  width: 100px;
-  height: 16px;
-  display: block;
-  margin: 0 auto;
-}
-
-.collumn .citation:after {
-  border-bottom: 1px solid #2f2f2f;
-  content: '';
-  width: 100px;
-  height: 16px;
-  display: block;
-  margin: 0 auto;
-}
-
-.collumn .figure {
-  margin: 0 0 20px;
-}
-
-.collumn .figcaption {
-  font-style: italic;
-  font-size: 12px;
-}
-
-.media {
-  -webkit-filter: sepia(80%) contrast(1) opacity(0.8);
-  filter: sepia(80%) grayscale(1) contrast(1) opacity(0.8);
-  mix-blend-mode: multiply;
-  width: 100%;
 }
 
 .article-h1 {
   margin: 0;
   padding: 0;
-  font-size: 34px;
+  font-size: 2rem;
   font-weight: 300;
   margin: 0 0 58px;
   background-color: white;
   color: var(--red);
-}
-
-/*________________________________________________________________________________________________________________________________*/
-/*MEDIAQUERIES*/
-@media only all and (max-width: 1300px) {
-  .weatherforcastbox {
-    display: none;
-  }
-
-}
-
-@media only all and (max-width: 1200px) {
-  .collumn {
-    width: 31%;
-  }
-
-}
-
-@media only all and (max-width: 900px) {
-  .collumn {
-    width: 47%;
-  }
-
-}
-
-@media only all and (max-width: 600px) {
-  .collumn {
-    width: 100%;
-  }
-
-  .collumn+.collumn {
-    border-left: none;
-    border-bottom: 1px solid #2f2f2f;
-  }
-
-  header {
-    max-width: 320px;
-    font-size: 60px;
-    line-height: 54px;
-    overflow: hidden;
-  }
-
 }

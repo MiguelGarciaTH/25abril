@@ -37,7 +37,7 @@ const Article = () => {
             });
     }, []);
 
-    console.log("HERE");
+
     const myArray = item.texts;
     myFunction(myArray);
 

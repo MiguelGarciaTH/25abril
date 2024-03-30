@@ -3,7 +3,6 @@ import React from "react";
 const About = () => {
     return (
         <div>
-            <h1>SOBRE</h1>
             <div class="text">
                 <h2>Motivação</h2>
                 <strong>O 25 de Abril de 1974 é o evento mais importante do século XX na História portuguesa. </strong>  

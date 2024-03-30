@@ -3,7 +3,6 @@ import React from "react";
 const Architecture = () => {
     return (
         <div>
-            <h1>ARQUITECTURA</h1>
             <div class="text">
 
                 <h2>Descrição</h2>
