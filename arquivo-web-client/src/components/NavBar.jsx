@@ -12,13 +12,19 @@ const NavBar = () => {
             <br />
             <br />
             <br />
-            <Link className="navbar-link" to="/entity/ARTISTAS">ARTISTAS</Link>
+            <Link className="navbar-link" to="/entity/CAPITAES">CAPITÃES</Link>
+            <br />
+            <Link className="navbar-link" to="/entity/RESISTENTES">RESISTENTES</Link>
+            <br />
+            <Link className="navbar-link" to="/entity/CANTORES">VOZES</Link>
+            <br />
+            <Link className="navbar-link" to="/entity/ESCRITORES">PALAVRAS</Link>
+            <br />
+            <Link className="navbar-link" to="/entity/JORNALISTAS">ANUNCIANTES</Link>
+            <br />
+            <Link className="navbar-link" to="/entity/OPRESSORES">OPRESSORES</Link>
             <br />
             <Link className="navbar-link" to="/entity/MOVIMENTOS">MOVIMENTOS</Link>
-            <br />
-            <Link className="navbar-link" to="/entity/POLITICOS">POLITICOS</Link>
-            <br />
-            <Link className="navbar-link" to="/entity/PARTIDOS">PARTIDOS</Link>
             <br />
             <Link className="navbar-link" to="/entity/EVENTOS">EVENTOS</Link>
             <br />
@@ -26,7 +32,7 @@ const NavBar = () => {
             <br />
             <Link className="navbar-link" to="/about">SOBRE</Link>
             <br />
-            <Link className="navbar-link" to="/architecture">ARQUITECTURA</Link>
+            <Link className="navbar-link" to="/architecture">DETALHES</Link>
         </nav>
     )
 }
