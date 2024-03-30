@@ -10,13 +10,15 @@ import javax.persistence.*;
 public class SearchEntity {
 
     public enum Type {
-        PARTIDOS,
-        POLITICOS,
-        ARTISTAS,
-        JORNAIS,
-        MOVIMENTOS,
+        CAPITAES,
+        CANTORES,
         EVENTOS,
-        LOCAIS
+        MOVIMENTOS,
+        LOCAIS,
+        RESISTENTES,
+        ESCRITORES,
+        OPRESSORES,
+        JORNALISTAS,
     }
 
     @Id
@@ -52,7 +54,7 @@ public class SearchEntity {
     @Column(columnDefinition = "text")
     private String biography;
 
-    public SearchEntity(){
+    public SearchEntity() {
 
     }
 
