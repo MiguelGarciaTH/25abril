@@ -28,8 +28,6 @@ const NavBar = () => {
             <br />
             <Link className="navbar-link" to="/entity/EVENTOS">EVENTOS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/LOCAIS">LOCAIS</Link>
-            <br />
             <Link className="navbar-link" to="/about">SOBRE</Link>
             <br />
             <Link className="navbar-link" to="/architecture">DETALHES</Link>

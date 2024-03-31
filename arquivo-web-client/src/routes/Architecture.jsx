@@ -6,7 +6,7 @@ const Architecture = () => {
             <div class="text">
 
                 <h2>Descrição</h2>
-                Este project é suportado por uma arquitectura cliente e servidor. O client é uma aplicação web que faz pedidos REST a um backend aplicacional servid por uma base 
+                Este projecto é suportado por uma arquitectura cliente e servidor. O cliente é uma aplicação web que faz pedidos REST a um backend aplicacional servido por uma base 
                 de dados SQL.
 
                 <h3>Stack</h3>
