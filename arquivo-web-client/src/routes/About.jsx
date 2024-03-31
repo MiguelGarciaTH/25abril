@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const About = () => {
     return (
@@ -29,6 +30,16 @@ const About = () => {
                  com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como 
                  o tema exige.
                 
+                Em particular, queria referir que falhei a menção ou referência de vários dos resistentes que sobreviveram ou não à opressão. No entanto, queria em jeito de desculpa 
+                sugerir a visita ao site do Museu do Aljube onde podem encontrar <Link to="https://www.museudoaljube.pt/centro-de-documentacao/testemunhos/">testemunhos dos que sobreviveram</Link> 
+                e referências aos que <Link to="https://www.museudoaljube.pt/centro-de-documentacao/biografias/">lutaram mas não sobreviveram para contar a história</Link>.
+                podem ser encontrados no site do Museu do Aljube.
+
+                Uma nota final sobre as decisões tomadas. Existem várias personalidades que nem sempre estiveram do lado "certo", ou sempre do lado errado. Ou independentemente do lado (errado) 
+                tiveram contributos enormes para Portugal, por exemplo, Duarte Pacheco. Outras personalidades que sairam como heróis da revolução e que tiveram ligadas a movimentos terroristas no pós-revolução, 
+                por exemplo Spinola ou Otelo. No entanto, por uma questão de categorização e organização tentei colocar estas personalidades no que me pareceu ser "a categoria" mais correcta aos olhos 
+                do tema principal: o 25 de Abril. 
+
                 {/* <h2>Agradecimentos</h2> */}
                 
 

@@ -80,16 +80,19 @@ const Architecture = () => {
                 <h3>Web</h3> 
                 O <strong>Web</strong> é uma aplicação web que apresenta de uma forma estruturada e útil os dados servidos pelo componente REST (9).
 
-                <h2>Limitações</h2>
+                <h2>Desafios e limitações</h2>
                 A primeira limitação identificada neste proejcto é o próprio autor. A sua formação e experiência não abrange áreas como Processamento de 
                 Linguagem Natural (PLN), Inteligência Artificial (IA) e programação Web. Estas três lacunas poderiam tornar pelo menos o trabalho mais
                 interessante e rico. 
 
                 <br /><br />
 
-                Feita esta ressalva listamos algumas das questões que limitam este trabalho:
+                Feita esta ressalva listamos algumas das questões que limitam ou foram mais desafiantes neste trabalho:
                 <br /><br />
                 
+                <strong>Artigos duplicados:</strong> 
+                Foi necessário filtrar artigos para evitar guardar artigos duplicados na BD. A forma encontrada para lidar com este problema foi identificar o URL original do artigo e usar como chave.
+
                 <strong>Tratamento do texto:</strong> 
                 Todos os textos de artigos de imprensa apresentados neste site são textos em bruto recolhidos 
                 pelo Arquivo.pt. 
