@@ -20,7 +20,7 @@ const NavBar = () => {
             <br />
             <Link className="navbar-link" to="/entity/ESCRITORES">PALAVRAS</Link>
             <br />
-            <Link className="navbar-link" to="/entity/JORNALISTAS">ANUNCIANTES</Link>
+            <Link className="navbar-link" to="/entity/JORNALISTAS">COMUNICADORES</Link>
             <br />
             <Link className="navbar-link" to="/entity/OPRESSORES">OPRESSORES</Link>
             <br />
