@@ -59,7 +59,8 @@ const About = () => {
                 <li>Inquietação, inquietação!</li>
                 <li>Avenida da Liberdade</li>
                 <li>Retratos de Abril</li>
-            
+                <li>Clandestinos</li>
+                
                 <h3>Documentários</h3>
                 <li>A Pide Leninha (RTP Play)</li>
                 <li>Prisioneiros de Guerra (RTP Play)</li>
