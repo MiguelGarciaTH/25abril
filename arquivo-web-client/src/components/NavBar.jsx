@@ -16,9 +16,9 @@ const NavBar = () => {
             <br />
             <Link className="navbar-link" to="/entity/RESISTENTES">RESISTENTES</Link>
             <br />
-            <Link className="navbar-link" to="/entity/CANTORES">VOZES</Link>
+            <Link className="navbar-link" to="/entity/CANTORES">CANTORES</Link>
             <br />
-            <Link className="navbar-link" to="/entity/ESCRITORES">PALAVRAS</Link>
+            <Link className="navbar-link" to="/entity/ESCRITORES">ESCRITORES</Link>
             <br />
             <Link className="navbar-link" to="/entity/JORNALISTAS">COMUNICADORES</Link>
             <br />
