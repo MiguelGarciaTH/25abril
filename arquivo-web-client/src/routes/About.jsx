@@ -6,20 +6,19 @@ const About = () => {
         <div>
             <div class="text">
                 <h2>Motivação</h2>
-                <strong>O 25 de Abril de 1974 é o evento mais importante do século XX na História portuguesa. </strong>  
-                Este dia encerrou uma ditadura de durou 41 anos - o Estado Novo - e deu lugar ao regime democrático que prevalece até aos nossos dias.
+                <strong>O 25 de Abril de 1974 encerrou uma ditadura que durou 41 anos - o Estado Novo - e deu lugar ao regime democrático que prevalece até aos nossos dias. </strong>  
+                É por isso, o evento mais importante do século XX na História portuguesa.
+            
                 
                 <br /><br />
-                Neste trabalho, procurámos divulgar os acontecimentos, personalidades, partidos e locais (entidades de pesquisa) que foram actores ou 
-                palco não só da Revolução de Abril, mas também do Estado Novo e do periodo pós-revolucionário. 
-                Em particular, procurámos fazer esta recolha histórica através da imprensa escrita online em vários orgãos de comunicação social de
-                referência.
-                Naturalmente, alguns dos orgãos de comunicação social utilizados neste projecto não são contemporâneos deste periodo histórico. 
-                No entanto, dada a relevância do Estado Novo e do 25 de Abril, têm existido ao longo dos anos muitos artigos sobre estes temas.
+                Este projecto tem como objectivo principal divulgar as personalidades, eventos, partidos, movimentos e locais que foram actores ou palco não só da Revolução de Abril, mas também do Estado Novo e do período pós-revolucionário. 
+                De forma a atingir este objectivo, procurámos na imprensa escrita online de referência artigos que relacionem os objectos em estudo com o tempo histórico da Revolução de Abril.
+                Naturalmente, alguns dos orgãos de comunicação social utilizados neste projecto não são contemporâneos deste periodo histórico, muito menos existia imprensa online na altura. 
+                No entanto, dada a relevância do Estado Novo e do 25 de Abril, existem muitos artigos sobre estes temas desde que existe imprensa online.
 
                 <br /><br />
                 <strong>O Arquivo.pt preserva toda a Web Portuguesa com dados a partir de 1991.</strong> Por esta razão, o Arquivo.pt foi o suporte principal para realizar 
-                este projecto. Através do Arquivo.pt foi possivel andar no tempo e recolher artigos desde que existe imprensa escrita online em Portugal.
+                este projecto. Através do Arquivo.pt foi possivel recuar no tempo e recolher artigos relevantes para o tema desde que existe imprensa escrita online em Portugal.
 
 
                 <br /><br />
@@ -27,16 +26,14 @@ const About = () => {
                 entidades de pesquisa. No que toca às primeiras, que são mais fáceis de listar, foram escolhidas como fontes noticiosas os sites do: 
                 <strong> Público, Diário de Notícias, Jornal de Notícias, Expresso, Observador, SIC Notícias e TSF</strong>. Em relação, às entidades 
                 de pesquisa foram selecionadas com base no conhecimento do autor do tema através de livros, podcasts, documentários, e de conversas 
-                 com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como 
-                 o tema exige.
+                 com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como o tema exige.
                 
-                Em particular, queria referir que falhei a menção ou referência de vários dos resistentes que sobreviveram ou não à opressão. No entanto, queria em jeito de desculpa 
-                sugerir a visita ao site do Museu do Aljube onde podem encontrar <Link to="https://www.museudoaljube.pt/centro-de-documentacao/testemunhos/">testemunhos dos que sobreviveram</Link> 
+                Em particular, queria referir que falhei na menção ou referência de vários dos resistentes que sobreviveram ou não à opressão. No entanto, queria sugerir a visita ao site do Museu do Aljube onde podem encontrar <Link to="https://www.museudoaljube.pt/centro-de-documentacao/testemunhos/">testemunhos dos que sobreviveram</Link> 
                 e referências aos que <Link to="https://www.museudoaljube.pt/centro-de-documentacao/biografias/">lutaram mas não sobreviveram para contar a história</Link>.
                 podem ser encontrados no site do Museu do Aljube.
 
-                Uma nota final sobre as decisões tomadas. Existem várias personalidades que nem sempre estiveram do lado "certo", ou sempre do lado errado. Ou independentemente do lado (errado) 
-                tiveram contributos enormes para Portugal, por exemplo, Duarte Pacheco. Outras personalidades que sairam como heróis da revolução e que tiveram ligadas a movimentos terroristas no pós-revolução, 
+                Uma nota final sobre as decisões tomadas. Existem várias personalidades que nem sempre estiveram do lado "certo", ou sempre do lado errado. Ou independentemente do lado 
+                tiveram contributos enormes para Portugal, por exemplo, Duarte Pacheco. Outras personalidades que sairam como heróis da revolução e que mais tarde estiveram ligadas a movimentos terroristas no pós-revolução, 
                 por exemplo Spinola ou Otelo. No entanto, por uma questão de categorização e organização tentei colocar estas personalidades no que me pareceu ser "a categoria" mais correcta aos olhos 
                 do tema principal: o 25 de Abril. 
 
