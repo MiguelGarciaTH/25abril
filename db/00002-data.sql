@@ -107,6 +107,7 @@ insert into search_entity (name, aliases, type) values
 ('Agostinho Neto', null, 'RESISTENTES'),
 ('Isabel do Carmo', null, 'RESISTENTES'),
 ('Camilo Mortágua', null, 'RESISTENTES'),
+('Salgado Zenha', null, 'RESISTENTES'),
 -- MFA
 ('António de Spínola', 'General Spínola',  'CAPITAES'),
 ('António Ramalho Eanes','Ramalho Eanes', 'CAPITAES'),
@@ -114,7 +115,6 @@ insert into search_entity (name, aliases, type) values
 ('Francisco da Costa Gomes','Costa Gomes', 'CAPITAES'),
 ('Carlos Fabião', null, 'CAPITAES'),
 ('Otelo Saraiva de Carvalho', null, 'CAPITAES'),
-('Salgado Zenha', null, 'CAPITAES'),
 ('Salgueiro Maia', 'Capitão Maia', 'CAPITAES'),
 ('Ernesto Melo Antunes','Melo Antunes', 'CAPITAES'),
 ('Fisher Lopes Pires', null, 'CAPITAES'),
