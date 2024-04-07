@@ -12,9 +12,9 @@ const NavBar = () => {
             <br />
             <br />
             <br />
-            <Link className="navbar-link" to="/entity/CAPITAES">CAPITÃES</Link>
+            <Link className="navbar-link" to="/entity/CAPITAES">MILITARES</Link>
             <br />
-            <Link className="navbar-link" to="/entity/RESISTENTES">MILITARES</Link>
+            <Link className="navbar-link" to="/entity/RESISTENTES">RESISTENTES</Link>
             <br />
             <Link className="navbar-link" to="/entity/CANTORES">CANTORES</Link>
             <br />
