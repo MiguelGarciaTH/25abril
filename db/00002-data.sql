@@ -32,7 +32,7 @@ insert into search_entity (name, aliases, type) values
 ('Fausto Bordalo Dias', null, 'CANTORES'),
 ('José Mário Branco', 'Zé Mário Branco', 'CANTORES'),
 ('Adriano Correia de Oliveira', null, 'CANTORES'),
-('Fernando Tordo', null, 'CANTORES'),
+('Rui Mingas', null, 'CANTORES'),
 ('Francisco Fanhais', 'Padre Fanhais', 'CANTORES'),
 ('Janita Salomé', null, 'CANTORES'),
 ('José Barata-Moura', 'José Barata Moura', 'CANTORES'),
@@ -59,6 +59,7 @@ insert into search_entity (name, aliases, type) values
 ('Leite de Vasconcelos', null, 'JORNALISTAS'),
 ('Rádio Clube Português', 'RCP', 'JORNALISTAS'),
 ('Rádio Renascença', null, 'JORNALISTAS'),
+('Página 1', null, 'JORNALISTAS'),
 --('Seara Nova', null, 'JORNAIS'),
 --('República', null, 'JORNAIS'),
 --('O Século Ilustrado', null, 'JORNAIS'),
@@ -93,6 +94,8 @@ insert into search_entity (name, aliases, type) values
 ('Margarida Tengarrinha',null, 'RESISTENTES'),
 ('Catarina Eufémia', null, 'RESISTENTES'),
 ('José Dias Coelho', null, 'RESISTENTES'),
+('Samora Machel', null , 'RESISTENTES'),
+('Jonas Savimbi', null, 'RESISTENTES'),
 ('José Manuel Tengarrinha', null, 'RESISTENTES'),
 ('Domingos Abrantes', null,  'RESISTENTES'),
 ('Henrique Galvão', null, 'RESISTENTES'),
@@ -162,6 +165,8 @@ insert into search_entity (name, aliases, type) values
 ('Massacre de WiriyAmu', null, 'EVENTOS'),
 ('Crise Académica', 'Lutas Académicas', 'EVENTOS'),
 ('Fuga de Peniche',null, 'EVENTOS'),
+('Operação Vagô', null, 'EVENTOS'),
+('Coliseu dos Recreios', '29 de Março, o primeiro dos cantos livres', 'EVENTOS'),
 ('Processo Revolucionário em Curso', 'PREC', 'EVENTOS');
 
 -- adds missing data from external online sources
