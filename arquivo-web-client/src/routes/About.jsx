@@ -6,7 +6,7 @@ const About = () => {
         <div>
             <div class="text">
                 <h2>Motivação</h2>
-                <strong>O 25 de Abril de 1974 encerrou uma ditadura que durou 41 anos - o Estado Novo - e deu lugar ao regime democrático que prevalece até aos nossos dias. </strong>  
+                <strong>O 25 de Abril de 1974 encerrou um periodo 48 anos em que Portugal viveu em ditadura (7 anos de Ditudura Militar seguidos de 41 anos de Estado Novo), dando lugar ao regime democrático que prevalece até aos nossos dias. </strong>  
                 É por isso, o evento mais importante do século XX na História portuguesa.
             
                 
@@ -40,7 +40,8 @@ const About = () => {
                 por exemplo Spinola ou Otelo. No entanto, por uma questão de categorização e organização tentei colocar estas personalidades no que me pareceu ser "a categoria" mais correcta aos olhos 
                 do tema principal: o 25 de Abril. 
 
-                {/* <h2>Agradecimentos</h2> */}
+                <h2>Agradecimentos</h2>
+                Quero agradecer a duas pessoas que viveram o 25 de Abril na juventude e dispensaram o seu tempo para rever este projecto, dar sugestões de nomes em falta e outras melhorias, o meu muito obrigado ao Jorge Martins e ao José Oliveira.
                 
 
                 <h2>Referências</h2>
