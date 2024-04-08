@@ -18,7 +18,9 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             inner join Article a on a.id = asa.article.id
             inner join Site s on s.id = a.site.id
             where asa.searchEntity.id = ?1
+            and asa.score > 5
             order by asa.score desc
+            limit 1000;
             """)
     List<ArticleRecord> findByAllBySearchEntityId(int entityId);
 
@@ -29,7 +31,9 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             inner join Site s on s.id = a.site.id
             where asa.searchEntity.id = ?1
             and asa.article.id = ?2
+            and asa.score > 5
             order by asa.score desc
+            limit 1000;
             """)
     ArticleRecord findByAllBySearchEntityIdAndArticleId(int entityId, int articleId);
 
@@ -38,6 +42,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             select count(aes.article_id) 
             from article_search_entity_association aes
             where aes.search_entity_id = ?1
+            and asa.score > 5
+            limit 1000;
             """)
     int countByAllBySearchEntityId(int entityId);
 
