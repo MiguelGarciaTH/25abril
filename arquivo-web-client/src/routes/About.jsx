@@ -41,7 +41,7 @@ const About = () => {
                 do tema principal: o 25 de Abril. 
 
                 <h2>Agradecimentos</h2>
-                Quero agradecer a duas pessoas que viveram o 25 de Abril na juventude e dispensaram o seu tempo para rever este projecto, dar sugestões de nomes em falta e outras melhorias, o meu muito obrigado ao Jorge Martins e ao José Oliveira.
+                Quero agradecer a duas pessoas que viveram o 25 de Abril na juventude e dispensaram o seu tempo para rever este projecto, dar sugestões de nomes em falta e outras melhorias, o meu muito obrigado ao historiador Jorge Martins e ao meu mestre José Oliveira.
                 
 
                 <h2>Referências</h2>
