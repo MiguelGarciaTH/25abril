@@ -11,37 +11,74 @@ const About = () => {
             
                 
                 <br /><br />
-                Este projecto tem como objectivo principal divulgar as personalidades, eventos, partidos, movimentos e locais que foram actores ou palco não só da Revolução de Abril, mas também do Estado Novo e do período pós-revolucionário. 
-                De forma a atingir este objectivo, procurámos na imprensa escrita online de referência artigos que relacionem os objectos em estudo com o tempo histórico da Revolução de Abril.
-                Naturalmente, alguns dos orgãos de comunicação social utilizados neste projecto não são contemporâneos deste periodo histórico, muito menos existia imprensa online na altura. 
-                No entanto, dada a relevância do Estado Novo e do 25 de Abril, existem muitos artigos sobre estes temas desde que existe imprensa online.
+                <strong>O principal objectivo deste projecto é promover a memória do que foi a divulgação do maior acontecimento do secúlo XX em Portugal. </strong>  
+                Além disso, este projecto também pretende destacar a relevância da imprensa online como um arquivo histórico através de um olhar jornalistico. 
+                A imprensa online é por excelência um meio de comunicação acessivel, em particular aos mais novos. 
+                Por isso, é de relevar a importância da imprensa como a fonte de informação verdadeira e isenta. 
+                E claro, este projecto também serve de homenagem aos que lutaram por um Portugal livre e sem o qual iniciativas como o Prémio Arquivo.pt não existiriam.
 
                 <br /><br />
-                <strong>O Arquivo.pt preserva toda a Web Portuguesa com dados a partir de 1991.</strong> Por esta razão, o Arquivo.pt foi o suporte principal para realizar 
-                este projecto. Através do Arquivo.pt foi possivel recuar no tempo e recolher artigos relevantes para o tema desde que existe imprensa escrita online em Portugal.
+                <strong>O Arquivo.pt preserva toda Web Portuguesa desde 1991. </strong>     
+                Neste projecto o Arquivo.pt funcionou como um motor de busca de artigos de jornais, visto que é possível fazer pesquisas por um termo, num determinado site e num intervalo temporal.
+                Sem este trabalho do Arquivo.pt seria impossível recolher alguns dos artigos que já não estão acessiveis através dos sites actuais. 
+                O Arquivo.pt foi por isso a principal fonte de dados e sem ele seria muito complicado aceder a todos os diferentes sites e conseguir "viajar no tempo".
 
 
                 <br /><br />
-                O resultado final deste projecto é futro de várias decisões pessoais, em particular na selecção das fontes noticiosas e das 
-                entidades de pesquisa. No que toca às primeiras, que são mais fáceis de listar, foram escolhidas como fontes noticiosas os sites do: 
-                <strong> Público, Diário de Notícias, Jornal de Notícias, Expresso, Observador, SIC Notícias e TSF</strong>. Em relação, às entidades 
-                de pesquisa foram selecionadas com base no conhecimento do autor do tema através de livros, podcasts, documentários, e de conversas 
-                 com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como o tema exige.
+                <strong>O principal resultado foi a criação de um arquivo temático com uma visão jornalista da história do 25 de Abril.</strong> 
+                O número considerável de artigos que foram escritos ao longo destes anos na imprensa portuguesa sobre o 25 de Abril (de uma forma geral), contribuiram para que este 
+                resultado seja (1) mais completo pois tem uma cobertura maior e (2) mais rico pois é possivel cruzar diferentes fontes para a mesma história.
+                Quando iniciei o projecto não esperava encontrar tantos resultados. 
+
+
+                O resultado final deste projecto é futro de várias decisões pessoais, em particular na selecção das fontes noticiosas. 
+                Fram escolhidas como fontes noticiosas os sites do: 
+                <strong> Público, Diário de Notícias, Jornal de Notícias, Expresso, Observador, SIC Notícias e TSF</strong>.
                 
 
-                <br /><br />
-                Em particular, queria referir que falhei na menção ou referência de vários dos resistentes que sobreviveram ou não à opressão. No entanto, queria sugerir a visita ao site do Museu do Aljube onde podem encontrar <Link to="https://www.museudoaljube.pt/centro-de-documentacao/testemunhos/">testemunhos dos que sobreviveram</Link> 
-                e referências aos que <Link to="https://www.museudoaljube.pt/centro-de-documentacao/biografias/">lutaram mas não sobreviveram para contar a história</Link>.
-            
+                <h2>Alguns dados</h2>
+                Numéro de entidades selecionadas 122 distribuidas por categorias:
+                <li>MILITARES	14</li>
+                <li>CANTORES	13</li>
+                <li>EVENTOS	    14</li>
+                <li>MOVIMENTOS	25</li>
+                <li>RESISTENTES	18</li>
+                <li>ESCRITORES	8</li>
+                <li>OPRESSORES	22</li>
+                <li>JORNALISTAS	8</li>
+                
+                <br/>
+                Foram processados e guardados 12829 artigos (ou seja artigos com relevância) distribuidos da seguinte forma pelos sites:
+                <li>Diário de Notícias	1309</li>
+                <li>TSF	509</li>
+                <li>Expresso	171</li>
+                <li>Público	566</li>
+                <li>Observador	7441</li>
+                <li>Jornal de Notícias	588</li>
+                <li>SIC Notícias	2245 </li>
+
+                <h2>Considerações pessoais</h2>
+                Em relação, às entidades de pesquisa foram selecionadas com base no conhecimento do autor do tema através de livros, podcasts, documentários, e de conversas
+                com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como o tema exige.
+
 
                 <br /><br />
-                Uma nota final sobre as decisões tomadas. Existem várias personalidades que nem sempre estiveram do lado "certo", ou sempre do lado errado. Ou independentemente do lado 
-                tiveram contributos enormes para Portugal, por exemplo, Duarte Pacheco. Outras personalidades que sairam como heróis da revolução e que mais tarde estiveram ligadas a movimentos terroristas no pós-revolução, 
-                por exemplo Spinola ou Otelo. No entanto, por uma questão de categorização e organização tentei colocar estas personalidades no que me pareceu ser "a categoria" mais correcta aos olhos 
-                do tema principal: o 25 de Abril. 
+                Em particular, queria referir que falhei na menção ou referência de vários dos resistentes que sobreviveram ou não à opressão. 
+                No entanto, queria sugerir a visita ao site do Museu do Aljube onde podem encontrar <Link to="https://www.museudoaljube.pt/centro-de-documentacao/testemunhos/">testemunhos dos que sobreviveram </Link>
+                 e referências aos que <Link to="https://www.museudoaljube.pt/centro-de-documentacao/biografias/">lutaram mas não sobreviveram para contar a história</Link>.
 
+
+                <br /><br />
+                Uma nota final sobre as personalidades selecionadas. 
+                Existem várias personalidades que nem sempre estiveram do lado "certo", ou sempre do lado errado. 
+                Ou independentemente do lado onde estiveram,
+                tiveram contributos enormes para Portugal, por exemplo, Duarte Pacheco. 
+                Outras personalidades que sairam como heróis da revolução e que mais tarde estiveram ligadas a movimentos terroristas no pós-revolução, por exemplo Spinola ou Otelo. 
+                No entanto, por uma questão de categorização e organização tentei colocar estas personalidades no que me pareceu ser "a categoria" mais correcta tendo em conta o tema principal: o 25 de Abril. 
+                
                 <h2>Agradecimentos</h2>
-                Quero agradecer a duas pessoas que viveram o 25 de Abril na juventude e dispensaram o seu tempo para rever este projecto, dar sugestões de nomes em falta e outras melhorias, o meu muito obrigado ao historiador Jorge Martins e ao meu mestre José Oliveira.
+                Quero agradecer ao historiador Jorge Martins e ao meu mestre José Oliveira, duas pessoas que viveram o 25 de Abril durante a juventude e dispensaram o seu tempo para 
+                sugerir nomes e melhorias.
                 
 
                 <h2>Referências</h2>

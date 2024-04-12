@@ -12,6 +12,8 @@ const NavBar = () => {
             <br />
             <br />
             <br />
+            <Link className="navbar-link" to="/about">SOBRE</Link>
+            <br />
             <Link className="navbar-link" to="/entity/CAPITAES">MILITARES</Link>
             <br />
             <Link className="navbar-link" to="/entity/RESISTENTES">RESISTENTES</Link>
@@ -27,8 +29,6 @@ const NavBar = () => {
             <Link className="navbar-link" to="/entity/MOVIMENTOS">MOVIMENTOS</Link>
             <br />
             <Link className="navbar-link" to="/entity/EVENTOS">EVENTOS</Link>
-            <br />
-            <Link className="navbar-link" to="/about">SOBRE</Link>
             <br />
             <Link className="navbar-link" to="/architecture">DETALHES</Link>
         </nav>
