@@ -32,7 +32,7 @@ insert into search_entity (name, aliases, type) values
 ('Fausto Bordalo Dias', null, 'CANTORES'),
 ('José Mário Branco', 'Zé Mário Branco', 'CANTORES'),
 ('Adriano Correia de Oliveira', null, 'CANTORES'),
-('Rui Mingas', null, 'CANTORES'),
+('Ruy Mingas', 'Rui Mingas', 'CANTORES'),
 ('Francisco Fanhais', 'Padre Fanhais', 'CANTORES'),
 ('Janita Salomé', null, 'CANTORES'),
 ('José Barata-Moura', 'José Barata Moura', 'CANTORES'),
@@ -41,7 +41,9 @@ insert into search_entity (name, aliases, type) values
 ('Vitorino Salomé', null, 'CANTORES'),
 ('José Jorge Letria', 'Jorge Letria', 'CANTORES'),
 ('José Afonso', 'Zeca Afonso', 'CANTORES'),
-('Fernando Lopes Graça', null, 'CANTORES'),
+('Fernando Lopes Graça', 'Fernando Lopes-Graça', 'CANTORES'),
+('Carlos Paredes', null, 'CANTORES'),
+('Paulo de Carvalho', null, 'CANTORES'),
 ---- ESCRITORES
 ('Natália Correia', null,  'ESCRITORES'),
 ('Maria Teresa Horta',  'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
@@ -53,6 +55,7 @@ insert into search_entity (name, aliases, type) values
 ('Bernardo Santareno', null, 'ESCRITORES'),
 ('José Gomes Ferreira', null ,'ESCRITORES'),
 ('Soeiro Pereira Gomes', null, 'ESCRITORES'),
+('Ferreira de Castro', null, 'ESCRITORES'),
 -- JORNALISTAS
 ('Joaquim Furtado', null,  'JORNALISTAS'),
 ('Raul Rego', null,  'JORNALISTAS'),
@@ -64,7 +67,8 @@ insert into search_entity (name, aliases, type) values
 ('Rádio Renascença', null, 'JORNALISTAS'),
 ('Carlos Albino', null, 'JORNALISTAS'),
 ('Álvaro Guerra', null, 'JORNALISTAS'),
-('Página 1', null, 'JORNALISTAS'),
+('Abel Manta', 'Abel Abrantes Manta', 'JORNALISTAS'),
+--('Página 1', null, 'JORNALISTAS'),
 --('Seara Nova', null, 'JORNAIS'),
 --('República', null, 'JORNAIS'),
 --('O Século Ilustrado', null, 'JORNAIS'),
@@ -73,6 +77,7 @@ insert into search_entity (name, aliases, type) values
 --('A Mosca', null, 'JORNAIS'),
 --- OPRESSAO
 ('Barbieri Cardoso', null, 'OPRESSORES'),
+('Secretariado Nacional de Informação', 'SNI', 'OPRESSORES'),
 ('Pedro Feytor Pinto', null, 'OPRESSORES'),
 ('António Rosa Casaco', null, 'OPRESSORES'),
 ('Alexandre Carvalho Neto', null, 'OPRESSORES'),
@@ -90,15 +95,18 @@ insert into search_entity (name, aliases, type) values
 ('Eduardo Fontes', null, 'OPRESSORES'),
 ('Adelino da Silva Tinoco', 'Inspector Tinoco', 'OPRESSORES'),
 ('Madalena Oliveira', 'Leninha, PIDE Leninha', 'OPRESSORES'),
-('Polícia Internacional e de Defesa do Estado','PIDE, DGS, Direcção-Geral de Segurança, P.I.D.E, Rua António Maria cardoso', 'OPRESSORES'),
+('Polícia Internacional e de Defesa do Estado','PIDE, PIDE/DGS, Direcção-Geral de Segurança, P.I.D.E, Rua António Maria cardoso', 'OPRESSORES'),
 ('Prisão de Caxias', null, 'OPRESSORES'),
 ('Prisão do Aljube', null,  'OPRESSORES'),
 ('Prisão de Peniche', null, 'OPRESSORES'),
+('António Joaquim Tavares Ferro', 'António Ferro', 'OPRESSORES'),
 ('Tarrafal', 'Campo de Concentração do Tarrafal, Campo da Morte Lenta', 'OPRESSORES'),
-('União Nacional', 'UN, Ação Nacional Popular', 'MOVIMENTOS'),
+('União Nacional', 'UN, Ação Nacional Popular', 'OPRESSORES'),
 --- RESISTENTES
 ('Margarida Tengarrinha',null, 'RESISTENTES'),
 ('Catarina Eufémia', null, 'RESISTENTES'),
+('Aurora Rodrigues', null, 'RESISTENTES'),
+('Conceição Matos', null, 'RESISTENTES'),
 ('José Dias Coelho', null, 'RESISTENTES'),
 ('Samora Machel', null , 'RESISTENTES'),
 ('Jonas Savimbi', null, 'RESISTENTES'),
@@ -113,12 +121,17 @@ insert into search_entity (name, aliases, type) values
 ('Manuel Alegre', null, 'RESISTENTES'),
 ('Humberto Delgado', 'General sem medo', 'RESISTENTES'),
 ('Amílcar Cabral', null, 'RESISTENTES'),
+('Nuno Teotónio Pereira', null, 'RESISTENTES'),
+('Jorge Sampaio', null, 'RESISTENTES'),
+('Alípio de Freitas', null, 'RESISTENTES'),
 ('Agostinho Neto', null, 'RESISTENTES'),
 ('Isabel do Carmo', null, 'RESISTENTES'),
 ('Camilo Mortágua', null, 'RESISTENTES'),
 ('Salgado Zenha', null, 'RESISTENTES'),
+('Maria Lamas', null, 'RESISTENTES'),
+('Emídio Santana', null, 'RESISTENTES'),
 -- MFA
-('António de Spínola', 'General Spínola',  'CAPITAES'),
+('António de Spínola', 'General Spínola, Spínola',  'CAPITAES'),
 ('António Ramalho Eanes','Ramalho Eanes', 'CAPITAES'),
 ('Vasco Lourenço', null, 'CAPITAES'),
 ('Francisco da Costa Gomes','Costa Gomes', 'CAPITAES'),
@@ -131,8 +144,9 @@ insert into search_entity (name, aliases, type) values
 ('Jaime Neves', null, 'CAPITAES'),
 ('Vasco Gonçalves', null, 'CAPITAES'),
 ('José Pinheiro de Azevedo','Pinheiro de Azevedo', 'CAPITAES'),
-('Vitor Manuel Rodrigues Alves', 'Vitor Alves', 'CAPITAES'),
+('Vitor Alves', 'Vitor Manuel Rodrigues Alves', 'CAPITAES'),
 ('Capitães de Abril', 'Movimento dos Capitães', 'CAPITAES'),
+--('Bravia Chaimite', null, 'CAPITAES'),
 --- Movimentos
 ('Partido Comunista dos Trabalhadores Portugueses', 'MRPP', 'MOVIMENTOS'),
 ('Frente de Libertação de Moçambique', 'FRELIMO','MOVIMENTOS'),
@@ -179,6 +193,7 @@ insert into search_entity (name, aliases, type) values
 ('Crise Académica', 'Lutas Académicas', 'EVENTOS'),
 ('Fuga de Peniche',null, 'EVENTOS'),
 ('Operação Vagô', null, 'EVENTOS'),
+('Cascais Jazz', 'Festival de Jazz de Cascais 1971, Cascais Jazz 1971, Cascais Jazz 71', 'EVENTOS'),
 ('Coliseu dos Recreios', '29 de Março, o primeiro dos cantos livres', 'EVENTOS'),
 ('Processo Revolucionário em Curso', 'PREC', 'EVENTOS');
 
@@ -199,7 +214,7 @@ update search_entity set biography = 'Vasco Correia Lourenço GCIH • GCL (Lous
 update search_entity set biography = 'Camilo Tavares Mortágua • GOL (Oliveira de Azeméis, 29 de janeiro de 1934) é um antifascista português que lutou contra a ditadura do Estado Novo, tendo militado na Liga de Unidade e Acção Revolucionária (LUAR). Em junho de 2005, foi condecorado com o grau de Grande Oficial da Ordem da Liberdade da República Portuguesa.' where name ='Camilo Mortágua';
 update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/7/76/Carlos_Antunes.jpg' where name = 'Carlos Antunes';
 update search_entity set image_url = 'https://www.avante.pt/images/cms-image-000024515.jpg' where name = 'Catarina Eufémia';
-update search_entity set image_url = 'https://pt.wikipedia.org/wiki/Domingos_Abrantes#/media/Ficheiro:DomingosAbrantes1980(NL).jpg' where name = 'Domingos Abrantes';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c0/DomingosAbrantes1980%28NL%29.jpg' where name = 'Domingos Abrantes';
 update search_entity set image_url = 'https://cdn-images.rtp.pt/arquivo/2020/02/Delgado0.jpg?crop=top&fit=crop&h=461&ixlib=php-1.1.0&w=860' where name = 'Humberto Delgado';
 update search_entity set image_url = 'https://www.museudoneorealismo.pt/thumbs/cmvfxira/uploads/writer_file/image/28879/jose_dias_coelho_1_1200_2500.jpg' where name = 'José Dias Coelho';
 update search_entity set image_url = 'https://cdn.britannica.com/00/138900-050-BAE45D4E/Mario-Soares-1974.jpg' where name = 'Mário Soares';
@@ -265,6 +280,7 @@ update search_entity set biography = 'Formado após o final da II Guerra Mundial
 update search_entity set biography = 'O Movimento Maria da Fonte ou Plano Maria da Fonte foi uma organização terrorista portuguesa de extrema-direita. Ativa durante o Verão Quente de 1975 na zona do Minho, foi responsável por diversos assaltos e destruição de sedes de partidos de esquerda, principalmente as do Partido Comunista Português. O nome da organização foi inspirado na Revolução da Maria da Fonte, ocorrida em 1846, e alegava ser "o braço armado da Igreja nortenha contra as forças de esquerda". Entre os organizadores estavam o jornalista Paradela de Abreu, Sanches Osório, Jorge Jardim e o cónego Eduardo Melo Peixoto, este por indicação do Arcebispo de Braga D. Francisco Maria da Silva. Era além disso apoiada por algumas pessoas ligadas à sociedade civil, nomeadamente alguns empresário do Norte que financiaram o movimento. ' where name = 'Movimento Maria da Fonte';
 update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Movimento Maria da Fonte';
 update search_entity set biography = 'O Partido Comunista dos Trabalhadores Portugueses (PCTP/MRPP) é um partido político de Portugal, marxista-leninista com inspiração maoísta fundado em 18 de setembro de 1970, foi registado oficialmente no tribunal constitucional em 18 de fevereiro de 1975, passou a chamar-se PCTP em 26 de dezembro de 1976 a deixando o nome Movimento Reorganizativo do Partido do Proletariado (MRPP).' where name = 'Partido Comunista dos Trabalhadores Portugueses';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/PCTP-MRPP_logo.png/1024px-PCTP-MRPP_logo.png' where name = 'Partido Comunista dos Trabalhadores Portugueses';
 update search_entity set biography = 'O Partido Comunista Português (PCP) é um partido político de inspiração marxista-leninista e socialista, organizado no molde do centralismo democrático. É um dos partidos comunistas mais fortes da Europa Ocidental e o mais antigo partido político português com existência ininterrupta. O espectro político do PCP é definido como sendo de esquerda a extrema-esquerda. Desde 1987, concorre a quaisquer eleições nacionais, autárquicas e europeias em coligação com o Partido Ecologista "Os Verdes" (PEV), reunidos na Coligação Democrática Unitária (CDU). ' where name = 'Partido Comunista Português';
 update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/CDS_%E2%80%93_People%27s_Party_logo.svg/1024px-CDS_%E2%80%93_People%27s_Party_logo.svg.png' where name = 'Partido do Centro Democrático Social';
 update search_entity set biography = 'O CDS – Partido Popular (CDS–PP) é um partido político português conservador inspirado pela democracia cristã, aberto também a liberais. Fundado em 19 de Julho de 1974, com o nome Partido do Centro Democrático Social (CDS), por Diogo Freitas do Amaral, Adelino Amaro da Costa, Basílio Horta, Victor Sá Machado, Valentim Xavier Pintado, João Morais Leitão e João Porto. Mais tarde, mudaria o nome apenas para Partido Popular (mantendo a sigla CDS–PP), e depois para a denominação utilizada presentemente. ' where name = 'Partido do Centro Democrático Social';
@@ -304,11 +320,32 @@ update search_entity set biography = 'José Manuel Marques do Carmo Mendes Tenga
 update search_entity set biography = 'O Rádio Clube Português foi originalmente uma emissora de radiodifusão fundada a 22 de novembro de 1931[1]. Mais tarde, Rádio Clube foi a designação de uma estação de rádio do Grupo Media Capital e, na atualidade, recuperando o seu nome original, é uma estação de rádio sediada em Newark (Nova Jérsia), nos Estados Unidos da América, dedicada às comunidades da diáspora portugues' where name = 'Rádio Clube Português';
 update search_entity set image_url = 'https://i.ytimg.com/vi/ecPdgi0ZOAU/maxresdefault.jpg' where name ='Rádio Clube Português';
 update search_entity set image_url = 'https://static.wikia.nocookie.net/logopedia/images/f/fb/R%C3%A1dio_Renascen%C3%A7a_1969.svg' where name = 'Rádio Renascença';
-update search_entity set biography = 'Francisco Júlio Amorim Fanhais[1] OL (Vila Nova da Barquinha, Praia do Ribatejo, 17 de maio de 1941), mais conhecido por Francisco Fanhais, é um ex-sacerdote católico e cantor português, que em 1995 foi feito Oficial da Ordem da Liberdade, pelo governo português.' where name = 'Francisco Fanhais';
+update search_entity set biography = 'Francisco Júlio Amorim Fanhais OL (Vila Nova da Barquinha, Praia do Ribatejo, 17 de maio de 1941), mais conhecido por Francisco Fanhais, é um ex-sacerdote católico e cantor português, que em 1995 foi feito Oficial da Ordem da Liberdade, pelo governo português.' where name = 'Francisco Fanhais';
 update search_entity set biography = 'Janita Salomé (nascido João Eduardo Salomé Vieira[1] em Redondo, 17 de maio de 1947) é um cantor português. É irmão de Vitorino Salomé. ' where name = 'Janita Salomé';
-update search_entity set biography = 'Luís Fernando Castelo Branco Cília[1] OL (Nova Lisboa, Angola, 1 de fevereiro de 1943) é um compositor e intérprete musical português. Luís Cília é um cantor de intervenção que no exílio, em França, denunciou a guerra colonial e a falta de liberdade em Portugal. Uma das suas músicas desse período mais conhecidas, Avante camarada, tornou-se uma espécie de segundo hino do Partido Comunista Português.' where name = 'Luís Cília';
+update search_entity set biography = 'Luís Fernando Castelo Branco Cília OL (Nova Lisboa, Angola, 1 de fevereiro de 1943) é um compositor e intérprete musical português. Luís Cília é um cantor de intervenção que no exílio, em França, denunciou a guerra colonial e a falta de liberdade em Portugal. Uma das suas músicas desse período mais conhecidas, Avante camarada, tornou-se uma espécie de segundo hino do Partido Comunista Português.' where name = 'Luís Cília';
 update search_entity set biography =  'Vitorino Salomé Vieira (born 11 July 1942), commonly known simply as Vitorino, is a Portuguese singer-songwriter.[1] His music combines the traditional music of his native region of Alentejo and urban popular song.' where name ='Vitorino Salomé';
 update search_entity set biography = 'Com a implantação do Estado Novo Português, o reduto sul do forte passou a ser utilizado como prisão política (24 de janeiro de 1935), tendo se destacado como a que maior número de presos políticos acolheu até à sua desativação com a Revolução dos Cravos (1974). A fuga mais emblemática ocorreu a 4 de Dezembro de 1961, quando oito dirigentes e militantes do PCP (designadamente Domingos Abrantes, que em 2013 contou, no Museu do Caramulo, os detalhes da fuga[1]) ali presos conseguiram escapar utilizando um Chrysler Imperial blindado que estivera ao serviço de Salazar. 'where name = 'Prisão de Caxias';
 update search_entity set biography = 'Na sequência do golpe militar de 28 de maio de 1926, a Fortaleza e Peniche receberam presos de natureza política e pessoas com residência controlada' where name = 'Prisão de Peniche';
 update search_entity set biography = 'Está instalado na cadeia do Aljube, situada em Lisboa, na freguesia de Santa Maria Maior, anterior freguesia da Sé, que foi um estabelecimento prisional que recebeu presos do foro eclesiástico até 1820, mulheres acusadas de delitos comuns até aos finais da década de 1920 e presos políticos do Estado Novo a partir de 1928 até ao seu encerramento em 1965. Foi posteriormente adaptado para presos de delito comum e ainda utilizado para instalação de serviços do Ministério da Justiça. ' where name = 'Prisão do Aljube';
 update search_entity set biography = 'O Campo de Concentração do Tarrafal, também designado Campo da Morte Lenta, é um campo de concentração situado na aldeia de Chão Bom, no Concelho de Tarrafal, na ilha de Santiago em Cabo Verde. Foi estabelecido em 1936, durante um processo de reorganização do sistema prisional do Estado Novo, com o objetivo de encarcerar presos políticos e sociais. A localização foi escolhida de forma estratégica, tanto por ser perfeita para que os testemunhos não viessem a público, tanto por ter um clima insalubre, com pouca água potável, e muitos mosquitos em épocas chuvosas, que facilitavam o aparecimento de doenças. O seu principal objetivo era aniquilar física e psicologicamente os opositores portugueses e africanos à ditadura Salazarista, isolando-os do resto mundo em condições subhumanas de cativeiro, maus tratos e insalubridade.' where name ='Tarrafal';
+update search_entity set biography = 'Vítor Manuel Rodrigues Alves GCL (Mafra, 30 de Setembro de 1935 — Lisboa, 9 de Janeiro de 2011) foi um militar português.' where name = 'Vitor Alves';
+update search_entity set image_url = 'https://pt.wikipedia.org/wiki/V%C3%ADtor_Alves#/media/Ficheiro:V%C3%ADtor_Alves.jpg' where name = 'Vitor Alves';
+update search_entity set biography = 'Emídio Santana (Lisboa, 4 de Julho de 1906 — Lisboa, 16 de Outubro de 1988) foi um dos mais importantes militantes portugueses do anarcossindicalismo nos anos 20, durante a clandestinidade e o pós-25 de Abril. Foi autor de diversos artigos e ensaios sobre o anarcossindicalismo e o mutualismo.' where name = 'Emídio Santana';
+update search_entity set image_url = 'https://toponimialisboa.files.wordpress.com/2016/03/rua-emidio-santana-anos-80.jpg' where name = 'Emídio Santana';
+update search_entity set image_url = 'https://cdn.maxima.pt/images/2020-09/img_1240x2000$2020_09_22_10_49_15_419774.jpg' where name ='Isabel do Carmo';
+update search_entity set image_url = 'https://eumoceano.pt/wp-content/uploads/2022/06/maria-lamas-e-um-oceano-eduardo-gageiro3.jpg' where name = 'Maria Lamas';
+update search_entity set image_url = 'https://comunidadeculturaearte.com/wp-content/uploads/2017/02/Captura-de-ecra-2022-07-23-as-10.29.29-e1658568602379.png' where name = 'Carlos Paredes';
+update search_entity set image_url = 'https://codaxmusic.com/wp-content/uploads/2021/11/Fernando-Lopes-Graca-na-sua-casa-da-Parede-1980-fotografia-de-Augusto-Cabrita-fundo-FLG-MMP-500.jpg' where name = 'Fernando Lopes Graça';
+update search_entity set biography = 'Fernando Lopes-Graça GOSE • GCIH (Tomar, 17 de dezembro de 1906 — Parede, Cascais, 27 de novembro de 1994) foi um compositor, musicólogo, pianista, maestro, professor, investigador, teórico, crítico de arte e militante do Partido Comunista Português.[1] É considerado um dos maiores compositores e musicólogos portugueses do século XX' where name ='Fernando Lopes Graça';
+update search_entity set image_url = 'https://i.discogs.com/PmrbaHF_WP13_VHi9MfkzK7TIxfKM0VsjOdULminR7k/rs:fit/g:sm/q:90/h:351/w:408/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9BLTk4Mzk2/My0xMzAyODgxNTc4/LmpwZWc.jpeg' where name = 'Paulo de Carvalho';
+update search_entity set image_url = 'https://www.portaldaliteratura.com/assets/files_autores/246.webp' where name = 'José Gomes Ferreira';
+update search_entity set image_url = 'https://www.museudoaljube.pt/wp-content/uploads/2019/02/2019_02_19_IAR_SPG_Img-site.jpg' where name ='Soeiro Pereira Gomes';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Antonio_Ferro.jpg/1024px-Antonio_Ferro.jpg' where name = 'António Joaquim Tavares Ferro';
+update search_entity set image_url = 'https://www.escritas.org/autores/alvaro-guerra.webp' where name = 'Álvaro Guerra';
+update search_entity set biography = 'Álvaro Manuel Soares Guerra (Vila Franca de Xira, 19 de outubro de 1936 — Vila Franca de Xira, 18 de abril de 2002) foi um jornalista, diplomata[1] e um importante escritor português do século XX. Formado na Faculdade de Letras da Universidade de Lisboa; foi fundador do jornal "A Luta" e embaixador de Portugal em Estocolmo.' where name = 'Álvaro Guerra';
+update search_entity set image_url = 'https://paigc.gw/wp-content/uploads/2021/04/PAIGC_LOGO.jpg' where name = 'Partido Africano para a Independência da Guiné e Cabo Verde';
+update search_entity set biography = 'O Partido Africano da Independência da Guiné e Cabo Verde, também conhecido pela sigla PAIGC, foi o movimento que organizou a luta pela independência da Guiné Portuguesa (Guiné-Bissau) e de Cabo Verde, que eram colónias de Portugal. Após o fim da guerra de independência, o PAIGC tornou-se um dos grandes partidos políticos da Guiné-Bissau.' where name = 'Partido Africano para a Independência da Guiné e Cabo Verde';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Unitalogo.png' where name = 'União Nacional para a Independência Total de Angola';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Movimento_Democr%C3%A1tico_de_Liberta%C3%A7%C3%A3o_de_Portugal.svg/1280px-Movimento_Democr%C3%A1tico_de_Liberta%C3%A7%C3%A3o_de_Portugal.svg.png' where name = 'Movimento Democrático de Libertação de Portugal';
+update search_entity set biography = 'O Movimento Democrático de Libertação de Portugal (MDLP) foi uma organização terrorista portuguesa ativa durante o período que se seguiu à revolução de 25 de abril de 1974.[1] Entre as ações atribuídas ao MDLP estão uma tentativa de golpe de estado em 11 de março de 1975, uma vaga de atentados à bomba a sedes de partidos de esquerda no início de 1976 e o atentado à bomba que vitimou o candidato a deputado Padre Max e uma estudante que o acompanhava.[1] O MDLP estava ligado ao Movimento Maria da Fonte e ao Exército de Libertação de Portugal, com o qual partilhava fontes, colaboradores e patrocinadores.'  where name = 'Movimento Democrático de Libertação de Portugal';
+update search_entity set biography = 'A Liga Comunista Internacionalista (LCI) foi um partido português fundado em 1973. Considera-se como secção portuguesa da IV Internacional, de cariz trotskista. Foi fundada em dezembro de 1973, tendo como primeiro líder João Cabral Fernandes. Em 1978 fundiu-se com o Partido Revolucionário dos Trabalhadores (PRT), dando origem ao Partido Socialista Revolucionário (PSR), actualmente extinto após integração no Bloco de Esquerda.' where name = 'Liga Comunista Internacionalista';
