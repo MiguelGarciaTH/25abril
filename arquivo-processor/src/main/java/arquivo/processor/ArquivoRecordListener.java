@@ -22,7 +22,10 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @EnableKafka
@@ -47,6 +50,9 @@ public class ArquivoRecordListener {
     private int totalTextFromDB = 0;
     private int totalErrors = 0;
     private int retryCounter = 0;
+
+    private final HashMap<Integer, List<String>> nameAliases = new HashMap<>();
+    private final HashMap<Integer, Pattern> namePatterns = new HashMap<>();
 
     private static final String noTitleTemplate = "Sem título (#%s)";
 
@@ -77,8 +83,9 @@ public class ArquivoRecordListener {
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
             final Site site = siteRepository.findById(event.siteId()).orElse(null);
 
-            final String trimmedUrl= trimUrl(event.originalUrl());
-            Article article = articleRepository.findByOriginalUrl(trimmedUrl).orElse(null);
+            final String trimmedUrl = trimUrl(event.originalUrl());
+            LOG.info("Original title={} Trimmed title={} siteId={}", event.originalUrl(), trimmedUrl, site.getId());
+            Article article = articleRepository.findByOriginalUrl(trimmedUrl, site.getId()).orElse(null);
 
             String text;
             String title;
@@ -104,9 +111,11 @@ public class ArquivoRecordListener {
                 title = article.getTitle();
                 totalTextFromDB++;
             }
-
-            final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text.toLowerCase(), searchEntity.getId(), mergeNamesToList(searchEntity));
-            if (score.total() > 0) {
+            if (!nameAliases.containsKey(searchEntity.getId())) {
+                nameAliases.put(searchEntity.getId(), mergeNamesToList(searchEntity));
+            }
+            final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text.toLowerCase(), searchEntity.getId(), nameAliases.get(searchEntity.getId()));
+            if (score.total() > 10) {
                 totalAccepted++;
                 if (article == null) {
                     article = articleRepository.saveAndFlush(new Article(event.digest(), title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
@@ -117,9 +126,13 @@ public class ArquivoRecordListener {
                 }
                 final ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
                 if (articleSearchEntityAssociation == null) {
+                    if (!namePatterns.containsKey(searchEntity.getId())) {
+                        namePatterns.put(searchEntity.getId(), buildPattern(searchEntity.getName(), searchEntity.getAliases()));
+                    }
+                    final String contextText = extractRelevantText(article.getText(), namePatterns.get(searchEntity.getId()));
                     LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
                     articleSearchEntityAssociationRepository.saveAndFlush(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
-                            objectMapper.convertValue(score.keywordCounter(), JsonNode.class)));
+                            objectMapper.convertValue(score.keywordCounter(), JsonNode.class), contextText));
                 }
             } else {
                 totalRejected++;
@@ -129,6 +142,32 @@ public class ArquivoRecordListener {
         }
         ack.acknowledge();
         LOG.info("Received:{} Accepted:{} Rejected:{} Duplicates:{} Text loaded from Web:{} Text loaded from DB:{} Errors:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB, totalErrors);
+    }
+
+    private Pattern buildPattern(String name, String aliases) {
+        final Pattern pattern;
+        if (aliases == null) {
+            pattern = Pattern.compile("([^.!?]*(" + name + ")[^.!?]*)[.!?]");
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            final String[] namesArrays = aliases.split(",");
+            stringBuilder.append(name).append("|");
+            for (String n : namesArrays) {
+                stringBuilder.append(n).append("|");
+            }
+            pattern = Pattern.compile("([^.!?]*(" + stringBuilder + ")[^.!?]*)[.!?]");
+        }
+        return pattern;
+    }
+
+    private String extractRelevantText(String text, Pattern pattern) {
+        final StringBuilder extractedText = new StringBuilder();
+        Matcher matcher = pattern.matcher(text);
+        while (matcher.find()) {
+            String sentence = matcher.group(1);
+            extractedText.append(sentence).append(".");
+        }
+        return extractedText.toString();
     }
 
     private List<String> mergeNamesToList(SearchEntity searchEntity) {

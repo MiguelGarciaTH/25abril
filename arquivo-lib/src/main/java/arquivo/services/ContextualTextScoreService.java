@@ -74,7 +74,7 @@ public class ContextualTextScoreService {
             if (title != null && url != null) {
                 final Map<String, Long> entityNamesUrlAndTitleCounter = getEntityNameTitleAndUrlCounter(entityId, title, url, entityNames);
                 for (var entry : entityNamesUrlAndTitleCounter.entrySet()) {
-                    score += (entry.getValue() * 30);
+                    score += (entry.getValue() * 2);
                 }
                 keywordTextCounter.putAll(entityNamesUrlAndTitleCounter);
             }

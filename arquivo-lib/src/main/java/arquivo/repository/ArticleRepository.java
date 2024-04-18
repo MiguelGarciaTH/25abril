@@ -44,9 +44,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query(nativeQuery = true, value = """
             select *
             from article a
-            where a.original_url like CONCAT('%', ?1, '%')
+            where a.original_url like CONCAT(?1, '%')
+            and a.site_id = ?2
             """)
-    Optional<Article> findByOriginalUrl(String originalUrl);
+    Optional<Article> findByOriginalUrl(String originalUrl, int siteId);
 
     @Query("""
             select se
