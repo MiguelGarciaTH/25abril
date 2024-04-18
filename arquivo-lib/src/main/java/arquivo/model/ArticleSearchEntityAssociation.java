@@ -30,14 +30,18 @@ public class ArticleSearchEntityAssociation {
     @Column(columnDefinition = "jsonb")
     private JsonNode individualScore;
 
+    @Column(columnDefinition = "text")
+    private String text;
+
     public ArticleSearchEntityAssociation() {
     }
 
-    public ArticleSearchEntityAssociation(Article article, SearchEntity searchEntity, int score, JsonNode individualScore) {
+    public ArticleSearchEntityAssociation(Article article, SearchEntity searchEntity, int score, JsonNode individualScore, String text) {
         this.article = article;
         this.searchEntity = searchEntity;
         this.score = score;
         this.individualScore = individualScore;
+        this.text = text;
     }
 
     public Article getArticle() {
@@ -70,5 +74,13 @@ public class ArticleSearchEntityAssociation {
 
     public void setIndividualScore(JsonNode individualScore) {
         this.individualScore = individualScore;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

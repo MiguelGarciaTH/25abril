@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS article_search_entity_association (
     id integer NOT NULL DEFAULT nextval('article_search_entity_association_seq'),
     article_id integer NOT NULL,
     search_entity_id integer NOT NULL,
+    "text" text,
     score integer,
     individual_score jsonb,
 
