@@ -70,6 +70,17 @@ public class ArquivoRecordListener {
 
         this.contextualTextScoreService = ContextualTextScoreService.getInstance();
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
+
+        final List<SearchEntity> searchEntities = searchEntityRepository.findAll();
+        LOG.info("Pre chaching names patterns for {} search entities", searchEntities.size());
+        for (SearchEntity searchEntity : searchEntities) {
+            if (!nameAliases.containsKey(searchEntity.getId())) {
+                nameAliases.put(searchEntity.getId(), mergeNamesToList(searchEntity));
+            }
+            if (!namePatterns.containsKey(searchEntity.getId())) {
+                namePatterns.put(searchEntity.getId(), buildPattern(searchEntity.getName(), searchEntity.getAliases()));
+            }
+        }
     }
 
     @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")
@@ -80,40 +91,32 @@ public class ArquivoRecordListener {
             final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
-            final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
             final Site site = siteRepository.findById(event.siteId()).orElse(null);
 
             final String trimmedUrl = trimUrl(event.originalUrl());
-            LOG.info("Original title={} Trimmed title={} siteId={}", event.originalUrl(), trimmedUrl, site.getId());
+            LOG.debug("Original title={} Trimmed title={} siteId={}", event.originalUrl(), trimmedUrl, site.getId());
             Article article = articleRepository.findByOriginalUrl(trimmedUrl, site.getId()).orElse(null);
 
             String text;
             String title;
-            if (article == null) {
+            if (article == null) { // new article
                 text = getText(event.textUrl());
-                if (text == null) {
+                totalTextFromWeb++;
+                if (text != null) {
+                    title = getTitle(event, site);
+                } else {
                     totalErrors++;
                     ack.acknowledge();
                     return;
-                } else {
-                    if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
-                        title = String.format(noTitleTemplate, noTitleCounter++);
-                    } else {
-                        title = trimTitle(event.title(), site.getName(), site.getAcronym());
-                        if (title == null || title.isBlank() || title.isEmpty()) {
-                            title = String.format(noTitleTemplate, noTitleCounter++);
-                        }
-                    }
-                    totalTextFromWeb++;
                 }
-            } else {
+            } else { // already known article
                 text = article.getText();
                 title = article.getTitle();
                 totalTextFromDB++;
             }
-            if (!nameAliases.containsKey(searchEntity.getId())) {
-                nameAliases.put(searchEntity.getId(), mergeNamesToList(searchEntity));
-            }
+
+            final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
+
             final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text.toLowerCase(), searchEntity.getId(), nameAliases.get(searchEntity.getId()));
             if (score.total() > 10) {
                 totalAccepted++;
@@ -126,9 +129,6 @@ public class ArquivoRecordListener {
                 }
                 final ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
                 if (articleSearchEntityAssociation == null) {
-                    if (!namePatterns.containsKey(searchEntity.getId())) {
-                        namePatterns.put(searchEntity.getId(), buildPattern(searchEntity.getName(), searchEntity.getAliases()));
-                    }
                     final String contextText = extractRelevantText(article.getText(), namePatterns.get(searchEntity.getId()));
                     LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
                     articleSearchEntityAssociationRepository.saveAndFlush(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
@@ -142,6 +142,19 @@ public class ArquivoRecordListener {
         }
         ack.acknowledge();
         LOG.info("Received:{} Accepted:{} Rejected:{} Duplicates:{} Text loaded from Web:{} Text loaded from DB:{} Errors:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB, totalErrors);
+    }
+
+    private String getTitle(CrawlerRecord event, Site site) {
+        String title;
+        if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
+            title = String.format(noTitleTemplate, noTitleCounter++);
+        } else {
+            title = trimTitle(event.title(), site.getName(), site.getAcronym());
+            if (title == null || title.isBlank() || title.isEmpty()) {
+                title = String.format(noTitleTemplate, noTitleCounter++);
+            }
+        }
+        return title;
     }
 
     private Pattern buildPattern(String name, String aliases) {

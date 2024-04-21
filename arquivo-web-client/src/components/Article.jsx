@@ -6,17 +6,11 @@ import { Link } from "react-router-dom";
 
 function myFunction(myArray) {
     if (myArray != undefined) {
-        console.log(myArray);
-        console.log(myArray.length);
-        var initI= 0;
-        var maxI = myArray.length-1;
-        if (myArray.length == 1){
-            initI = 0;
-            maxI = myArray.length;
-        }
-        for (let i = initI; i <= maxI; i++) {
+        var initI= 1;
+        var splitted = myArray.split(".");
+        for (let i = initI; i <= splitted.length; i++) {
             document.getElementById("text-div")
-                .innerHTML += myArray[i] + "<br/><br/>"
+                .innerHTML += splitted[i] + "<br/><br/>"
         }
     }
 

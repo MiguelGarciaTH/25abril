@@ -2,7 +2,15 @@ import { Link } from "react-router-dom";
 
 function trimText(text) {
     //const result = text[0].substring(0, 500);
-    return text[0];
+        
+    //var splitted = text.split("."); 
+    //console.log(splitted);
+    //var initI = 1;
+    //var textFinal ="";
+    //for (let i = initI; i <= splitted.length; i++) {
+    //    textFinal.concat(".<br/>", splitted[i]);
+   // }
+    return text;
 }
 
 
