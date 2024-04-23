@@ -6,6 +6,7 @@ const Home = () => {
     const [quote, setPosts] = useState([]);
 
     useEffect(() => {
+        console.log(import.meta.env.VITE_REST_URL);
         fetch(import.meta.env.VITE_REST_URL +"/quotes")
             .then((res) => res.json())
             .then((res) => {
