@@ -28,7 +28,7 @@ const About = () => {
                 <strong>O principal resultado foi a criação de um arquivo temático com uma visão jornalista da história do 25 de Abril.</strong> 
                 O número considerável de artigos que foram escritos ao longo destes anos na imprensa portuguesa sobre o 25 de Abril (de uma forma geral), contribuiram para que este 
                 resultado seja (1) mais completo pois tem uma cobertura maior e (2) mais rico pois é possivel cruzar diferentes fontes para a mesma história.
-                Quando iniciei o projecto não esperava encontrar tantos resultados. 
+                Quando iniciei o projecto não esperava encontrar tantos artigos publicados sobre este tema e os seus actores. 
 
 
                 O resultado final deste projecto é futro de várias decisões pessoais, em particular na selecção das fontes noticiosas. 
