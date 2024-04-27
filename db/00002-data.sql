@@ -151,7 +151,7 @@ insert into search_entity (name, aliases, type) values
 ('Partido Comunista dos Trabalhadores Portugueses', 'MRPP', 'MOVIMENTOS'),
 ('Frente de Libertação de Moçambique', 'FRELIMO','MOVIMENTOS'),
 ('Partido Comunista Português', 'PCP', 'MOVIMENTOS'),
-('Partido Popular Monárquico', 'PPM', 'MOVIMENTOS'),
+--('Partido Popular Monárquico', 'PPM', 'MOVIMENTOS'),
 ('Partido do Centro Democrático Social', 'CDS', 'MOVIMENTOS'),
 ('Partido Socialista','PS', 'MOVIMENTOS'),
 ('Partido Social Democrata', 'PPD-PSD, PSD', 'MOVIMENTOS'),
