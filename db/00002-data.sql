@@ -6,7 +6,7 @@ insert into quote(author, "text") values
 ('Salgueiro Maia','Meus senhores, como todos sabem, há diversas modalidades de Estado. Os estados socialistas, os estados capitalistas e o estado a que chegámos. Ora, nesta noite solene, vamos acabar com o estado a que chegámos');
 
 insert into rate_limiter(description, counter, counter_limit, sleep_time, locked) values
-('arquivo.pt', 0, 240, 60000, false),
+('arquivo.pt', 0, 245, 60000, false),
 ('dbpedia', 0, 95, 60000, false);
 
 insert into site(name, acronym, url) values
@@ -34,7 +34,7 @@ insert into search_entity (name, aliases, type) values
 ('Adriano Correia de Oliveira', null, 'CANTORES'),
 ('Ruy Mingas', 'Rui Mingas', 'CANTORES'),
 ('Francisco Fanhais', 'Padre Fanhais', 'CANTORES'),
-('Janita Salomé', null, 'CANTORES'),
+--('Janita Salomé', null, 'CANTORES'),
 ('José Barata-Moura', 'José Barata Moura', 'CANTORES'),
 ('Luís Cília', null, 'CANTORES'),
 ('Manuel Freire', null, 'CANTORES'),
@@ -85,7 +85,7 @@ insert into search_entity (name, aliases, type) values
 ('António de Oliveira Salazar', null, 'OPRESSORES'),
 ('Oscar Carmona', null,'OPRESSORES'),
 ('Duarte Pacheco', null, 'OPRESSORES'),
-('Cardeal Manuel Gonçalves cerejeira', 'Cardeal Cerejeira', 'OPRESSORES'),
+('Cardeal Manuel Gonçalves Cerejeira', 'Cardeal Cerejeira', 'OPRESSORES'),
 ('Américo Tomás', 'Américo Thomaz','OPRESSORES'),
 ('Kaúlza de Arriaga', null, 'OPRESSORES'),
 ('Fernando da Silva Pais', 'Silva Pais', 'OPRESSORES'),
@@ -162,7 +162,7 @@ insert into search_entity (name, aliases, type) values
 ('Junta de Salvação Nacional', null, 'MOVIMENTOS'),
 ('Mocidade Portuguesa', null, 'MOVIMENTOS'),
 ('Confederação Geral dos Trabalhadores Portugueses — Intersindical Nacional', 'CGTP', 'MOVIMENTOS'),
-('Ação Revolucionária Armada', 'ARA', 'MOVIMENTOS'),
+('Ação Revolucionária Armada', ' ARA ', 'MOVIMENTOS'),
 ('Diretório Democrato-Social', null, 'MOVIMENTOS'),
 ('Frente Portuguesa de Libertação Nacional', 'FPLN', 'MOVIMENTOS'),
 ('Ala Liberal', null, 'MOVIMENTOS'),
