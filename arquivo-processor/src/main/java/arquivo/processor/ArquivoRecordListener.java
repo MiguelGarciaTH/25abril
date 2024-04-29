@@ -10,15 +10,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class ArquivoRecordListener {
 
     private final HashMap<Integer, List<String>> nameAliases = new HashMap<>();
     private final HashMap<Integer, Pattern> namePatterns = new HashMap<>();
+    private final HashMap<Integer, Site> siteCache = new HashMap<>();
+    private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
 
     private static final String noTitleTemplate = "Sem título (#%s)";
 
@@ -74,12 +77,8 @@ public class ArquivoRecordListener {
         final List<SearchEntity> searchEntities = searchEntityRepository.findAll();
         LOG.info("Pre chaching names patterns for {} search entities", searchEntities.size());
         for (SearchEntity searchEntity : searchEntities) {
-            if (!nameAliases.containsKey(searchEntity.getId())) {
-                nameAliases.put(searchEntity.getId(), mergeNamesToList(searchEntity));
-            }
-            if (!namePatterns.containsKey(searchEntity.getId())) {
-                namePatterns.put(searchEntity.getId(), buildPattern(searchEntity.getName(), searchEntity.getAliases()));
-            }
+            nameAliases.put(searchEntity.getId(), mergeNamesToList(searchEntity));
+            namePatterns.put(searchEntity.getId(), buildPattern(searchEntity.getName(), searchEntity.getAliases()));
         }
     }
 
@@ -91,11 +90,33 @@ public class ArquivoRecordListener {
             final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
             LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
 
-            final Site site = siteRepository.findById(event.siteId()).orElse(null);
+            final Site site = getSite(event.siteId());
 
             final String trimmedUrl = trimUrl(event.originalUrl());
             LOG.debug("Original title={} Trimmed title={} siteId={}", event.originalUrl(), trimmedUrl, site.getId());
-            Article article = articleRepository.findByOriginalUrl(trimmedUrl, site.getId()).orElse(null);
+
+            Article article;
+            try {
+                article = articleRepository.findByOriginalUrl(trimmedUrl, site.getId()).orElse(null);
+            } catch (IncorrectResultSizeDataAccessException ex) {
+                LOG.error("There were duplicate results for url {} (trimmed url: {} )", event.url(), trimmedUrl);
+                totalErrors++;
+                ack.acknowledge();
+                return;
+            }
+            final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
+
+            if (article != null) {
+                final ArticleSearchEntityAssociation articleSearchEntityAssociation =
+                        articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
+                if (articleSearchEntityAssociation != null) {
+                    totalDuplicates++;
+                    LOG.debug("Article already exists article id {} original title={}",
+                            article.getId(), article.getOriginalTitle());
+                    ack.acknowledge();
+                    return;
+                }
+            }
 
             String text;
             String title;
@@ -115,25 +136,23 @@ public class ArquivoRecordListener {
                 totalTextFromDB++;
             }
 
-            final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
-
             final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text.toLowerCase(), searchEntity.getId(), nameAliases.get(searchEntity.getId()));
-            if (score.total() > 10) {
+            if (score.total() > 0) {
+                LOG.info("Score total: {} Score details: {} for site {}", score.total(), score.keywordCounter(), event.url());
+            }
+            if (shouldAcceptArticle(score)) {
                 totalAccepted++;
                 if (article == null) {
-                    article = articleRepository.saveAndFlush(new Article(event.digest(), title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
+                    article = articleRepository.save(new Article(event.digest(), title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
                     LOG.debug("New article articleId={} title={} url={}", article.getId(), title, event.originalUrl());
                 } else {
                     totalDuplicates++;
                     LOG.debug("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
                 }
-                final ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
-                if (articleSearchEntityAssociation == null) {
-                    final String contextText = extractRelevantText(article.getText(), namePatterns.get(searchEntity.getId()));
-                    LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
-                    articleSearchEntityAssociationRepository.saveAndFlush(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
-                            objectMapper.convertValue(score.keywordCounter(), JsonNode.class), contextText));
-                }
+                final String contextText = extractRelevantText(article.getText(), namePatterns.get(searchEntity.getId()));
+                LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
+                articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
+                        objectMapper.convertValue(score.keywordCounter(), JsonNode.class), contextText));
             } else {
                 totalRejected++;
             }
@@ -142,6 +161,29 @@ public class ArquivoRecordListener {
         }
         ack.acknowledge();
         LOG.info("Received:{} Accepted:{} Rejected:{} Duplicates:{} Text loaded from Web:{} Text loaded from DB:{} Errors:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB, totalErrors);
+    }
+
+    private Site getSite(int siteId) {
+        if (!siteCache.containsKey(siteId)) {
+            final Site site = siteRepository.findById(siteId).orElse(null);
+            siteCache.put(siteId, site);
+        }
+        return siteCache.get(siteId);
+    }
+
+    private SearchEntity getSearchEntity(int searchEntityId) {
+        if (!entityCache.containsKey(searchEntityId)) {
+            final SearchEntity searchEntity = searchEntityRepository.findById(searchEntityId).orElse(null);
+            entityCache.put(searchEntityId, searchEntity);
+        }
+        return entityCache.get(searchEntityId);
+    }
+
+    private boolean shouldAcceptArticle(ContextualTextScoreService.Score score) {
+        return (score.total() > 5
+                && score.keywordCounter().get("countNamesKeywords") > 2
+                && score.keywordCounter().get("countContextualKeyword") > 1)
+                || score.total() > 20;
     }
 
     private String getTitle(CrawlerRecord event, Site site) {
@@ -175,7 +217,7 @@ public class ArquivoRecordListener {
 
     private String extractRelevantText(String text, Pattern pattern) {
         final StringBuilder extractedText = new StringBuilder();
-        Matcher matcher = pattern.matcher(text);
+        final Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String sentence = matcher.group(1);
             extractedText.append(sentence).append(".");
@@ -224,14 +266,11 @@ public class ArquivoRecordListener {
     }
 
     private String get(String inputTrim, String urlInput) throws IOException {
-        final StringBuilder everything = new StringBuilder();
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new URL(urlInput).openStream()))) {
-            String line;
-            while ((line = in.readLine()) != null) {
-                everything.append(line);
-            }
+        try (InputStream in = new URL(urlInput).openStream()) {
+            byte[] bytes = in.readAllBytes();
+            String allText = new String(bytes, StandardCharsets.UTF_8);
             integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));
-            return everything.toString();
+            return allText;
         }
     }
 

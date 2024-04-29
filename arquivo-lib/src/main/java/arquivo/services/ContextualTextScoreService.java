@@ -15,22 +15,30 @@ public class ContextualTextScoreService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextualTextScoreService.class);
 
-    private static final Map<String, Integer> keywordsScoreMap = Map.ofEntries(
-            Map.entry("revolução dos cravos", 2),
-            Map.entry("estado novo", 2),
-            Map.entry("25 de abril", 2),
-            Map.entry("revolução abril", 2),
-            Map.entry("guerra colonial", 2),
-            Map.entry("salazarismo", 2),
-            Map.entry("salazarista", 2),
-            Map.entry("salazaristas", 2),
-            Map.entry("clandestinidade", 1),
-            Map.entry("1974", 1),
-            Map.entry("abril de 1974", 2)
+    private static Pattern keywordPattern;
+
+    private static final List<String> contextualKeywords = List.of(
+            "revolução dos cravos",
+            "revolução de abril",
+            "golpe de estado",
+            "golpe militar",
+            "estado novo",
+            "25 de abril",
+            "guerra colonial",
+            "ditadura",
+            "censura",
+            "salazarismo",
+            "salazarista",
+            "salazaristas",
+            "clandestinos",
+            "clandestinidade",
+            "1974",
+            "abril de 1974",
+            "prisioneiros políticos"
     );
 
     private final Map<String, Pattern> keywordsPatternMap;
-    private final Map<Integer, Map<String, Pattern>> searchEntityMapOfPatternMaps;
+    private final Map<Integer, Pattern> namesPattern;
 
     public static ContextualTextScoreService getInstance() {
         if (INSTANCE == null) {
@@ -41,93 +49,72 @@ public class ContextualTextScoreService {
     }
 
     public ContextualTextScoreService() {
-        searchEntityMapOfPatternMaps = new HashMap<>();
         keywordsPatternMap = new HashMap<>();
-        for (String key : keywordsScoreMap.keySet()) {
-            Pattern pattern = Pattern.compile(key, Pattern.CASE_INSENSITIVE);
-            keywordsPatternMap.put(key, pattern);
+        for (String keyword : contextualKeywords) {
+            Pattern pattern = Pattern.compile(keyword, Pattern.CASE_INSENSITIVE);
+            keywordsPatternMap.put(keyword, pattern);
         }
+        StringBuilder regexp = new StringBuilder();
+        regexp.append("(");
+        for (String word : contextualKeywords) {
+            regexp.append(word).append("|");
+        }
+        regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
+        regexp.append(")");
+        keywordPattern = Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE);
+        namesPattern = new HashMap<>();
     }
 
     public Score score(String title, String url, String text, int entityId, List<String> entityNames) {
+        final Map<String, Long> keywordTextCounter = new HashMap<>();
+
         int score = 0;
 
-        // score by contextual keywords
-        final Map<String, Long> keywordTextCounter = getKeywordTextCounter(text);
-        // remove to avoid non entity articles being score
-        /*for (var entry : keywordTextCounter.entrySet()) {
-            score += entry.getValue() * keywordsScoreMap.get(entry.getKey());
-        }*/
+        final Matcher matcher = keywordPattern.matcher(text);
+        final long countContextualKeyword = matcher.results().count();
+        keywordTextCounter.put("countContextualKeyword", countContextualKeyword);
+        score += countContextualKeyword;
+        if (score == 0) {
+            // the article is not about 25 de abril
+            return new Score(0, keywordTextCounter);
+        }
 
-        // score by entity names
         if (entityNames != null) {
-            final Map<String, Long> entityNamesTextCounter = getEntityNamesTextCounter(text, entityId, entityNames);
-            for (var entry : entityNamesTextCounter.entrySet()) {
-                for (var entry2 : keywordTextCounter.entrySet()) {
-                    // multiple the entity in the text by the contextual scores raising exponentially the score for real articles
-                    score += (entry.getValue() * entry2.getValue());
-                }
+            final Pattern pattern = buildPattern(entityId, entityNames);
+            final Matcher matcher2 = pattern.matcher(text);
+            final long countNamesKeywords = matcher2.results().count();
+            keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
+            score += (countNamesKeywords * 2);
+            if (countNamesKeywords == 0) {
+                // the article is not about 25 de abril
+                return new Score(0, keywordTextCounter);
             }
-            // merge both counter maps
-            keywordTextCounter.putAll(entityNamesTextCounter);
 
-            if (title != null && url != null) {
-                final Map<String, Long> entityNamesUrlAndTitleCounter = getEntityNameTitleAndUrlCounter(entityId, title, url, entityNames);
-                for (var entry : entityNamesUrlAndTitleCounter.entrySet()) {
-                    score += (entry.getValue() * 2);
-                }
-                keywordTextCounter.putAll(entityNamesUrlAndTitleCounter);
-            }
+            final Matcher matcher3 = pattern.matcher(url);
+            final long countNamesUrl = matcher3.results().count();
+            keywordTextCounter.put("countNamesUrl", countNamesUrl);
+            score *= Math.max(1, countNamesUrl * 2);
+
+            final Matcher matcher4 = pattern.matcher(title);
+            final long countNamesTitle = matcher4.results().count();
+            keywordTextCounter.put("countNamesTitle", countNamesTitle);
+            score *= Math.max(1, countNamesTitle * 2);
         }
         return new Score(score, keywordTextCounter);
     }
 
-    private Map<String, Long> getKeywordTextCounter(String text) {
-        final Map<String, Long> keywordCounter = new HashMap<>();
-        for (var keyword : keywordsScoreMap.entrySet()) {
-            final Pattern pattern = keywordsPatternMap.get(keyword.getKey());
-            final Matcher matcher = pattern.matcher(text);
-            long counter = matcher.results().count();
-            keywordCounter.put(keyword.getKey(), counter);
-            LOG.debug("Text keywords: Keyword={} Count={}", keyword.getKey(), counter);
-        }
-        return keywordCounter;
-    }
-
-    private Map<String, Long> getEntityNamesTextCounter(String text, int entityId, List<String> entityNames) {
-        final Map<String, Long> keywordCounter = new HashMap<>();
-        Map<String, Pattern> searchEntityNamePatternMap;
-        if (searchEntityMapOfPatternMaps.containsKey(entityId)) {
-            searchEntityNamePatternMap = searchEntityMapOfPatternMaps.get(entityId);
-        } else {
-            searchEntityNamePatternMap = new HashMap<>();
-            for (String key : entityNames) {
-                searchEntityNamePatternMap.put(key, Pattern.compile(key, Pattern.CASE_INSENSITIVE));
+    private Pattern buildPattern(int entityId, List<String> names) {
+        if (!namesPattern.containsKey(entityId)) {
+            StringBuilder regexp = new StringBuilder();
+            regexp.append("(");
+            for (String name : names) {
+                regexp.append(name).append("|");
             }
-            searchEntityMapOfPatternMaps.put(entityId, searchEntityNamePatternMap);
+            regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
+            regexp.append(")");
+            namesPattern.put(entityId, Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE));
         }
-        for (String name : entityNames) {
-            final Pattern pattern = searchEntityNamePatternMap.get(name);
-            final Matcher matcher = pattern.matcher(text);
-            long counter = matcher.results().count();
-            keywordCounter.put(name + "(text)", counter);
-            LOG.debug("Text entity name: Keyword={} Count={}", name, counter);
-        }
-        return keywordCounter;
-    }
-
-    private Map<String, Long> getEntityNameTitleAndUrlCounter(int entityId, String title, String url, List<String> entityNames) {
-        final Map<String, Pattern> searchEntityNamePatternMap = searchEntityMapOfPatternMaps.get(entityId);
-        final Map<String, Long> keywordCounter = new HashMap<>();
-        for (String name : entityNames) {
-            final Pattern pattern = searchEntityNamePatternMap.get(name);
-            final Matcher matcher = pattern.matcher(title);
-            final Matcher matcher2 = pattern.matcher(url.replaceAll("-", " "));
-            long counter = (matcher.results().count() + matcher2.results().count());
-            keywordCounter.put(name + "(title)", counter);
-            LOG.debug("Text title and url: Keyword={} Count={} url={}", name, counter, url);
-        }
-        return keywordCounter;
+        return namesPattern.get(entityId);
     }
 
     public record Score(int total, Map<String, Long> keywordCounter) {
