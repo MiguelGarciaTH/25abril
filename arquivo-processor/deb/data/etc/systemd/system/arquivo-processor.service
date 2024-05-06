@@ -6,7 +6,7 @@ After=network.target
 Type=simple
 EnvironmentFile=/etc/default/arquivo-processor
 ExecStart=/opt/25abril/arquivo-processor/run.sh
-User=arquivoUser
+User=arquivo
 SyslogIdentifier=ArquivoProcessor
 Restart=always
 
