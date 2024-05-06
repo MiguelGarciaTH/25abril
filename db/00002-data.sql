@@ -136,7 +136,7 @@ insert into search_entity (name, aliases, type) values
 ('Vasco Lourenço', null, 'CAPITAES'),
 ('Francisco da Costa Gomes','Costa Gomes', 'CAPITAES'),
 ('Carlos Fabião', null, 'CAPITAES'),
-('Otelo Saraiva de Carvalho', null, 'CAPITAES'),
+('Otelo Saraiva de Carvalho', 'Otelo', 'CAPITAES'),
 ('Salgueiro Maia', 'Capitão Maia', 'CAPITAES'),
 ('Ernesto Melo Antunes','Melo Antunes', 'CAPITAES'),
 ('Fisher Lopes Pires', null, 'CAPITAES'),
