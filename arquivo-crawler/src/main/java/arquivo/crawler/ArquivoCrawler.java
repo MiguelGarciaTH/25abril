@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -74,26 +75,26 @@ public class ArquivoCrawler {
             LOG.info("Crawling: {} ({}) (site: {})", url.entity.getName(), url.entity.getType().name(), url.site.getName());
             try {
                 int entityTotal = 0;
+                List<JsonNode> responses = new ArrayList<>();
                 JsonNode response = webClientService.get(url.url, "arquivo.pt");
                 // update change log
                 saveChangeLog(url, response);
                 // publish to kafka
-                publishToKafka(url, response.get("response_items"));
+                responses.add(response.get("response_items"));
                 entityTotal = response.get("response_items").size();
-
                 int pages = 1;
-                while (response.has("next_page")) {
-                    String nextPageUrl = response.get("next_page").asText();
-                    response = webClientService.get(nextPageUrl, "arquivo.pt");
-                    // update change log
-                    UrlRecord url2 = new UrlRecord(url, nextPageUrl);
-                    saveChangeLog(url2, response);
-                    // publish to kafka
-                    publishToKafka(url2, response.get("response_items"));
-                    entityTotal += response.get("response_items").size();
-                    pages++;
+                if (response.has("next_page")) {
+                    do {
+                        String nextPageUrl = java.net.URLDecoder.decode(response.get("next_page").asText(), StandardCharsets.UTF_8);
+                        response = webClientService.get(nextPageUrl, "arquivo.pt");
+                        responses.add(response.get("response_items"));
+                        entityTotal += response.get("response_items").size();
+                        pages++;
+                    } while (response.has("next_page"));
                 }
-
+                for(JsonNode node : responses){
+                    publishToKafka(url, node);
+                }
                 LOG.info("Crawling results: {} (site: {}) : {} in {} pages", url.entity.getName(), url.site.getName(), entityTotal, pages);
                 total += entityTotal;
             } catch (WebClientResponseException e) {
@@ -139,7 +140,7 @@ public class ArquivoCrawler {
         final List<UrlRecord> urls = new ArrayList<>();
         for (SearchEntity entity : entities) {
             for (Site site : sites) {
-                List<UrlRecord> urlsInt = buildUrl(entity, site);
+                final List<UrlRecord> urlsInt = buildUrl(entity, site);
                 if (!urlsInt.isEmpty()) {
                     urls.addAll(urlsInt);
                 }
@@ -165,7 +166,7 @@ public class ArquivoCrawler {
             startDate = changeLog.getToTimestamp();
         }
 
-        final String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=500";
+        final String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=500&type=html&dedupField=title&dedupValue=2";
         String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
         urls.add(new UrlRecord(entity, site, changeLog, startDate, endDate, url));
         if (entity.getAliases() != null) {
