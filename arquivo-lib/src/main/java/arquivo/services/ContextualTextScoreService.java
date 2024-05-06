@@ -37,7 +37,6 @@ public class ContextualTextScoreService {
             "prisioneiros políticos"
     );
 
-    private final Map<String, Pattern> keywordsPatternMap;
     private final Map<Integer, Pattern> namesPattern;
 
     public static ContextualTextScoreService getInstance() {
@@ -49,11 +48,6 @@ public class ContextualTextScoreService {
     }
 
     public ContextualTextScoreService() {
-        keywordsPatternMap = new HashMap<>();
-        for (String keyword : contextualKeywords) {
-            Pattern pattern = Pattern.compile(keyword, Pattern.CASE_INSENSITIVE);
-            keywordsPatternMap.put(keyword, pattern);
-        }
         StringBuilder regexp = new StringBuilder();
         regexp.append("(");
         for (String word : contextualKeywords) {
@@ -84,7 +78,11 @@ public class ContextualTextScoreService {
             final Matcher matcher2 = pattern.matcher(text);
             final long countNamesKeywords = matcher2.results().count();
             keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
-            score += (countNamesKeywords * 2);
+            if (countContextualKeyword > 5) {
+                score += (countNamesKeywords * countContextualKeyword);
+            } else {
+                score += countNamesKeywords;
+            }
             if (countNamesKeywords == 0) {
                 // the article is not about 25 de abril
                 return new Score(0, keywordTextCounter);

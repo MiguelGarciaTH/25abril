@@ -104,8 +104,8 @@ public class ArquivoRecordListener {
                 ack.acknowledge();
                 return;
             }
-            final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
 
+            final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
             if (article != null) {
                 final ArticleSearchEntityAssociation articleSearchEntityAssociation =
                         articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
@@ -180,10 +180,16 @@ public class ArquivoRecordListener {
     }
 
     private boolean shouldAcceptArticle(ContextualTextScoreService.Score score) {
-        return (score.total() > 5
-                && score.keywordCounter().get("countNamesKeywords") > 2
-                && score.keywordCounter().get("countContextualKeyword") > 1)
-                || score.total() > 20;
+        return (score.total() > 30)
+                ||
+                (score.total() > 10 &&
+                        score.keywordCounter().get("countNamesKeywords") > 2 &&
+                        score.keywordCounter().get("countContextualKeyword") > 2)
+                ||
+                (score.total() > 1 &&
+                        score.keywordCounter().get("countNamesTitle") > 0 &&
+                        score.keywordCounter().get("countNamesKeywords") >= 2 &&
+                        score.keywordCounter().get("countContextualKeyword") >= 2);
     }
 
     private String getTitle(CrawlerRecord event, Site site) {
