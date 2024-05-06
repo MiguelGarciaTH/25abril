@@ -1,6 +1,4 @@
 import arquivo.Processor;
-import arquivo.model.ArticleRecord;
-import arquivo.model.SearchEntity;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
@@ -11,7 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,38 +25,44 @@ public class Tester {
     @Autowired
     private SiteRepository siteRepository;
 
+    private static final List<String> contextualKeywords = List.of(
+            "revolução dos cravos",
+            "revolução de abril",
+            "golpe de estado",
+            "golpe militar",
+            "estado novo",
+            "25 de abril",
+            "guerra colonial",
+            "ditadura",
+            "censura",
+            "salazarismo",
+            "salazarista",
+            "salazaristas",
+            "clandestinos",
+            "clandestinidade",
+            "1974",
+            "abril de 1974",
+            "prisioneiros políticos"
+    );
+
     @Test
     public void test() {
 
-        String site1 = "https://arquivo.pt/wayback/20010420014947/http://www.expresso.pt/ed1464/r1501.asp";
-        String site2 = "https://arquivo.pt/wayback/20010420014947/http://www.expresso.pt/ed1464/r1501.asp?il";
-        final Map<String, Integer> keywordsScoreMap = Map.ofEntries(
-                Map.entry("revolução dos cravos", 2),
-                //Map.entry("estado novo", 2),
-                //Map.entry("25 de abril", 2),
-                //Map.entry("revolução abril", 2),
-                //Map.entry("guerra colonial", 2),
-                //Map.entry("salazarismo", 2),
-                Map.entry("salazarista", 2),
-                //Map.entry("salazaristas", 2),
-                //Map.entry("clandestinidade", 1),
-                //Map.entry("1974", 1),
-                Map.entry("abril de 1974", 2));
-
         StringBuilder regexp = new StringBuilder();
         regexp.append("(");
-        for (String word : keywordsScoreMap.keySet()) {
+        for (String word : contextualKeywords) {
             regexp.append(word).append("|");
         }
-        regexp = new StringBuilder(regexp.substring(0, regexp.length()-1));
+        regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
         regexp.append(")");
-        System.out.println(regexp.toString());
-        Pattern keywordPattern = Pattern.compile(regexp.toString());
+        Pattern keywordPattern = Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE);
+        System.out.println(keywordPattern);
 
-        String text = "Em abril de 1974 derrobou-se o regime salazarista com a revolução dos cravos";
-        Matcher matcher = keywordPattern.matcher(text);
-        long counter = matcher.results().count();
-        System.out.println(counter);
+        String text = " A Revolução dos cravos foi muito gira";
+        final Matcher matcher = keywordPattern.matcher(text);
+        final long countContextualKeyword = matcher.results().count();
+        System.out.println(countContextualKeyword);
+
     }
 
 
