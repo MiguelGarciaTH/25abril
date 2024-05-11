@@ -81,9 +81,9 @@ insert into search_entity (name, aliases, type) values
 ('Pedro Feytor Pinto', null, 'OPRESSORES'),
 ('António Rosa Casaco', null, 'OPRESSORES'),
 ('Alexandre Carvalho Neto', null, 'OPRESSORES'),
-('Marcelo Caetano', null, 'OPRESSORES'),
+('Marcello Caetano', 'Marcelo Caetano', 'OPRESSORES'),
 ('António de Oliveira Salazar', null, 'OPRESSORES'),
-('Oscar Carmona', null,'OPRESSORES'),
+('Óscar Carmona', null,'OPRESSORES'),
 ('Duarte Pacheco', null, 'OPRESSORES'),
 ('Cardeal Manuel Gonçalves Cerejeira', 'Cardeal Cerejeira', 'OPRESSORES'),
 ('Américo Tomás', 'Américo Thomaz','OPRESSORES'),
@@ -92,13 +92,14 @@ insert into search_entity (name, aliases, type) values
 --('Veiga Simão', null, 'OPRESSORES'),
 --('Baltasar Rebelo de Sousa', null, 'OPRESSORES'),
 --('José Hermano Saraiva', null, 'OPRESSORES'),
-('Eduardo Fontes', null, 'OPRESSORES'),
+('Eduardo Fontes', 'Dadinho Fontes', 'OPRESSORES'),
 ('Adelino da Silva Tinoco', 'Inspector Tinoco', 'OPRESSORES'),
 ('Madalena Oliveira', 'Leninha, PIDE Leninha', 'OPRESSORES'),
 ('Polícia Internacional e de Defesa do Estado','PIDE, PIDE/DGS, Direcção-Geral de Segurança, P.I.D.E, Rua António Maria cardoso', 'OPRESSORES'),
 ('Prisão de Caxias', null, 'OPRESSORES'),
 ('Prisão do Aljube', null,  'OPRESSORES'),
 ('Prisão de Peniche', null, 'OPRESSORES'),
+('Legião Portuguesa', null, 'OPRESSORES'),
 ('António Joaquim Tavares Ferro', 'António Ferro', 'OPRESSORES'),
 ('Tarrafal', 'Campo de Concentração do Tarrafal, Campo da Morte Lenta', 'OPRESSORES'),
 ('União Nacional', 'UN, Ação Nacional Popular', 'OPRESSORES'),
@@ -115,11 +116,11 @@ insert into search_entity (name, aliases, type) values
 ('Henrique Galvão', null, 'RESISTENTES'),
 ('Carlos Antunes', null, 'RESISTENTES'),
 ('Hermínio da Palma Inácio', 'Palma Inácio', 'RESISTENTES'),
-('José Ribeiro Santos',  null, 'RESISTENTES'),
+('José António Ribeiro Santos', 'José Ribeiro Santos', 'RESISTENTES'),
 ('Álvaro Cunhal', null, 'RESISTENTES'),
 ('Mário Soares', null, 'RESISTENTES'),
 ('Manuel Alegre', null, 'RESISTENTES'),
-('Humberto Delgado', 'General sem medo', 'RESISTENTES'),
+('Humberto Delgado', ,'Humberto da Silva Delgado, O General sem medo', 'RESISTENTES'),
 ('Amílcar Cabral', null, 'RESISTENTES'),
 ('Nuno Teotónio Pereira', null, 'RESISTENTES'),
 ('Jorge Sampaio', null, 'RESISTENTES'),
@@ -146,6 +147,10 @@ insert into search_entity (name, aliases, type) values
 ('José Pinheiro de Azevedo','Pinheiro de Azevedo', 'CAPITAES'),
 ('Vitor Alves', 'Vitor Manuel Rodrigues Alves', 'CAPITAES'),
 ('Capitães de Abril', 'Movimento dos Capitães', 'CAPITAES'),
+('Diniz de Almeida', null, 'CAPITAES'),
+('Carlos Matos Gomes', null, 'CAPITAES'),
+('Jorge Golias', null, 'CAPITAES'),
+('Manuel Duran Clemente', null, 'CAPITAES'),
 --('Bravia Chaimite', null, 'CAPITAES'),
 --- Movimentos
 ('Partido Comunista dos Trabalhadores Portugueses', 'MRPP', 'MOVIMENTOS'),
@@ -193,11 +198,14 @@ insert into search_entity (name, aliases, type) values
 ('Crise Académica', 'Lutas Académicas', 'EVENTOS'),
 ('Fuga de Peniche',null, 'EVENTOS'),
 ('Operação Vagô', null, 'EVENTOS'),
+('Reunião de Alcáçovas', null, 'EVENTOS'),
 ('Cascais Jazz', 'Festival de Jazz de Cascais 1971, Cascais Jazz 1971, Cascais Jazz 71', 'EVENTOS'),
 ('Coliseu dos Recreios', '29 de Março, o primeiro dos cantos livres', 'EVENTOS'),
 ('Processo Revolucionário em Curso', 'PREC', 'EVENTOS');
 
 -- adds missing data from external online sources
+update search_entity set image_url = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRt-8jd22AUxL1Y17ChMMMUGdC50MNFoDO4MVr1QISNCTzW5Vrd8xYAh1FdVoW0T_M9MQHi1uJ3aHcZXSgFn9YWuIt-6r7pDxgQ9x3t8pGcrC1gn_7vQYZMZPL23zshVDcFKgwQeyBeq8/s1600/images.jpg' where name = 'Fisher Lopes Pires';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Ernesto_Melo_Antunes_1975-05-21.png/1024px-Ernesto_Melo_Antunes_1975-05-21.png' where name = 'Ernesto Melo Antunes';
 update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/5/56/PIDE_Badge.png' where name = 'Polícia Internacional e de Defesa do Estado';
 update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Ernesto_Melo_Antunes_1975-05-21.png/200px-Ernesto_Melo_Antunes_1975-05-21.png' where name = 'Ernesto Melo Antunes';
 update search_entity set image_url = 'http://1.bp.blogspot.com/-9eFFqRa8S0k/VQLIqHd7bZI/AAAAAAAAlI4/WETBX0vvc_I/s1600/images.jpg' where name = 'Fisher Lopes Pires';
@@ -246,9 +254,9 @@ update search_entity set biography = 'Fernando Eduardo da Silva Pais (1905 Setú
 update search_entity set image_url = 'https://images.impresa.pt/expresso/2022-11-17-Silva-Pais-Fotobiografia_0001_T-_IDP_AA.jpg-8ac8e601-1/original/mw-860' where name = 'Fernando da Silva Pais';
 update search_entity set image_url = 'https://www.abrilabril.pt/sites/default/files/styles/node_aberto_vp768/public/assets/img/9542.jpg?itok=RVMbrQHU' where name = 'Madalena Oliveira';
 update search_entity set biography = '"PIDE Leninha" era o nome de código de Madalena Oliveira, uma agente feminina que desempenhou um papel proeminente na polícia política do Estado Novo em Portugal, conhecida como PIDE (Polícia Internacional e de Defesa do Estado). A PIDE era uma organização notória pela sua repressão e perseguição a opositores políticos durante o regime ditatorial que vigorou em Portugal de 1933 até à Revolução dos Cravos em 1974. Madalena Oliveira foi a única mulher a atingir o posto de chefe de brigada na PIDE, evidenciando a sua ascensão significativa dentro da hierarquia da organização. O seu codinome, "Leninha", sugere uma figura aparentemente inofensiva, mas na realidade, ela ganhou reputação como uma das agentes mais temidas devido à sua dedicação em aprimorar métodos de tortura. O seu envolvimento na PIDE implicava a participação ativa na repressão de opositores políticos, muitos dos quais eram membros do Partido Comunista Português (PCP) e outros grupos que se opunham ao regime salazarista. Essa atuação incluía interrogatórios violentos e práticas de tortura para extrair informações e silenciar a dissidência. Madalena Oliveira não resistiu a um cancro nos ovários e morreu a 22 de Novembro de 2003.' where name = 'Madalena Oliveira';
-update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/15/Marcello_caetano.jpg' where name = 'Marcelo Caetano';
-update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Carmona.jpg' where name = 'Oscar Carmona';
-update search_entity set biography = 'António Óscar de Fragoso Carmona ComC • ComA • GCA • ComSE (Lisboa, Pena, 24 de novembro de 1869–Lisboa, Lumiar, 18 de abril de 1951) foi um militar e governante português, como presidente do Ministério e presidente da República Portuguesa (terceiro da Ditadura e primeiro do Estado Novo). ' where name = 'Oscar Carmona';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/15/Marcello_caetano.jpg' where name = 'Marcello Caetano';
+update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Carmona.jpg' where name = 'Óscar Carmona';
+update search_entity set biography = 'António Óscar de Fragoso Carmona ComC • ComA • GCA • ComSE (Lisboa, Pena, 24 de novembro de 1869–Lisboa, Lumiar, 18 de abril de 1951) foi um militar e governante português, como presidente do Ministério e presidente da República Portuguesa (terceiro da Ditadura e primeiro do Estado Novo). ' where name = 'Óscar Carmona';
 update search_entity set image_url = 'https://imagens.publico.pt/imagens.aspx/917659?tp=UH&db=IMAGENS&type=JPG' where name = 'Pedro Feytor Pinto';
 update search_entity set biography = 'Pedro Feytor Pinto foi director dos serviços de informação (SEIT) do governo marcelista. Um homem sempre informado, mas sempre na sombra. As circunstâncias ditaram ironicamente que se tenha acabado por tornar num dos protagonistas da deposição do prof. Marcello Caetano, alguém que tanto admirava. Feytor Pinto era uma das pessoas presentes no dia 25 de Abril de 1974 no próprio Convento do Carmo, em plena Revolução dos Cravos.' where name = 'Pedro Feytor Pinto';
 update search_entity set biography = 'José Veiga Simão GCC • GCSE • GOI • GCIH • GCIP (Guarda, 13 de fevereiro de 1929 – Lisboa, 3 de maio de 2014) foi um professor de Física e político português.' where name = 'Veiga Simão';
@@ -350,3 +358,16 @@ update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/com
 update search_entity set biography = 'O Movimento Democrático de Libertação de Portugal (MDLP) foi uma organização terrorista portuguesa ativa durante o período que se seguiu à revolução de 25 de abril de 1974.[1] Entre as ações atribuídas ao MDLP estão uma tentativa de golpe de estado em 11 de março de 1975, uma vaga de atentados à bomba a sedes de partidos de esquerda no início de 1976 e o atentado à bomba que vitimou o candidato a deputado Padre Max e uma estudante que o acompanhava.[1] O MDLP estava ligado ao Movimento Maria da Fonte e ao Exército de Libertação de Portugal, com o qual partilhava fontes, colaboradores e patrocinadores.'  where name = 'Movimento Democrático de Libertação de Portugal';
 update search_entity set biography = 'A Liga Comunista Internacionalista (LCI) foi um partido português fundado em 1973. Considera-se como secção portuguesa da IV Internacional, de cariz trotskista. Foi fundada em dezembro de 1973, tendo como primeiro líder João Cabral Fernandes. Em 1978 fundiu-se com o Partido Revolucionário dos Trabalhadores (PRT), dando origem ao Partido Socialista Revolucionário (PSR), actualmente extinto após integração no Bloco de Esquerda.' where name = 'Liga Comunista Internacionalista';
 update search_entity set biography = 'Os capitães simbolizam todos os militares que participaram nessa mudança de regime e entre eles estavam figuras como Otelo Saraiva de Carvalho ou Salgueiro Maia que tiveram um papel muito importante para que a revolução fosse pacífica e tivesse resultado.' where name = 'Capitães de Abril';
+update search_entity set image_url  = 'https://upload.wikimedia.org/wikipedia/pt/e/ed/V%C3%ADtor_Alves.jpg' where name = 'Vitor Alves';
+update search_entity set biography = 'Alípio Cristiano de Freitas ou Padre Alípio de Freitas (Bragança, 17 de fevereiro de 1929 – Lisboa, 13 de junho de 2017) foi um jornalista e professor universitário português.' where name = 'Alípio de Freitas';
+update search_entity set biography = 'Aurora Rosa Salvador Rodrigues, mais conhecida por Aurora Rodrigues (Minas de São Domingos, 25 de janeiro de 1952), é uma magistrada portuguesa jubilada do Ministério Público. Foi presa política pela PIDE durante o Estado Novo português.' where name = 'Aurora Rodrigues';
+update search_entity set image_url = 'https://www.reporteresemconstrucao.pt/wp-content/uploads/2021/04/foto2.jpg' where name = 'Aurora Rodrigues';
+update search_entity set biography = 'Nuno Teotónio Pereira GCIH • GCL (Lisboa, 30 de janeiro de 1922 – Lisboa, 20 de janeiro de 2016) foi um arquitecto português.' where name = 'Nuno Teotónio Pereira';
+update search_entity set biography = 'Ruy Alberto Vieira Dias Rodrigues Mingas (Luanda, 12 de maio de 1939 – Lisboa, 4 de janeiro de 2024) foi um cantor, compositor, diplomata, empresário e político angolano. Foi deputado no parlamento angolano, secretário com status de Ministro dos Desportos e embaixador de Angola em Portugal. Compôs a música do Hino Nacional de Angola.' where name ='Ruy Mingas';
+update search_entity set image_url = 'https://i0.wp.com/bantumen.com/wp-content/uploads/2024/01/Rui-Mingas-.jpg?resize=1536%2C864&ssl=1' where name = 'Ruy Mingas';
+update search_entity set image_url = 'https://www.cnc.pt/wp-content/uploads/2020/05/maria-velho-da-costa-f-1.jpg' where name = 'Maria Velho da Costa';
+update search_entity set biography = 'Nasceu em 1941 em Mirandela, filho de Francisco Emílio Golias e de Maria Luísa Sales e irmão de José Manuel Sales Golias. Fez o 5.º ano na terra natal, e o 7.º ano (12.º) em Vila Real. Frequentou a Academia Militar e licenciou-se em Eng.ª Electrotécnica no IST. Participou na Guerra colonial na Guiné em 72-74 e no 25 de Abril. Foi Chefe de Gabinete do Encarregado de Governo da Guiné, Assistente dos CTT/TLP e Adjunto do General Chefe de Estado Maior do Exército.' where "name" = 'Jorge Golias';
+update search_entity set image_url = 'https://fotos.web.sapo.io/i/Bab086c55/19536090_zZkNR.png' where "name" = 'Jorge Golias';
+update search_entity set biography = 'Diniz de Almeida, um dos mais destacados operacionais da revolução de Abril, comandou também, no 11 de Março, a resistência do Ralis (Regimento de Artilharia de Lisboa) e foi um dos principais vencedores dessa jornada. O seu testemunho tem uma importância central para entender o 11 de Março.' where "name" = 'Diniz de Almeida';
+update search_entity set image_url = 'https://i0.wp.com/mediotejo.net/wp-content/uploads/2021/04/Matos-Gomes_112.jpg?resize=1320%2C1062&ssl=1' where "name" = 'Carlos Matos Gomes';
+update search_entity set biography = 'Nasceu em Vila Nova da Barquinha e estudou no Colégio Nun’Alvares, em Tomar, onde conheceu Salgueiro Maia, de quem ficou grande amigo. Entrevista com um dos mais conceituados militares e historiadores da guerra colonial, um Capitão de Abril que continua a sonhar com uma sociedade mais justa. ' where "name" = 'Diniz de Almeida';
