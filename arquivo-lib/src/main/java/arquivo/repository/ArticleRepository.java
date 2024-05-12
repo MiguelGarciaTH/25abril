@@ -3,6 +3,7 @@ package arquivo.repository;
 import arquivo.model.Article;
 import arquivo.model.ArticleRecord;
 import arquivo.model.SearchEntity;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -20,7 +21,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             where asa.searchEntity.id = ?1
             order by asa.score desc
             """)
-    List<ArticleRecord> findByAllBySearchEntityId(int entityId);
+    List<ArticleRecord> findByAllBySearchEntityId(int entityId, Pageable topTwenty);
 
     @Query(value = """
             select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, asa.text) 
