@@ -57,8 +57,6 @@ public class ArquivoRecordListener {
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
 
-    private static final String noTitleTemplate = "Sem título (#%s)";
-
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
                           ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
@@ -92,7 +90,7 @@ public class ArquivoRecordListener {
 
             final Site site = getSite(event.siteId());
 
-            final String trimmedUrl = trimUrl(event.originalUrl());
+            final String trimmedUrl = event.originalUrl();// trimUrl(event.originalUrl());
             LOG.debug("Original title={} Trimmed title={} siteId={}", event.originalUrl(), trimmedUrl, site.getId());
 
             Article article;
@@ -124,7 +122,7 @@ public class ArquivoRecordListener {
                 text = getText(event.textUrl());
                 totalTextFromWeb++;
                 if (text != null) {
-                    title = getTitle(event, site);
+                    title = event.title();
                 } else {
                     totalErrors++;
                     ack.acknowledge();
@@ -143,7 +141,7 @@ public class ArquivoRecordListener {
             if (shouldAcceptArticle(score)) {
                 totalAccepted++;
                 if (article == null) {
-                    article = articleRepository.save(new Article(event.digest(), title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
+                    article = articleRepository.save(new Article(title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
                     LOG.debug("New article articleId={} title={} url={}", article.getId(), title, event.originalUrl());
                 } else {
                     totalDuplicates++;
@@ -190,19 +188,6 @@ public class ArquivoRecordListener {
                         score.keywordCounter().get("countNamesTitle") > 0 &&
                         score.keywordCounter().get("countNamesKeywords") >= 2 &&
                         score.keywordCounter().get("countContextualKeyword") >= 2);
-    }
-
-    private String getTitle(CrawlerRecord event, Site site) {
-        String title;
-        if (event.title() == null || event.title().isBlank() || event.title().isEmpty()) {
-            title = String.format(noTitleTemplate, noTitleCounter++);
-        } else {
-            title = trimTitle(event.title(), site.getName(), site.getAcronym());
-            if (title == null || title.isBlank() || title.isEmpty()) {
-                title = String.format(noTitleTemplate, noTitleCounter++);
-            }
-        }
-        return title;
     }
 
     private Pattern buildPattern(String name, String aliases) {

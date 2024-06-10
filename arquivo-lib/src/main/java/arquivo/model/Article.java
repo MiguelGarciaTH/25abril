@@ -45,9 +45,6 @@ public class Article {
     @Column(columnDefinition = "text")
     private String metadataUrl;
 
-    @Column(length = 50)
-    private String digest;
-
     @Column(columnDefinition = "text")
     private String text;
 
@@ -55,8 +52,7 @@ public class Article {
 
     }
 
-    public Article(String digest, String title, String originalTitle, String url, String originalUrl, String noFrameUrl, String textUrl,  String text, String metadataUrl, LocalDateTime date, Site site) {
-        this.digest = digest;
+    public Article(String title, String originalTitle, String url, String originalUrl, String noFrameUrl, String textUrl,  String text, String metadataUrl, LocalDateTime date, Site site) {
         this.url = url;
         this.noFrameUrl = noFrameUrl;
         this.textUrl = textUrl;
@@ -95,14 +91,6 @@ public class Article {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getDigest() {
-        return digest;
-    }
-
-    public void setDigest(String digest) {
-        this.digest = digest;
     }
 
     public String getTitle() {

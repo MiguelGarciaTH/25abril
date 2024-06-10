@@ -67,7 +67,6 @@ CREATE TABLE IF NOT EXISTS article (
     no_frame_url text NOT NULL,
     text_url text NOT NULL,
     original_url text NOT NULL,
-    digest varchar(50) NOT NULL,
     "text" text,
 
     CONSTRAINT article_pk PRIMARY KEY (id),
