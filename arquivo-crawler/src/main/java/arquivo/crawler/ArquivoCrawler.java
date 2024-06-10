@@ -45,6 +45,8 @@ public class ArquivoCrawler {
 
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
 
+    private long noTitleCounter = 0;
+
     @Value("${crawler.topic}")
     private String topic;
 
@@ -59,7 +61,6 @@ public class ArquivoCrawler {
         this.changeLogRepository = changeLogRepository;
         this.kafkaTemplate = kafkaTemplate;
         this.webClientService = new WebClientService(rateLimiterRepository);
-
         this.objectMapper = new ObjectMapper();
     }
 
@@ -70,17 +71,21 @@ public class ArquivoCrawler {
         final List<Site> sites = siteRepository.findAll();
 
         int total = 0;
-        final List<UrlRecord> urls = prepareFirstSearchUrl(entities, sites);
+        final List<UrlRecord> urls = prepareSearchUrl(entities, sites);
         for (UrlRecord url : urls) {
-            LOG.info("Crawling: {} ({}) (site: {})", url.entity.getName(), url.entity.getType().name(), url.site.getName());
+            LOG.info("Start crawling: {} ({}) (site: {})", url.queryTerm(), url.entity.getType().name(), url.site.getName());
             try {
                 int entityTotal = 0;
-                List<JsonNode> responses = new ArrayList<>();
+                LOG.debug("Request for {}", url.url);
                 JsonNode response = webClientService.get(url.url, "arquivo.pt");
+
                 // update change log
                 saveChangeLog(url, response);
+
                 // publish to kafka
+                final List<JsonNode> responses = new ArrayList<>();
                 responses.add(response.get("response_items"));
+
                 entityTotal = response.get("response_items").size();
                 int pages = 1;
                 if (response.has("next_page")) {
@@ -92,9 +97,11 @@ public class ArquivoCrawler {
                         pages++;
                     } while (response.has("next_page"));
                 }
-                for(JsonNode node : responses){
+
+                for (JsonNode node : responses) {
                     publishToKafka(url, node);
                 }
+
                 LOG.info("Crawling results: {} (site: {}) : {} in {} pages", url.entity.getName(), url.site.getName(), entityTotal, pages);
                 total += entityTotal;
             } catch (WebClientResponseException e) {
@@ -103,40 +110,36 @@ public class ArquivoCrawler {
             }
         }
         final LocalDateTime finished = LocalDateTime.now(ZoneOffset.UTC);
-        LOG.info("Finished: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
-    }
-
-    private void saveChangeLog(UrlRecord url, JsonNode response) {
-        final Changelog changelog = url.changeLog;
-        int urlTotalResponses = changelog.getTotalEntries() + response.get("response_items").size();
-        changelog.setTotalEntries(urlTotalResponses);
-        changelog.setToTimestamp(url.endDate);
-        changeLogRepository.save(changelog);
+        LOG.info("Finished crawling: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
     }
 
     private void publishToKafka(UrlRecord url, JsonNode response) {
         for (var node : response) {
             final int siteId = url.site.getId();
             final int entityId = url.entity.getId();
-            final String arquivoDigest = node.get("digest").asText();
-            final String arquivoTitle = node.get("title").asText();
-            final String arquivoMetaData = node.get("linkToMetadata").asText();
-            final String arquivoUrl = node.get("linkToArchive").asText();
-            final String arquivoText = node.get("linkToExtractedText").asText();
-            final String arquivoNoFrame = node.get("linkToNoFrame").asText();
-            final String originalUrl = node.get("originalURL").asText();
 
-            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoDigest, arquivoTitle, arquivoUrl, originalUrl, arquivoMetaData, arquivoText, arquivoNoFrame);
+            final String arquivoTitle = node.get("title").asText();
+            // accepting only articles with title
+            if (arquivoTitle == null || arquivoTitle.isBlank()) {
+                noTitleCounter++;
+                LOG.debug("Articles with no title {}", noTitleCounter);
+                return;
+            }
+
+            final CrawlerRecord record = new CrawlerRecord(entityId, siteId, arquivoTitle, node.get("linkToArchive").asText(),
+                    node.get("originalURL").asText(), node.get("linkToMetadata").asText(), node.get("linkToExtractedText").asText(),
+                    node.get("linkToNoFrame").asText());
+
             try {
-                kafkaTemplate.send(topic, arquivoDigest, objectMapper.writeValueAsString(record));
-                LOG.debug("Sent to topic {} the key={} and value={}", topic, arquivoDigest, record);
+                kafkaTemplate.send(topic, objectMapper.writeValueAsString(record));
+                LOG.debug("Sent to topic {} value={}", topic, record);
             } catch (JsonProcessingException e) {
                 LOG.warn("Error processing {} and response item: {}", url.url, node.toPrettyString());
             }
         }
     }
 
-    private List<UrlRecord> prepareFirstSearchUrl(List<SearchEntity> entities, List<Site> sites) {
+    private List<UrlRecord> prepareSearchUrl(List<SearchEntity> entities, List<Site> sites) {
         final List<UrlRecord> urls = new ArrayList<>();
         for (SearchEntity entity : entities) {
             for (Site site : sites) {
@@ -152,8 +155,7 @@ public class ArquivoCrawler {
     private List<UrlRecord> buildUrl(SearchEntity entity, Site site) {
         final List<UrlRecord> urls = new ArrayList<>();
         final LocalDateTime endDate = LocalDateTime.now(ZoneOffset.UTC);
-        Changelog changeLog = changeLogRepository.findBySearchEntityIdAndSiteId(entity.getId(), site.getId())
-                .orElse(null);
+        Changelog changeLog = changeLogRepository.findBySearchEntityIdAndSiteId(entity.getId(), site.getId()).orElse(null);
 
         LocalDateTime startDate;
         if (changeLog == null) {
@@ -166,13 +168,13 @@ public class ArquivoCrawler {
             startDate = changeLog.getToTimestamp();
         }
 
-        final String baseUrl = "https://arquivo.pt/textsearch?q=%s&siteSearch=%s&from=%s&to=%s&maxItems=500&type=html&dedupField=title&dedupValue=2";
+        final String baseUrl = "https://arquivo.pt/textsearch?q=\"%s\"&prettyPrint=false&siteSearch=%s&from=%s&to=%s&maxItems=500&type=html&dedupValue=1&dedupField=title";
         String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
-        urls.add(new UrlRecord(entity, site, changeLog, startDate, endDate, url));
+        urls.add(new UrlRecord(entity, entity.getName(), site, changeLog, startDate, endDate, url));
         if (entity.getAliases() != null) {
             for (String alias : entity.getAliases().split(",")) {
                 url = String.format(baseUrl, alias, site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
-                urls.add(new UrlRecord(entity, site, changeLog, startDate, endDate, url));
+                urls.add(new UrlRecord(entity, alias, site, changeLog, startDate, endDate, url));
             }
         }
         return urls;
@@ -182,10 +184,18 @@ public class ArquivoCrawler {
         return timestamp.truncatedTo(DAYS).isEqual(timestampToCompare.truncatedTo(DAYS));
     }
 
-    record UrlRecord(SearchEntity entity, Site site, Changelog changeLog, LocalDateTime startDate,
+    private void saveChangeLog(UrlRecord url, JsonNode response) {
+        final Changelog changelog = url.changeLog;
+        int urlTotalResponses = changelog.getTotalEntries() + response.get("response_items").size();
+        changelog.setTotalEntries(urlTotalResponses);
+        changelog.setToTimestamp(url.endDate);
+        changeLogRepository.save(changelog);
+    }
+
+    record UrlRecord(SearchEntity entity, String queryTerm, Site site, Changelog changeLog, LocalDateTime startDate,
                      LocalDateTime endDate, String url) {
         UrlRecord(UrlRecord urlRecord, String url) {
-            this(urlRecord.entity, urlRecord.site, urlRecord.changeLog, urlRecord.startDate, urlRecord.endDate, url);
+            this(urlRecord.entity, urlRecord.queryTerm, urlRecord.site, urlRecord.changeLog, urlRecord.startDate, urlRecord.endDate, url);
         }
     }
 }
