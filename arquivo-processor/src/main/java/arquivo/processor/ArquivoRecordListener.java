@@ -147,7 +147,7 @@ public class ArquivoRecordListener {
                     totalDuplicates++;
                     LOG.debug("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
                 }
-                final String contextText = extractRelevantText(article.getText(), namePatterns.get(searchEntity.getId()));
+                final String contextText = extractRelevantText(article.getTitle(), article.getText(), namePatterns.get(searchEntity.getId()));
                 LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
                 articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
                         objectMapper.convertValue(score.keywordCounter(), JsonNode.class), contextText));
@@ -206,14 +206,14 @@ public class ArquivoRecordListener {
         return pattern;
     }
 
-    private String extractRelevantText(String text, Pattern pattern) {
-        final StringBuilder extractedText = new StringBuilder();
-        final Matcher matcher = pattern.matcher(text);
-        while (matcher.find()) {
-            String sentence = matcher.group(1);
-            extractedText.append(sentence).append(".");
+    private String extractRelevantText(String title, String text, Pattern pattern) {
+        System.out.println("TITLE="+title);
+        System.out.println("TEXT="+text);
+        String[] str = text.split(title);
+        for(String el : str) {
+            System.out.println("SPLITED="+el);
         }
-        return extractedText.toString();
+        return "";
     }
 
     private List<String> mergeNamesToList(SearchEntity searchEntity) {
