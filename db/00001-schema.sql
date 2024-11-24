@@ -41,19 +41,6 @@ CREATE TABLE IF NOT EXISTS search_entity (
 
 CREATE SEQUENCE IF NOT EXISTS changelog_seq START WITH 1 INCREMENT BY 1;
 
-CREATE TABLE IF NOT EXISTS changelog (
-    id integer NOT NULL DEFAULT nextval('changelog_seq'),
-    "from_timestamp" timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
-    "to_timestamp" timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
-    search_entity_id integer NOT NULL,
-    site_id integer NOT NULL,
-    total_entries integer default 0,
-
-    CONSTRAINT changelog_pk PRIMARY KEY (id),
-    CONSTRAINT changelog_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id),
-    CONSTRAINT changelog_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
-);
-
 CREATE SEQUENCE IF NOT EXISTS article_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE IF NOT EXISTS article (
@@ -63,8 +50,6 @@ CREATE TABLE IF NOT EXISTS article (
     title text NOT NULL,
     original_title text NOT NULL,
     url text NOT NULL,
-    metadata_url text NOT NULL,
-    no_frame_url text NOT NULL,
     text_url text NOT NULL,
     original_url text NOT NULL,
     "text" text,

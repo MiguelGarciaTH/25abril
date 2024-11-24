@@ -50,6 +50,21 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Optional<Article> findByOriginalUrl(String originalUrl, int siteId);
 
+    @Query(nativeQuery = true, value = """
+            select exists(
+                select 1
+                from article a
+                where a.original_url = ?1
+                and a.site_id = ?2
+                and a.id in (
+                    select aes.article_id
+                    from article_search_entity_association aes
+                    where aes.search_entity_id = ?3
+                )
+            )
+            """)
+    boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
+
     @Query("""
             select se
             from ArticleSearchEntityAssociation asa

@@ -141,7 +141,7 @@ public class ArquivoRecordListener {
             if (shouldAcceptArticle(score)) {
                 totalAccepted++;
                 if (article == null) {
-                    article = articleRepository.save(new Article(title, event.title(), event.url(), trimmedUrl, event.noFrameUrl(), event.textUrl(), text, event.metaDataUrl(), LocalDateTime.now(ZoneOffset.UTC), site));
+                    article = articleRepository.save(new Article(title, event.title(), event.url(), trimmedUrl, event.textUrl(), text, LocalDateTime.now(ZoneOffset.UTC), site));
                     LOG.debug("New article articleId={} title={} url={}", article.getId(), title, event.originalUrl());
                 } else {
                     totalDuplicates++;

@@ -34,16 +34,10 @@ public class Article {
     private String url;
 
     @Column(columnDefinition = "text")
-    private String noFrameUrl;
-
-    @Column(columnDefinition = "text")
     private String textUrl;
 
     @Column(columnDefinition = "text")
     private String originalUrl;
-
-    @Column(columnDefinition = "text")
-    private String metadataUrl;
 
     @Column(columnDefinition = "text")
     private String text;
@@ -52,11 +46,9 @@ public class Article {
 
     }
 
-    public Article(String title, String originalTitle, String url, String originalUrl, String noFrameUrl, String textUrl,  String text, String metadataUrl, LocalDateTime date, Site site) {
+    public Article(String title, String originalTitle, String url, String originalUrl, String textUrl,  String text, LocalDateTime date, Site site) {
         this.url = url;
-        this.noFrameUrl = noFrameUrl;
         this.textUrl = textUrl;
-        this.metadataUrl = metadataUrl;
         this.originalUrl = originalUrl;
         this.date = date;
         this.site = site;
