@@ -14,7 +14,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     //Integer articleId, Integer siteId, Long score, String url, String title
     @Query(value = """
-            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, asa.text) 
+            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, a.text)
             from ArticleSearchEntityAssociation asa
             inner join Article a on a.id = asa.article.id
             inner join Site s on s.id = a.site.id
@@ -24,7 +24,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     List<ArticleRecord> findByAllBySearchEntityId(int entityId, Pageable topTwenty);
 
     @Query(value = """
-            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, asa.text) 
+            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, a.text)
             from ArticleSearchEntityAssociation asa
             inner join Article a on a.id = asa.article.id
             inner join Site s on s.id = a.site.id
@@ -36,7 +36,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
 
     @Query(nativeQuery = true, value = """
-            select count(aes.article_id) 
+            select count(aes.article_id)
             from article_search_entity_association aes
             where aes.search_entity_id = ?1
             """)
@@ -45,7 +45,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query(nativeQuery = true, value = """
             select *
             from article a
-            where a.original_url = ?1
+            where a.url = ?1
             and a.site_id = ?2
             """)
     Optional<Article> findByOriginalUrl(String originalUrl, int siteId);
@@ -54,7 +54,17 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             select exists(
                 select 1
                 from article a
-                where a.original_url = ?1
+                where a.url = ?1
+                and a.site_id = ?2
+            )
+            """)
+    boolean existsByTitleAndSite(String title, int siteId);
+
+    @Query(nativeQuery = true, value = """
+            select exists(
+                select 1
+                from article a
+                where a.url = ?1
                 and a.site_id = ?2
                 and a.id in (
                     select aes.article_id

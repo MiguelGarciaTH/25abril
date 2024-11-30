@@ -28,33 +28,25 @@ public class Article {
     private String title;
 
     @Column(columnDefinition = "text")
-    private String originalTitle;
-
-    @Column(columnDefinition = "text")
     private String url;
 
     @Column(columnDefinition = "text")
-    private String textUrl;
-
-    @Column(columnDefinition = "text")
-    private String originalUrl;
-
-    @Column(columnDefinition = "text")
     private String text;
+
+    @Column(columnDefinition = "text")
+    private String textSummary;
 
     public Article() {
 
     }
 
-    public Article(String title, String originalTitle, String url, String originalUrl, String textUrl,  String text, LocalDateTime date, Site site) {
+    public Article(String title, String url, String text, LocalDateTime date, Site site) {
         this.url = url;
-        this.textUrl = textUrl;
-        this.originalUrl = originalUrl;
         this.date = date;
         this.site = site;
         this.title = title;
-        this.originalTitle = originalTitle;
         this.text = text;
+        this.textSummary = null;
     }
 
     public int getId() {
@@ -93,19 +85,19 @@ public class Article {
         this.title = title;
     }
 
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public void setOriginalTitle(String originalTitle) {
-        this.originalTitle = originalTitle;
-    }
-
     public String getText() {
         return text;
     }
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getTextSummary() {
+        return textSummary;
+    }
+
+    public void setTextSummary(String textSummary) {
+        this.textSummary = textSummary;
     }
 }

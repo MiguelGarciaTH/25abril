@@ -2,15 +2,12 @@ package arquivo.processor;
 
 import arquivo.model.*;
 import arquivo.repository.*;
-import arquivo.services.ContextualTextScoreService;
 import arquivo.services.RateLimiterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -22,11 +19,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @EnableKafka
@@ -39,21 +33,17 @@ public class ArquivoRecordListener {
     private final SiteRepository siteRepository;
     private final SearchEntityRepository searchEntityRepository;
     private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
-    private final ContextualTextScoreService contextualTextScoreService;
     private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
-    private int noTitleCounter = 0;
-    private int totalReceived = 0;
-    private int totalAccepted = 0;
-    private int totalRejected = 0;
-    private int totalDuplicates = 0;
-    private int totalTextFromWeb = 0;
-    private int totalTextFromDB = 0;
-    private int totalErrors = 0;
-    private int retryCounter = 0;
 
-    private final HashMap<Integer, List<String>> nameAliases = new HashMap<>();
-    private final HashMap<Integer, Pattern> namePatterns = new HashMap<>();
+    private int receivedCounter = 0;
+    private int duplicatesCounter = 0;
+    private int reusedCounter = 0;
+    private int newCounter = 0;
+    private int emptyTextCounter = 0;
+    private int retryCounter = 0;
+    private int articleNotFoundCounter = 0;
+
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
 
@@ -69,163 +59,78 @@ public class ArquivoRecordListener {
         this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.integrationLogRepository = integrationLogRepository;
 
-        this.contextualTextScoreService = ContextualTextScoreService.getInstance();
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         final List<SearchEntity> searchEntities = searchEntityRepository.findAll();
         LOG.info("Pre chaching names patterns for {} search entities", searchEntities.size());
-        for (SearchEntity searchEntity : searchEntities) {
-            nameAliases.put(searchEntity.getId(), mergeNamesToList(searchEntity));
-            namePatterns.put(searchEntity.getId(), buildPattern(searchEntity.getName(), searchEntity.getAliases()));
-        }
     }
 
     @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
-        totalReceived++;
 
+        LOG.debug("Received on topic {} record {}", record.topic(), record.value());
+        receivedCounter++;
+
+        final CrawlerRecord event;
         try {
-            final CrawlerRecord event = objectMapper.readValue(record.value(), CrawlerRecord.class);
-            LOG.debug("Received on topic {} record {}:{}", record.topic(), record.key(), event);
+            event = objectMapper.readValue(record.value(), CrawlerRecord.class);
+        } catch (JsonProcessingException e) {
+            LOG.error("Error parsing json record: {}", record.value());
+            ack.acknowledge();
+            return;
+        }
 
-            final Site site = getSite(event.siteId());
+        if (articleRepository.existsByTitleAndSiteAndEntityId(event.title(), event.siteId(), event.searchEntityId())) {
+            LOG.warn("Article already exists we will skip it: {} (trimmed url: {})", event.title(), event.url());
+            duplicatesCounter++;
+            ack.acknowledge();
+            return;
+        }
 
-            final String trimmedUrl = event.originalUrl();// trimUrl(event.originalUrl());
-            LOG.debug("Original title={} Trimmed title={} siteId={}", event.originalUrl(), trimmedUrl, site.getId());
+        if (articleRepository.existsByTitleAndSite(event.title(), event.siteId())) {
 
-            Article article;
-            try {
-                article = articleRepository.findByOriginalUrl(trimmedUrl, site.getId()).orElse(null);
-            } catch (IncorrectResultSizeDataAccessException ex) {
-                LOG.error("There were duplicate results for url {} (trimmed url: {} )", event.url(), trimmedUrl);
-                totalErrors++;
+            final Article article = articleRepository.findByOriginalUrl(event.url(), event.siteId()).orElse(null);
+            // should never return null here, the if already checked that
+            if (article == null) {
+                LOG.error("Should not happen article title {} with null result (url: {}}", event.title(), event.url());
+                articleNotFoundCounter++;
                 ack.acknowledge();
                 return;
             }
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            if (article != null) {
-                final ArticleSearchEntityAssociation articleSearchEntityAssociation =
-                        articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
-                if (articleSearchEntityAssociation != null) {
-                    totalDuplicates++;
-                    LOG.debug("Article already exists article id {} original title={}",
-                            article.getId(), article.getOriginalTitle());
-                    ack.acknowledge();
-                    return;
-                }
+            articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity));
+            reusedCounter++;
+            LOG.debug("New article association articleId={} title={} url={} for entity={}", article.getId(), event.title(), event.url(), searchEntity.getName());
+
+        } else { //new article
+            final Site site = getSite(event.siteId());
+            final String text = getText(event.textUrl());
+            if (text == null || text.isBlank()) {
+                LOG.warn("Text is empty for article: {} (trimmed url: {})", event.title(), event.url());
+                emptyTextCounter++;
+                ack.acknowledge();
+                return;
             }
 
-            String text;
-            String title;
-            if (article == null) { // new article
-                text = getText(event.textUrl());
-                totalTextFromWeb++;
-                if (text != null) {
-                    title = event.title();
-                } else {
-                    totalErrors++;
-                    ack.acknowledge();
-                    return;
-                }
-            } else { // already known article
-                text = article.getText();
-                title = article.getTitle();
-                totalTextFromDB++;
-            }
-
-            final ContextualTextScoreService.Score score = contextualTextScoreService.score(title, event.url(), text.toLowerCase(), searchEntity.getId(), nameAliases.get(searchEntity.getId()));
-            if (score.total() > 0) {
-                LOG.info("Score total: {} Score details: {} for site {}", score.total(), score.keywordCounter(), event.url());
-            }
-            if (shouldAcceptArticle(score)) {
-                totalAccepted++;
-                if (article == null) {
-                    article = articleRepository.save(new Article(title, event.title(), event.url(), trimmedUrl, event.textUrl(), text, LocalDateTime.now(ZoneOffset.UTC), site));
-                    LOG.debug("New article articleId={} title={} url={}", article.getId(), title, event.originalUrl());
-                } else {
-                    totalDuplicates++;
-                    LOG.debug("Article already exists article id {} original title={} new title={}", article.getId(), article.getOriginalTitle(), title);
-                }
-                final String contextText = extractRelevantText(article.getTitle(), article.getText(), namePatterns.get(searchEntity.getId()));
-                LOG.debug("New association articleId={} entityId={}", article.getId(), searchEntity.getId());
-                articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, score.total(),
-                        objectMapper.convertValue(score.keywordCounter(), JsonNode.class), contextText));
-            } else {
-                totalRejected++;
-            }
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            final Article article = articleRepository.save(new Article(event.title(), event.url(), text, LocalDateTime.now(ZoneOffset.UTC), site));
+            LOG.debug("New article articleId={} title={} url={}", article.getId(), event.title(), event.url());
+            newCounter++;
         }
+
         ack.acknowledge();
-        LOG.info("Received:{} Accepted:{} Rejected:{} Duplicates:{} Text loaded from Web:{} Text loaded from DB:{} Errors:{}", totalReceived, totalAccepted, totalRejected, totalDuplicates, totalTextFromWeb, totalTextFromDB, totalErrors);
+
+        // TODO add kafka publisher with article id and text to the kafka consumer that will summarize text
+
+        logStats();
     }
 
     private Site getSite(int siteId) {
-        if (!siteCache.containsKey(siteId)) {
-            final Site site = siteRepository.findById(siteId).orElse(null);
-            siteCache.put(siteId, site);
-        }
-        return siteCache.get(siteId);
+        return siteCache.computeIfAbsent(siteId, k -> siteRepository.getReferenceById(siteId));
     }
 
     private SearchEntity getSearchEntity(int searchEntityId) {
-        if (!entityCache.containsKey(searchEntityId)) {
-            final SearchEntity searchEntity = searchEntityRepository.findById(searchEntityId).orElse(null);
-            entityCache.put(searchEntityId, searchEntity);
-        }
-        return entityCache.get(searchEntityId);
-    }
-
-    private boolean shouldAcceptArticle(ContextualTextScoreService.Score score) {
-        return (score.total() > 30)
-                ||
-                (score.total() > 10 &&
-                        score.keywordCounter().get("countNamesKeywords") > 2 &&
-                        score.keywordCounter().get("countContextualKeyword") > 2)
-                ||
-                (score.total() > 1 &&
-                        score.keywordCounter().get("countNamesTitle") > 0 &&
-                        score.keywordCounter().get("countNamesKeywords") >= 2 &&
-                        score.keywordCounter().get("countContextualKeyword") >= 2);
-    }
-
-    private Pattern buildPattern(String name, String aliases) {
-        final Pattern pattern;
-        if (aliases == null) {
-            pattern = Pattern.compile("([^.!?]*(" + name + ")[^.!?]*)[.!?]");
-        } else {
-            StringBuilder stringBuilder = new StringBuilder();
-            final String[] namesArrays = aliases.split(",");
-            stringBuilder.append(name).append("|");
-            for (String n : namesArrays) {
-                stringBuilder.append(n).append("|");
-            }
-            pattern = Pattern.compile("([^.!?]*(" + stringBuilder + ")[^.!?]*)[.!?]");
-        }
-        return pattern;
-    }
-
-    private String extractRelevantText(String title, String text, Pattern pattern) {
-        System.out.println("TITLE="+title);
-        System.out.println("TEXT="+text);
-        String[] str = text.split(title);
-        for(String el : str) {
-            System.out.println("SPLITED="+el);
-        }
-        return "";
-    }
-
-    private List<String> mergeNamesToList(SearchEntity searchEntity) {
-        final List<String> names = new ArrayList<>();
-        names.add(searchEntity.getName().toLowerCase());
-        if (searchEntity.getAliases() != null) {
-            String[] namesArrays = searchEntity.getAliases().split(",");
-            for (String name : namesArrays) {
-                names.add(name.toLowerCase());
-            }
-        }
-        return names;
+        return entityCache.computeIfAbsent(searchEntityId, k -> searchEntityRepository.getReferenceById(searchEntityId));
     }
 
     private String getText(String urlInput) {
@@ -244,13 +149,13 @@ public class ArquivoRecordListener {
             try {
                 Thread.sleep(500L);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                //do nothing
             }
             try {
                 retryCounter++;
                 return get(inputTrim, urlInput);
             } catch (IOException ex) {
-                ex.printStackTrace();
+                LOG.error("Error fetching text", ex.getCause());
             }
         }
         return null;
@@ -265,63 +170,19 @@ public class ArquivoRecordListener {
         }
     }
 
-    private String trimUrl(String originalUrl) {
-        originalUrl = originalUrl.split("//")[1];
-        if (originalUrl.contains("/amp/")) {
-            originalUrl = originalUrl.replace("/amp/", "/");
+    private void logStats() {
+        LOG.info("Stats:");
+        LOG.info("Articles received: {}", receivedCounter);
+        LOG.info("Articles new: {}/{}", newCounter, receivedCounter);
+        LOG.info("Articles re-used: {}/{}", reusedCounter, receivedCounter);
+        if (duplicatesCounter > 0) {
+            LOG.warn("Articles repeated warn: {}/{}", duplicatesCounter, receivedCounter);
         }
-        return originalUrl;
-    }
-
-    private String trimTitle(String title, String siteName, String acronym) {
-        boolean containsSiteOnTitle = false;
-        if (title.contains("|")) {
-            String[] titleParts = title.split("\\|");
-            int maxLen = 0;
-            int maxLenIndex = 0;
-            int i = 0;
-            for (String part : titleParts) {
-                if (part.length() > maxLen) {
-                    maxLen = part.length();
-                    maxLenIndex = i;
-                    i++;
-                }
-            }
-            title = titleParts[maxLenIndex];
+        if (emptyTextCounter > 0) {
+            LOG.warn("Articles without text: {}/{}", emptyTextCounter, receivedCounter);
         }
-        if (title.contains(siteName)) {
-            containsSiteOnTitle = true;
-            title = title.replaceAll(siteName, "");
+        if (articleNotFoundCounter > 0) {
+            LOG.warn("Articles not found: {}/{}", articleNotFoundCounter, receivedCounter);
         }
-        if (acronym != null && title.contains(acronym)) {
-            containsSiteOnTitle = true;
-            title = title.replaceAll(acronym, "");
-        }
-        if (title.contains(siteName.toUpperCase())) {
-            containsSiteOnTitle = true;
-            title = title.replaceAll(siteName.toUpperCase(), "");
-        }
-        if (acronym != null && title.contains(acronym.toUpperCase())) {
-            containsSiteOnTitle = true;
-            title = title.replaceAll(acronym.toUpperCase(), "");
-        }
-        if (containsSiteOnTitle) {
-            if (title.contains(" – ")) {
-                title = title.replaceAll(" – ", "");
-            }
-            if (title.contains(" - ")) {
-                title = title.replaceAll(" - ", "");
-            }
-            if (title.contains(" \\- ")) {
-                title = title.replaceAll(" \\– ", "");
-            }
-            if (title.contains(" \\| ")) {
-                title = title.replaceAll(" \\| ", "");
-            }
-        }
-        if (title.startsWith(" ")) {
-            title = title.replaceFirst(" ", "");
-        }
-        return title;
     }
 }

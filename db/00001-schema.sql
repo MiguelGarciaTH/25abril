@@ -48,11 +48,10 @@ CREATE TABLE IF NOT EXISTS article (
     "date" timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
     site_id integer NOT NULL,
     title text NOT NULL,
-    original_title text NOT NULL,
     url text NOT NULL,
-    text_url text NOT NULL,
-    original_url text NOT NULL,
-    "text" text,
+    "text" text NOT NULL,
+    "text_summary" text,
+
 
     CONSTRAINT article_pk PRIMARY KEY (id),
     CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
@@ -64,7 +63,6 @@ CREATE TABLE IF NOT EXISTS article_search_entity_association (
     id integer NOT NULL DEFAULT nextval('article_search_entity_association_seq'),
     article_id integer NOT NULL,
     search_entity_id integer NOT NULL,
-    "text" text,
     score integer,
     individual_score jsonb,
 
