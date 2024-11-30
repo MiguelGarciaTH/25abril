@@ -46,6 +46,8 @@ public class ArquivoCrawler {
 
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
 
+
+    private long totalFetchedCounter = 0;
     private long noTitleCounter = 0;
     private long duplicateCounter = 0;
     private long totalSentCounter = 0;
@@ -75,11 +77,10 @@ public class ArquivoCrawler {
         final List<UrlRecord> urls = prepareSearchUrl(entities, sites);
         LOG.info("Number of URLs to hit Arquivo.pt {} (#entities:{} and #sites:{})", urls.size(), entities.size(), sites.size());
 
-        int total = 0;
         for (UrlRecord url : urls) {
             LOG.info("Start crawling: {} ({}) (site: {})", url.queryTerm(), url.entity.getType().name(), url.site.getName());
             try {
-                int entityTotal = 0;
+                int entityTotal;
                 LOG.debug("Request for {}", url.url);
                 JsonNode response = webClientService.get(url.url, "arquivo.pt");
 
@@ -104,15 +105,18 @@ public class ArquivoCrawler {
                 }
 
                 LOG.info("Crawling results: {} (site: {}) : {} in {} pages", url.entity.getName(), url.site.getName(), entityTotal, pages);
-                total += entityTotal;
+                totalFetchedCounter += entityTotal;
             } catch (WebClientResponseException e) {
                 LOG.error("Failed to get {}", url);
                 integrationLogRepository.save(new IntegrationLog(url.url, LocalDateTime.now(ZoneOffset.UTC), "crawler", IntegrationLog.Status.TR, "", e.getMessage()));
             }
         }
         final LocalDateTime finished = LocalDateTime.now(ZoneOffset.UTC);
-        LOG.info("Finished crawling: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(start, finished));
-        LOG.info("Stats:\nArticles with no titles: {}/{}\nArticles already stored: {}/{}", noTitleCounter, totalSentCounter, duplicateCounter, totalSentCounter);
+        LOG.info("Finished crawling: {} results founds in {} mins", totalFetchedCounter, ChronoUnit.MINUTES.between(start, finished));
+        LOG.info("Stats:");
+        LOG.info("\tArticles with no titles: {}/{}", noTitleCounter, totalFetchedCounter);
+        LOG.info("\tArticles already stored: {}/{}", duplicateCounter, totalFetchedCounter);
+        LOG.info("\tArticles sent: {}/{}", totalSentCounter, totalFetchedCounter);
     }
 
     private boolean shouldSendToKafka(int entityId, int siteId, JsonNode result) {
@@ -136,7 +140,7 @@ public class ArquivoCrawler {
             final int siteId = url.site.getId();
             final int entityId = url.entity.getId();
             if (shouldSendToKafka(entityId, siteId, responseItem)) {
-                final CrawlerRecord record = new CrawlerRecord(entityId, siteId, responseItem.get("title").asText(), responseItem.get("linkToArchive").asText(), responseItem.get("originalURL").asText(), responseItem.get("linkToExtractedText").asText());
+                final CrawlerRecord record = new CrawlerRecord(entityId, siteId, responseItem.get("title").asText(), responseItem.get("linkToArchive").asText(), responseItem.get("linkToExtractedText").asText());
                 try {
                     kafkaTemplate.send(topic, objectMapper.writeValueAsString(record));
                     totalSentCounter++;
