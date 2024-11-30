@@ -14,6 +14,7 @@ import io.netty.channel.ChannelOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,7 @@ import java.util.List;
 
 @Service
 @EnableScheduling
+@ConditionalOnProperty(name = "25-abril.dbpedia.bio-crawler.enable", havingValue = "true")
 public class DBPediaCrawler {
 
     private static final Logger LOG = LoggerFactory.getLogger(DBPediaCrawler.class);
