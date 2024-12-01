@@ -29,7 +29,8 @@
 		<module>arquivo-lib</module>
 		<module>arquivo-processor</module>
 		<module>arquivo-rest</module>
-	</modules>
+        <module>arquivo-text</module>
+    </modules>
 
 	<dependencies>
 		<dependency>
