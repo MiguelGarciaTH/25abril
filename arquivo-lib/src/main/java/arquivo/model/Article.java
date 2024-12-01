@@ -31,21 +31,17 @@ public class Article {
     private String url;
 
     @Column(columnDefinition = "text")
-    private String text;
-
-    @Column(columnDefinition = "text")
     private String textSummary;
 
     public Article() {
 
     }
 
-    public Article(String title, String url, String text, LocalDateTime date, Site site) {
+    public Article(String title, String url, LocalDateTime date, Site site) {
         this.url = url;
         this.date = date;
         this.site = site;
         this.title = title;
-        this.text = text;
         this.textSummary = null;
     }
 
@@ -83,14 +79,6 @@ public class Article {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public String getTextSummary() {

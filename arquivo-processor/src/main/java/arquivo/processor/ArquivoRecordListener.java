@@ -123,14 +123,13 @@ public class ArquivoRecordListener {
                 return;
             }
 
-            article = articleRepository.save(new Article(event.title(), event.url(), text, LocalDateTime.now(ZoneOffset.UTC), site));
+            article = articleRepository.save(new Article(event.title(), event.url(), LocalDateTime.now(ZoneOffset.UTC), site));
             LOG.debug("New article articleId={} title={} url={}", article.getId(), event.title(), event.url());
             newCounter++;
+            publish(new TextRecord(article.getId(), text));
         }
 
         ack.acknowledge();
-
-        publish(new TextRecord(article.getId(), article.getText()));
 
         logStats();
     }

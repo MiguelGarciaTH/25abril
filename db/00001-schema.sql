@@ -49,7 +49,6 @@ CREATE TABLE IF NOT EXISTS article (
     site_id integer NOT NULL,
     title text NOT NULL,
     url text NOT NULL,
-    "text" text NOT NULL,
     "text_summary" text,
 
 
