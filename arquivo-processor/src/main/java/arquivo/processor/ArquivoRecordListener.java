@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,11 @@ public class ArquivoRecordListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArquivoRecordListener.class);
 
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    @Value("${text-summary.topic}")
+    private String topic;
+
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
     private final SiteRepository siteRepository;
@@ -43,6 +50,7 @@ public class ArquivoRecordListener {
     private int emptyTextCounter = 0;
     private int retryCounter = 0;
     private int articleNotFoundCounter = 0;
+    private int totalSentCounter = 0;
 
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
@@ -51,13 +59,14 @@ public class ArquivoRecordListener {
                           SearchEntityRepository searchEntityRepository,
                           ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
                           IntegrationLogRepository integrationLogRepository,
-                          RateLimiterRepository rateLimiterRepository) {
+                          RateLimiterRepository rateLimiterRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.objectMapper = objectMapper;
         this.articleRepository = articleRepository;
         this.siteRepository = siteRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.integrationLogRepository = integrationLogRepository;
+        this.kafkaTemplate = kafkaTemplate;
 
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
@@ -87,9 +96,10 @@ public class ArquivoRecordListener {
             return;
         }
 
-        if (articleRepository.existsByTitleAndSite(event.title(), event.siteId())) {
+        Article article;
+        if (articleRepository.existsByTitleAndSite(event.title(), event.siteId())) { // TODO good candidate for index
 
-            final Article article = articleRepository.findByOriginalUrl(event.url(), event.siteId()).orElse(null);
+            article = articleRepository.findByOriginalUrl(event.url(), event.siteId()).orElse(null);
             // should never return null here, the if already checked that
             if (article == null) {
                 LOG.error("Should not happen article title {} with null result (url: {}}", event.title(), event.url());
@@ -113,14 +123,14 @@ public class ArquivoRecordListener {
                 return;
             }
 
-            final Article article = articleRepository.save(new Article(event.title(), event.url(), text, LocalDateTime.now(ZoneOffset.UTC), site));
+            article = articleRepository.save(new Article(event.title(), event.url(), text, LocalDateTime.now(ZoneOffset.UTC), site));
             LOG.debug("New article articleId={} title={} url={}", article.getId(), event.title(), event.url());
             newCounter++;
         }
 
         ack.acknowledge();
 
-        // TODO add kafka publisher with article id and text to the kafka consumer that will summarize text
+        publish(new TextRecord(article.getId(), article.getText()));
 
         logStats();
     }
@@ -170,11 +180,23 @@ public class ArquivoRecordListener {
         }
     }
 
+    private void publish(TextRecord textRecord) {
+        try {
+            kafkaTemplate.send(topic, objectMapper.writeValueAsString(textRecord));
+            totalSentCounter++;
+            LOG.debug("Sent to topic {} value={}", topic, textRecord);
+        } catch (JsonProcessingException e) {
+            LOG.warn("Error processing article {} for summary processing", textRecord.articleId());
+        }
+    }
+
     private void logStats() {
         LOG.info("Stats:");
         LOG.info("Articles received: {}", receivedCounter);
         LOG.info("Articles new: {}/{}", newCounter, receivedCounter);
         LOG.info("Articles re-used: {}/{}", reusedCounter, receivedCounter);
+        LOG.info("Articles sent to summary: {}/{}", totalSentCounter, receivedCounter);
+
         if (duplicatesCounter > 0) {
             LOG.warn("Articles repeated warn: {}/{}", duplicatesCounter, receivedCounter);
         }
