@@ -1,0 +1,14 @@
+[Unit]
+Description=Arquivo text
+After=network.target multi-user.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/arquivo-text
+ExecStart=/opt/25abril/arquivo-text/run.sh
+User=arquivo
+SyslogIdentifier=ArquivoText
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
