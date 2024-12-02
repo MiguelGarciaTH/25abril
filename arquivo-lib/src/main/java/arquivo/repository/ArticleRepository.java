@@ -14,7 +14,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
     //Integer articleId, Integer siteId, Long score, String url, String title
     @Query(value = """
-            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, a.text)
+            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title)
             from ArticleSearchEntityAssociation asa
             inner join Article a on a.id = asa.article.id
             inner join Site s on s.id = a.site.id
@@ -24,7 +24,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     List<ArticleRecord> findByAllBySearchEntityId(int entityId, Pageable topTwenty);
 
     @Query(value = """
-            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title, a.text)
+            select new arquivo.model.ArticleRecord(a.id, asa.searchEntity.id, a.site.id, s.name, asa.score, a.url, a.title)
             from ArticleSearchEntityAssociation asa
             inner join Article a on a.id = asa.article.id
             inner join Site s on s.id = a.site.id
