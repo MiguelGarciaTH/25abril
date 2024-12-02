@@ -1,5 +1,6 @@
 package arquivo.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -33,16 +34,24 @@ public class Article {
     @Column(columnDefinition = "text")
     private String textSummary;
 
+    private int score;
+
+    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
+    @Column(columnDefinition = "jsonb")
+    private JsonNode scoreDetails;
+
     public Article() {
 
     }
 
-    public Article(String title, String url, LocalDateTime date, Site site) {
+    public Article(String title, String url, LocalDateTime date, Site site, int score, JsonNode scoreDetails) {
         this.url = url;
         this.date = date;
         this.site = site;
         this.title = title;
         this.textSummary = null;
+        this.score = score;
+        this.scoreDetails = scoreDetails;
     }
 
     public int getId() {

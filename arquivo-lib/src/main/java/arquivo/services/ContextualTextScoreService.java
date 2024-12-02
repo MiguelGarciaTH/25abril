@@ -1,5 +1,6 @@
 package arquivo.services;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,6 +116,7 @@ public class ContextualTextScoreService {
         return namesPattern.get(entityId);
     }
 
+    @JsonSerialize
     public record Score(int total, Map<String, Long> keywordCounter) {
 
     }

@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS article (
     title text NOT NULL,
     url text NOT NULL,
     "text_summary" text,
+    score integer,
+    score_details jsonb,
 
 
     CONSTRAINT article_pk PRIMARY KEY (id),
@@ -63,7 +65,6 @@ CREATE TABLE IF NOT EXISTS article_search_entity_association (
     article_id integer NOT NULL,
     search_entity_id integer NOT NULL,
     score integer,
-    individual_score jsonb,
 
     CONSTRAINT article_entity_association_pk PRIMARY KEY (id),
     CONSTRAINT article_entity_association_uq UNIQUE (article_id, search_entity_id),

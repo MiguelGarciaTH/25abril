@@ -2,8 +2,10 @@ package arquivo.processor;
 
 import arquivo.model.*;
 import arquivo.repository.*;
+import arquivo.services.ContextualTextScoreService;
 import arquivo.services.RateLimiterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -51,9 +54,12 @@ public class ArquivoRecordListener {
     private int retryCounter = 0;
     private int articleNotFoundCounter = 0;
     private int totalSentCounter = 0;
+    private int discardedCounter = 0;
 
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
+
+    private final ContextualTextScoreService scoreService = ContextualTextScoreService.getInstance();
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
@@ -123,10 +129,18 @@ public class ArquivoRecordListener {
                 return;
             }
 
-            article = articleRepository.save(new Article(event.title(), event.url(), LocalDateTime.now(ZoneOffset.UTC), site));
-            LOG.debug("New article articleId={} title={} url={}", article.getId(), event.title(), event.url());
-            newCounter++;
-            publish(new TextRecord(article.getId(), text));
+            final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
+            final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, event.searchEntityId(), mergeNamesToList(searchEntity));
+            if (score.total() > 5) {
+                final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
+                article = articleRepository.save(new Article(event.title(), event.url(), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson));
+
+                LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
+                newCounter++;
+                publish(new TextRecord(article.getId(), text));
+            } else {
+                discardedCounter++;
+            }
         }
 
         ack.acknowledge();
@@ -134,12 +148,24 @@ public class ArquivoRecordListener {
         logStats();
     }
 
+    private List<String> mergeNamesToList(SearchEntity searchEntity) {
+        final List<String> names = new ArrayList<String>();
+        names.add(searchEntity.getName().toLowerCase());
+        if (searchEntity.getAliases() != null) {
+            String[] namesArrays = searchEntity.getAliases().split(",");
+            for (String name : namesArrays) {
+                names.add(name.toLowerCase());
+            }
+        }
+        return names;
+    }
+
     private Site getSite(int siteId) {
         return siteCache.computeIfAbsent(siteId, k -> siteRepository.getReferenceById(siteId));
     }
 
     private SearchEntity getSearchEntity(int searchEntityId) {
-        return entityCache.computeIfAbsent(searchEntityId, k -> searchEntityRepository.getReferenceById(searchEntityId));
+        return entityCache.computeIfAbsent(searchEntityId, k -> searchEntityRepository.findById(searchEntityId).orElse(null));
     }
 
     private String getText(String urlInput) {
@@ -204,6 +230,9 @@ public class ArquivoRecordListener {
         }
         if (articleNotFoundCounter > 0) {
             LOG.warn("Articles not found: {}/{}", articleNotFoundCounter, receivedCounter);
+        }
+        if (discardedCounter > 0) {
+            LOG.warn("Articles discarded: {}/{}", discardedCounter, receivedCounter);
         }
     }
 }
