@@ -5,9 +5,6 @@
 # This is not meant to be run directly, but to be used as base definitions
 # referenced from other docker compose files (with 'extends' clause).
 ############################################################################
-
-version: "2"
-
 services:
 
   postgres:
