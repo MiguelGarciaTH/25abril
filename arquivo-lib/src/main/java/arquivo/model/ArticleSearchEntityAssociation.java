@@ -24,25 +24,12 @@ public class ArticleSearchEntityAssociation {
     @ManyToOne(fetch = FetchType.EAGER)
     private SearchEntity searchEntity;
 
-    private int score;
-
-    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
-    @Column(columnDefinition = "jsonb")
-    private JsonNode individualScore;
-
     public ArticleSearchEntityAssociation() {
     }
 
     public ArticleSearchEntityAssociation(Article article, SearchEntity searchEntity) {
         this.article = article;
         this.searchEntity = searchEntity;
-    }
-
-    public ArticleSearchEntityAssociation(Article article, SearchEntity searchEntity, int score, JsonNode individualScore) {
-        this.article = article;
-        this.searchEntity = searchEntity;
-        this.score = score;
-        this.individualScore = individualScore;
     }
 
     public Article getArticle() {
@@ -59,21 +46,5 @@ public class ArticleSearchEntityAssociation {
 
     public void setSearchEntity(SearchEntity searchEntity) {
         this.searchEntity = searchEntity;
-    }
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    public JsonNode getIndividualScore() {
-        return individualScore;
-    }
-
-    public void setIndividualScore(JsonNode individualScore) {
-        this.individualScore = individualScore;
     }
 }
