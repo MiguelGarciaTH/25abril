@@ -65,6 +65,13 @@ public class Tester {
 
     }
 
+    @Test
+    public void testTrimmedUrl() {
+        String url =  "https://arquivo.pt/wayback/20160904003551/https://www.publico.pt/culturaipsilon/noticia/morreu-maria-isabel-barreno-uma-das-tres-marias-1743111";
+        String url2 = "https://arquivo.pt/wayback/20160904003551/https://www.publico.pt/culturaipsilon/noticia/morreu-maria-isabel-barreno-uma-das-tres-marias-1743111";
+        String[] splitted = url.split("\\/\\/");
+        System.out.println(splitted[2]);
+    }
 
     private List<String> getRelevantSentences(String text, String name, String aliases) {
         final Pattern pattern;
