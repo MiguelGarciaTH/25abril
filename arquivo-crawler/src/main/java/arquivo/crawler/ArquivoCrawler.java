@@ -127,7 +127,7 @@ public class ArquivoCrawler {
             LOG.debug("Article with no title (total: {})", noTitleCounter);
             return false;
         }
-        if (articleRepository.existsByTitleAndSiteAndEntityId(title, siteId, entityId)) {
+        if (articleRepository.existsByTrimmedUrlAndSiteAndEntityId(title, siteId, entityId)) {
             duplicateCounter++;
             LOG.debug("Article already exist (total: {})", duplicateCounter);
             return false;

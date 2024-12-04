@@ -32,6 +32,9 @@ public class Article {
     private String url;
 
     @Column(columnDefinition = "text")
+    private String trimmedUrl;
+
+    @Column(columnDefinition = "text")
     private String textSummary;
 
     private int score;
@@ -44,8 +47,9 @@ public class Article {
 
     }
 
-    public Article(String title, String url, LocalDateTime date, Site site, int score, JsonNode scoreDetails) {
+    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, int score, JsonNode scoreDetails) {
         this.url = url;
+        this.trimmedUrl = trimmedUrl;
         this.date = date;
         this.site = site;
         this.title = title;
@@ -80,6 +84,14 @@ public class Article {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getTrimmedUrl() {
+        return trimmedUrl;
+    }
+
+    public void setTrimmedUrl(String trimmedUrl) {
+        this.trimmedUrl = trimmedUrl;
     }
 
     public String getTitle() {

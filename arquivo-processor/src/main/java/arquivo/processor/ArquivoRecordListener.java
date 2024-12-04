@@ -52,7 +52,6 @@ public class ArquivoRecordListener {
     private int newCounter = 0;
     private int emptyTextCounter = 0;
     private int retryCounter = 0;
-    private int articleNotFoundCounter = 0;
     private int totalSentCounter = 0;
     private int discardedCounter = 0;
 
@@ -95,25 +94,15 @@ public class ArquivoRecordListener {
             return;
         }
 
-        if (articleRepository.existsByTitleAndSiteAndEntityId(event.title(), event.siteId(), event.searchEntityId())) {
+        if (articleRepository.existsByTrimmedUrlAndSiteAndEntityId(trimUrl(event.url()), event.siteId(), event.searchEntityId())) {
             LOG.warn("Article already exists we will skip it: {} (trimmed url: {})", event.title(), event.url());
             duplicatesCounter++;
             ack.acknowledge();
             return;
         }
 
-        Article article;
-        if (articleRepository.existsByTitleAndSite(event.title(), event.siteId())) { // TODO good candidate for index
-
-            article = articleRepository.findByOriginalUrl(event.url(), event.siteId()).orElse(null);
-            // should never return null here, the if already checked that
-            if (article == null) {
-                LOG.error("Should not happen article title {} with null result (url: {}}", event.title(), event.url());
-                articleNotFoundCounter++;
-                ack.acknowledge();
-                return;
-            }
-
+        Article article = articleRepository.findByTrimmedUrlAndSiteId(trimUrl(event.url()), event.siteId()).orElse(null);
+        if (article != null) { // TODO good candidate for index
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
             articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity));
             reusedCounter++;
@@ -133,7 +122,8 @@ public class ArquivoRecordListener {
             final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, event.searchEntityId(), mergeNamesToList(searchEntity));
             if (score.total() > 5) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
-                article = articleRepository.save(new Article(event.title(), event.url(), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson));
+                article = articleRepository.saveAndFlush(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson));
+                articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity));
 
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;
@@ -215,6 +205,10 @@ public class ArquivoRecordListener {
         }
     }
 
+    private String trimUrl(String url) {
+        return url.split("\\/\\/")[2];
+    }
+
     private void logStats() {
         LOG.info("Stats:");
         LOG.info("Articles received: {}", receivedCounter);
@@ -227,9 +221,6 @@ public class ArquivoRecordListener {
         }
         if (emptyTextCounter > 0) {
             LOG.warn("Articles without text: {}/{}", emptyTextCounter, receivedCounter);
-        }
-        if (articleNotFoundCounter > 0) {
-            LOG.warn("Articles not found: {}/{}", articleNotFoundCounter, receivedCounter);
         }
         if (discardedCounter > 0) {
             LOG.warn("Articles discarded: {}/{}", discardedCounter, receivedCounter);

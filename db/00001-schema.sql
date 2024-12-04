@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS article (
     site_id integer NOT NULL,
     title text NOT NULL,
     url text NOT NULL,
+    trimmed_url text NOT NULL,
     "text_summary" text,
     score integer,
     score_details jsonb,
@@ -64,7 +65,6 @@ CREATE TABLE IF NOT EXISTS article_search_entity_association (
     id integer NOT NULL DEFAULT nextval('article_search_entity_association_seq'),
     article_id integer NOT NULL,
     search_entity_id integer NOT NULL,
-    score integer,
 
     CONSTRAINT article_entity_association_pk PRIMARY KEY (id),
     CONSTRAINT article_entity_association_uq UNIQUE (article_id, search_entity_id),
