@@ -35,27 +35,35 @@ public class Article {
     private String trimmedUrl;
 
     @Column(columnDefinition = "text")
-    private String textSummary;
+    private String summary;
 
-    private int score;
+    private int textScore;
 
     @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
     @Column(columnDefinition = "jsonb")
-    private JsonNode scoreDetails;
+    private JsonNode textScoreDetails;
+
+    private int summaryScore;
+
+    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
+    @Column(columnDefinition = "jsonb")
+    private JsonNode summaryScoreDetails;
 
     public Article() {
 
     }
 
-    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, int score, JsonNode scoreDetails) {
+    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, int textScore, JsonNode textScoreDetails) {
         this.url = url;
         this.trimmedUrl = trimmedUrl;
         this.date = date;
         this.site = site;
         this.title = title;
-        this.textSummary = null;
-        this.score = score;
-        this.scoreDetails = scoreDetails;
+        this.summary = null;
+        this.textScore = textScore;
+        this.textScoreDetails = textScoreDetails;
+        this.summaryScore = summaryScore;
+        this.summaryScoreDetails = summaryScoreDetails;
     }
 
     public int getId() {
@@ -102,11 +110,43 @@ public class Article {
         this.title = title;
     }
 
-    public String getTextSummary() {
-        return textSummary;
+    public String getSummary() {
+        return summary;
     }
 
-    public void setTextSummary(String textSummary) {
-        this.textSummary = textSummary;
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public int getSummaryScore() {
+        return summaryScore;
+    }
+
+    public void setSummaryScore(int summaryScore) {
+        this.summaryScore = summaryScore;
+    }
+
+    public int getTextScore() {
+        return textScore;
+    }
+
+    public void setTextScore(int textScore) {
+        this.textScore = textScore;
+    }
+
+    public JsonNode getTextScoreDetails() {
+        return textScoreDetails;
+    }
+
+    public void setTextScoreDetails(JsonNode textScoreDetails) {
+        this.textScoreDetails = textScoreDetails;
+    }
+
+    public JsonNode getSummaryScoreDetails() {
+        return summaryScoreDetails;
+    }
+
+    public void setSummaryScoreDetails(JsonNode summaryScoreDetails) {
+        this.summaryScoreDetails = summaryScoreDetails;
     }
 }

@@ -93,7 +93,7 @@ public class ArquivoTextListener {
             return;
         }
 
-        if (article.getTextSummary() != null && !article.getTextSummary().isBlank()) {
+        if (article.getSummary() != null && !article.getSummary().isBlank()) {
             LOG.warn("Summary already set, we will skip: {}", event.articleId());
             ack.acknowledge();
             summaryAlreadySetCounter++;
@@ -109,7 +109,7 @@ public class ArquivoTextListener {
                 return;
             }
 
-            article.setTextSummary(summary);
+            article.setSummary(summary);
             articleRepository.save(article);
             newSummaryCounter++;
 

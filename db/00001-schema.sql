@@ -50,10 +50,11 @@ CREATE TABLE IF NOT EXISTS article (
     title text NOT NULL,
     url text NOT NULL,
     trimmed_url text NOT NULL,
-    "text_summary" text,
-    score integer,
-    score_details jsonb,
-
+    "summary" text,
+    text_score integer,
+    text_score_details jsonb,
+    summary_score integer,
+    summary_score_details jsonb,
 
     CONSTRAINT article_pk PRIMARY KEY (id),
     CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
