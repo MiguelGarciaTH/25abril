@@ -35,9 +35,12 @@ CREATE TABLE IF NOT EXISTS search_entity (
     biography text,
     birth_date varchar(50),
     death_date varchar(50),
+    names_vector tsvector GENERATED ALWAYS AS (to_tsvector('portuguese', COALESCE(name, aliases))) STORED,
 
     CONSTRAINT search_entity_pk PRIMARY KEY (id)
 );
+
+CREATE INDEX ts_idx ON search_entity USING GIN (names_vector);
 
 CREATE SEQUENCE IF NOT EXISTS changelog_seq START WITH 1 INCREMENT BY 1;
 
