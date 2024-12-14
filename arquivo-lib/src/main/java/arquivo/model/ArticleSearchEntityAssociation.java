@@ -1,6 +1,5 @@
 package arquivo.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
