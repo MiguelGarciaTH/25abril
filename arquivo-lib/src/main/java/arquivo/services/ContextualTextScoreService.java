@@ -1,9 +1,11 @@
 package arquivo.services;
 
+import arquivo.model.SearchEntity;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +62,7 @@ public class ContextualTextScoreService {
         namesPattern = new HashMap<>();
     }
 
-    public Score score(String title, String url, String text, int entityId, List<String> entityNames) {
+    public Score score(String title, String url, String text, SearchEntity searchEntity) {
         final Map<String, Long> keywordTextCounter = new HashMap<>();
 
         int score = 0;
@@ -74,8 +76,9 @@ public class ContextualTextScoreService {
             return new Score(0, keywordTextCounter);
         }
 
+        final List<String> entityNames = mergeNamesToList(searchEntity);
         if (entityNames != null) {
-            final Pattern pattern = buildPattern(entityId, entityNames);
+            final Pattern pattern = buildPattern(searchEntity.getId(), entityNames);
             final Matcher matcher2 = pattern.matcher(text);
             final long countNamesKeywords = matcher2.results().count();
             keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
@@ -100,6 +103,57 @@ public class ContextualTextScoreService {
             score *= Math.max(1, countNamesTitle * 2);
         }
         return new Score(score, keywordTextCounter);
+    }
+
+    public Score scoreSummary(String title, String url, String text, SearchEntity searchEntity) {
+        final Map<String, Long> keywordTextCounter = new HashMap<>();
+
+        int score = 0;
+
+        final Matcher matcher = keywordPattern.matcher(text);
+        final long countContextualKeyword = matcher.results().count();
+        keywordTextCounter.put("countContextualKeyword", countContextualKeyword);
+        score += countContextualKeyword;
+        if (score == 0) {
+            // the article is not about 25 de abril
+            return new Score(0, keywordTextCounter);
+        }
+
+        final List<String> entityNames = mergeNamesToList(searchEntity);
+        if (entityNames != null) {
+            final Pattern pattern = buildPattern(searchEntity.getId(), entityNames);
+            final Matcher matcher2 = pattern.matcher(text);
+            final long countNamesKeywords = matcher2.results().count();
+            keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
+            if (countContextualKeyword > 0) {
+                score += (countNamesKeywords * countContextualKeyword);
+            } else {
+                score += countNamesKeywords;
+            }
+
+            final Matcher matcher3 = pattern.matcher(url);
+            final long countNamesUrl = matcher3.results().count();
+            keywordTextCounter.put("countNamesUrl", countNamesUrl);
+            score *= Math.max(1, countNamesUrl * 2);
+
+            final Matcher matcher4 = pattern.matcher(title);
+            final long countNamesTitle = matcher4.results().count();
+            keywordTextCounter.put("countNamesTitle", countNamesTitle);
+            score *= Math.max(1, countNamesTitle * 2);
+        }
+        return new Score(score, keywordTextCounter);
+    }
+
+    private List<String> mergeNamesToList(SearchEntity searchEntity) {
+        final List<String> names = new ArrayList<String>();
+        names.add(searchEntity.getName().toLowerCase());
+        if (searchEntity.getAliases() != null) {
+            String[] namesArrays = searchEntity.getAliases().split(",");
+            for (String name : namesArrays) {
+                names.add(name.toLowerCase());
+            }
+        }
+        return names;
     }
 
     private Pattern buildPattern(int entityId, List<String> names) {

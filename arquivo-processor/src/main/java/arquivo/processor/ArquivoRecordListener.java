@@ -119,7 +119,7 @@ public class ArquivoRecordListener {
             }
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, event.searchEntityId(), mergeNamesToList(searchEntity));
+            final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, searchEntity);
             if (score.total() > 5) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = articleRepository.saveAndFlush(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson));
@@ -127,7 +127,7 @@ public class ArquivoRecordListener {
 
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;
-                publish(new TextRecord(article.getId(), text));
+                publish(new TextRecord(article.getId(), searchEntity.getId(), text));
             } else {
                 discardedCounter++;
             }
@@ -136,18 +136,6 @@ public class ArquivoRecordListener {
         ack.acknowledge();
 
         logStats();
-    }
-
-    private List<String> mergeNamesToList(SearchEntity searchEntity) {
-        final List<String> names = new ArrayList<String>();
-        names.add(searchEntity.getName().toLowerCase());
-        if (searchEntity.getAliases() != null) {
-            String[] namesArrays = searchEntity.getAliases().split(",");
-            for (String name : namesArrays) {
-                names.add(name.toLowerCase());
-            }
-        }
-        return names;
     }
 
     private Site getSite(int siteId) {
