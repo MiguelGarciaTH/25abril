@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS search_entity (
     CONSTRAINT search_entity_pk PRIMARY KEY (id)
 );
 
-CREATE INDEX ts_idx ON search_entity USING GIN (names_vector);
+CREATE INDEX names_idx ON search_entity USING GIN (names_vector);
 
 CREATE SEQUENCE IF NOT EXISTS changelog_seq START WITH 1 INCREMENT BY 1;
 
@@ -58,10 +58,15 @@ CREATE TABLE IF NOT EXISTS article (
     text_score_details jsonb,
     summary_score integer,
     summary_score_details jsonb,
+    title_vector tsvector GENERATED ALWAYS AS (to_tsvector('portuguese', COALESCE(title))) STORED,
+    summary_vector tsvector GENERATED ALWAYS AS (to_tsvector('portuguese', COALESCE("summary"))) STORED,
 
     CONSTRAINT article_pk PRIMARY KEY (id),
     CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
 );
+CREATE INDEX title_idx ON article USING GIN (title_vector);
+CREATE INDEX summary_idx ON article USING GIN (summary_vector);
+
 
 CREATE SEQUENCE IF NOT EXISTS article_search_entity_association_seq START WITH 1 INCREMENT BY 1;
 
