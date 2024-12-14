@@ -1,9 +1,14 @@
 package arquivo.text;
 
 import arquivo.model.Article;
+import arquivo.model.SearchEntity;
 import arquivo.model.TextRecord;
 import arquivo.repository.ArticleRepository;
+import arquivo.repository.SearchEntityRepository;
+import arquivo.services.ContextualTextScoreService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.vertexai.VertexAI;
 import com.google.cloud.vertexai.api.*;
@@ -32,6 +37,8 @@ public class ArquivoTextListener {
     private final Content systemInstruction;
     private final GenerationConfig generationConfig;
     private final List<SafetySetting> safetySettings;
+    private final ContextualTextScoreService contextualTextScoreService = ContextualTextScoreService.getInstance();
+    private final SearchEntityRepository searchEntityRepository;
 
     private int receivedCounter = 0;
     private int summaryNullCounter = 0;
@@ -39,9 +46,11 @@ public class ArquivoTextListener {
     private int summaryAlreadySetCounter = 0;
     private int newSummaryCounter = 0;
 
-    ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository) {
+    ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SearchEntityRepository searchEntityRepository) {
         this.objectMapper = objectMapper;
+        objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         this.articleRepository = articleRepository;
+        this.searchEntityRepository = searchEntityRepository;
 
         generationConfig =
                 GenerationConfig.newBuilder()
@@ -109,12 +118,20 @@ public class ArquivoTextListener {
                 return;
             }
 
+            // recalculates the score over text summary, stores is greater than 5
+            final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
+            final ContextualTextScoreService.Score score = contextualTextScoreService.scoreSummary(article.getTitle(), article.getUrl(), summary, searchEntity);
+
             article.setSummary(summary);
+            article.setSummaryScore(score.total());
+            final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
+            article.setSummaryScoreDetails(scoreJson);
             articleRepository.save(article);
             newSummaryCounter++;
 
+
         } catch (IOException e) {
-            LOG.error("Error using Vertex API: {}", event.articleId(), e.getCause());
+            LOG.error("Error using Vertex API: {}", event.articleId(), e);
             ack.acknowledge();
             vertexApiErrorCounter++;
             return;
