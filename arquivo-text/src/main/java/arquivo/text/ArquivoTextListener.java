@@ -1,11 +1,12 @@
 package arquivo.text;
 
-import arquivo.model.Article;
-import arquivo.model.SearchEntity;
-import arquivo.model.TextRecord;
+import arquivo.model.*;
+import arquivo.repository.ArticleKeywordRepository;
 import arquivo.repository.ArticleRepository;
+import arquivo.repository.KeywordRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.services.ContextualTextScoreService;
+import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,8 +24,7 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 @EnableKafka
@@ -39,6 +39,9 @@ public class ArquivoTextListener {
     private final List<SafetySetting> safetySettings;
     private final ContextualTextScoreService contextualTextScoreService = ContextualTextScoreService.getInstance();
     private final SearchEntityRepository searchEntityRepository;
+    private final KeywordRepository keywordRepository;
+    private final ArticleKeywordRepository articleKeywordRepository;
+    private final WebClientService webClientService;
 
     private int receivedCounter = 0;
     private int summaryNullCounter = 0;
@@ -46,11 +49,17 @@ public class ArquivoTextListener {
     private int summaryAlreadySetCounter = 0;
     private int newSummaryCounter = 0;
 
-    ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SearchEntityRepository searchEntityRepository) {
+    private final Map<String, Object> input;
+
+    ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SearchEntityRepository searchEntityRepository,
+                        KeywordRepository keywordRepository, ArticleKeywordRepository articleKeywordRepository) {
         this.objectMapper = objectMapper;
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         this.articleRepository = articleRepository;
         this.searchEntityRepository = searchEntityRepository;
+        this.keywordRepository = keywordRepository;
+        this.articleKeywordRepository = articleKeywordRepository;
+        this.webClientService = new WebClientService();
 
         generationConfig =
                 GenerationConfig.newBuilder()
@@ -78,6 +87,11 @@ public class ArquivoTextListener {
                         .build()
         );
         systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 500 and 1000 words");
+
+        input = new HashMap<>();
+        input.put("language", "pt");
+        input.put("max_ngram_size", 2);
+        input.put("number_of_keywords", 5);
     }
 
     @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory")
@@ -126,9 +140,19 @@ public class ArquivoTextListener {
             article.setSummaryScore(score.total());
             final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
             article.setSummaryScoreDetails(scoreJson);
+
+            List<KeywordScore> keywordList = getKeywords(summary);
+            List<ArticleKeyword> keywords = new ArrayList<>(keywordList.size());
+            for (var ks : keywordList) {
+                Keyword keyword = keywordRepository.findByKeyword(ks.keyword);
+                if (keyword == null) {
+                    keyword = keywordRepository.save(new Keyword(ks.keyword));
+                }
+                keywords.add(new ArticleKeyword(article, keyword, ks.score()));
+            }
+            articleKeywordRepository.saveAll(keywords);
             articleRepository.save(article);
             newSummaryCounter++;
-
 
         } catch (IOException e) {
             LOG.error("Error using Vertex API: {}", event.articleId(), e);
@@ -155,6 +179,20 @@ public class ArquivoTextListener {
         if (summaryNullCounter > 0) {
             LOG.warn("Texts summary returned null : {}/{}", summaryNullCounter, receivedCounter);
         }
+    }
+
+    private List<KeywordScore> getKeywords(String text) {
+        input.put("text", text);
+        final JsonNode keywords = webClientService.post("http://localhost:5000/yake/", objectMapper.convertValue(input, JsonNode.class));
+        final List<KeywordScore> keywordList = new ArrayList<>(keywords.size());
+        for (var keyword : keywords) {
+            keywordList.add(new KeywordScore(keyword.get("ngram").asText(), keyword.get("score").asDouble()));
+        }
+        return keywordList;
+    }
+
+    private record KeywordScore(String keyword, Double score) {
+
     }
 
     private String summarize(String text) throws IOException {

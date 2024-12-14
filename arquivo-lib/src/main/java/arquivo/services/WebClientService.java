@@ -21,11 +21,16 @@ public class WebClientService {
     private static final Logger LOG = LoggerFactory.getLogger(WebClientService.class);
 
     private final WebClient webClient;
-    private final RateLimiterService rateLimiterService;
+    private RateLimiterService rateLimiterService;
     private final ObjectMapper objectMapper;
     private int retryCounter = 0;
 
     public WebClientService(RateLimiterRepository rateLimiterRepository) {
+        this();
+        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
+    }
+
+    public WebClientService() {
         final HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000 * 1000)
                 .responseTimeout(Duration.ofSeconds(5000));
@@ -39,7 +44,6 @@ public class WebClientService {
                 .build();
 
         this.objectMapper = new ObjectMapper();
-        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
     }
 
     public JsonNode get(String url, String service) {
@@ -48,7 +52,9 @@ public class WebClientService {
             return null;
         }
         try {
-            rateLimiterService.increment(service);
+            if(rateLimiterService != null) {
+                rateLimiterService.increment(service);
+            }
 
             final JsonNode response = objectMapper.readTree(webClient.get()
                     .uri(url)
@@ -69,6 +75,38 @@ public class WebClientService {
             retryCounter++;
             LOG.info("Will retry {}^nt attempt (max 2): {}", retryCounter, url);
             return get(url, service);
+        }
+        return null;
+    }
+
+    public JsonNode post(String url, JsonNode body) {
+        if (retryCounter > 2) {
+            retryCounter = 0;
+            return null;
+        }
+        try {
+
+            final JsonNode response = objectMapper.readTree(webClient.post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(body)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .retrieve().bodyToMono(String.class).block());
+            LOG.debug("Response for {} : {}", url, response);
+            retryCounter = 0;
+            return response;
+        } catch (JsonProcessingException e) {
+            LOG.error("Problem fetching {}", url);
+        } catch (WebClientResponseException e2) {
+            LOG.error("Problem fetching {}: {}", url, e2.getMessage());
+            try {
+                Thread.sleep(500L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            retryCounter++;
+            LOG.info("Will retry {}^nt attempt (max 2): {}", retryCounter, url);
+            return post(url, body);
         }
         return null;
     }

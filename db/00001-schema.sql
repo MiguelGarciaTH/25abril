@@ -67,6 +67,24 @@ CREATE TABLE IF NOT EXISTS article (
 CREATE INDEX title_idx ON article USING GIN (title_vector);
 CREATE INDEX summary_idx ON article USING GIN (summary_vector);
 
+CREATE SEQUENCE IF NOT EXISTS keyword_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS keyword (
+    id integer NOT NULL DEFAULT nextval('keyword_seq'),
+    keyword varchar(80),
+
+    CONSTRAINT keyword_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS article_keyword (
+    article_id integer not null,
+    keyword_id integer not null,
+    score numeric(2,2),
+
+    CONSTRAINT article_keyword_pk PRIMARY KEY (article_id, keyword_id),
+    CONSTRAINT article_keyword_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
+    CONSTRAINT article_keyword_fk_keyword_id FOREIGN KEY (keyword_id) REFERENCES keyword(id)
+);
 
 CREATE SEQUENCE IF NOT EXISTS article_search_entity_association_seq START WITH 1 INCREMENT BY 1;
 
