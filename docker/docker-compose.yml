@@ -19,6 +19,12 @@ services:
     volumes:
       - ../db:/docker-entrypoint-initdb.d
 
+  yake:
+    image: liaad/yake-server:latest
+    restart: always
+    ports:
+      - "5000:5000"
+
   zookeeper:
     # use the same version deployed in production
     image: bitnami/zookeeper:3.6.3

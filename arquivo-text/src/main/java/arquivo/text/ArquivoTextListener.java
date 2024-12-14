@@ -90,7 +90,7 @@ public class ArquivoTextListener {
 
         input = new HashMap<>();
         input.put("language", "pt");
-        input.put("max_ngram_size", 2);
+        input.put("max_ngram_size", 3);
         input.put("number_of_keywords", 5);
     }
 
@@ -109,7 +109,7 @@ public class ArquivoTextListener {
             return;
         }
 
-        final Article article = articleRepository.findById(event.articleId()).orElse(null);
+        Article article = articleRepository.findById(event.articleId()).orElse(null);
         if (article == null) {
             LOG.warn("Should not happen article: {} is null", event.articleId());
             ack.acknowledge();
@@ -135,14 +135,15 @@ public class ArquivoTextListener {
             // recalculates the score over text summary, stores is greater than 5
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
             final ContextualTextScoreService.Score score = contextualTextScoreService.scoreSummary(article.getTitle(), article.getUrl(), summary, searchEntity);
+            final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
 
             article.setSummary(summary);
             article.setSummaryScore(score.total());
-            final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
             article.setSummaryScoreDetails(scoreJson);
+            article = articleRepository.save(article);
 
-            List<KeywordScore> keywordList = getKeywords(summary);
-            List<ArticleKeyword> keywords = new ArrayList<>(keywordList.size());
+            final List<KeywordScore> keywordList = getKeywords(summary);
+            final List<ArticleKeyword> keywords = new ArrayList<>(keywordList.size());
             for (var ks : keywordList) {
                 Keyword keyword = keywordRepository.findByKeyword(ks.keyword);
                 if (keyword == null) {
@@ -151,7 +152,6 @@ public class ArquivoTextListener {
                 keywords.add(new ArticleKeyword(article, keyword, ks.score()));
             }
             articleKeywordRepository.saveAll(keywords);
-            articleRepository.save(article);
             newSummaryCounter++;
 
         } catch (IOException e) {
