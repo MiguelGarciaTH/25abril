@@ -23,7 +23,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -76,7 +75,7 @@ public class ArquivoRecordListener {
         this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         final List<SearchEntity> searchEntities = searchEntityRepository.findAll();
-        LOG.info("Pre chaching names patterns for {} search entities", searchEntities.size());
+        LOG.info("Pre caching names patterns for {} search entities", searchEntities.size());
     }
 
     @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")
