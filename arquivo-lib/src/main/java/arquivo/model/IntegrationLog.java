@@ -30,7 +30,7 @@ public class IntegrationLog {
     @GeneratedValue(generator = "sequence-per-table")
     private int id;
 
-    @Column(length = 255)
+    @Column(columnDefinition = "text")
     private String url;
 
     @NotNull

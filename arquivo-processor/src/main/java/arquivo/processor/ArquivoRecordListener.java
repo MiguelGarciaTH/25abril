@@ -150,13 +150,12 @@ public class ArquivoRecordListener {
             retryCounter = 0;
             return null;
         }
-        final String inputTrim = urlInput.substring(0, Math.min(urlInput.length(), 240));
         rateLimiterService.increment("arquivo.pt");
         try {
-            return get(inputTrim, urlInput);
+            return get(urlInput);
         } catch (IOException e) {
             LOG.error("IOException url {}: {}", urlInput, e.getMessage());
-            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
+            integrationLogRepository.save(new IntegrationLog(urlInput, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TR, "", e.getMessage()));
             LOG.info("Will retry {}^nt attempt (max 2): {}", retryCounter, urlInput);
             try {
                 Thread.sleep(500L);
@@ -165,7 +164,7 @@ public class ArquivoRecordListener {
             }
             try {
                 retryCounter++;
-                return get(inputTrim, urlInput);
+                return get(urlInput);
             } catch (IOException ex) {
                 LOG.error("Error fetching text", ex.getCause());
             }
@@ -173,11 +172,11 @@ public class ArquivoRecordListener {
         return null;
     }
 
-    private String get(String inputTrim, String urlInput) throws IOException {
+    private String get(String urlInput) throws IOException {
         try (InputStream in = new URL(urlInput).openStream()) {
             byte[] bytes = in.readAllBytes();
             String allText = new String(bytes, StandardCharsets.UTF_8);
-            integrationLogRepository.save(new IntegrationLog(inputTrim, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));
+            integrationLogRepository.save(new IntegrationLog(urlInput, LocalDateTime.now(ZoneOffset.UTC), "processor", IntegrationLog.Status.TS, "", null));
             return allText;
         }
     }
