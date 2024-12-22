@@ -15,7 +15,7 @@ CREATE SEQUENCE IF NOT EXISTS integration_log_seq START WITH 1 INCREMENT BY 1;
 CREATE TABLE IF NOT EXISTS integration_log (
     id integer NOT NULL DEFAULT nextval('integration_log_seq'),
     event_timestamp timestamp without time zone NOT NULL DEFAULT LOCALTIMESTAMP,
-    url varchar(255) NOT NULL,
+    url text NOT NULL,
     origin varchar(255) NOT NULL,
     status varchar(2) NOT NULL CHECK (status in ('TS','TE','TR')),
     input_data text,
@@ -65,6 +65,19 @@ CREATE TABLE IF NOT EXISTS article (
 CREATE INDEX title_idx ON article USING GIN (title_vector);
 CREATE INDEX summary_idx ON article USING GIN (summary_vector);
 
+CREATE SEQUENCE IF NOT EXISTS article_search_entity_association_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS article_search_entity_association (
+    id integer NOT NULL DEFAULT nextval('article_search_entity_association_seq'),
+    article_id integer NOT NULL,
+    search_entity_id integer NOT NULL,
+
+    CONSTRAINT article_entity_association_pk PRIMARY KEY (id),
+    CONSTRAINT article_entity_association_uq UNIQUE (article_id, search_entity_id),
+    CONSTRAINT article_entity_association_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
+    CONSTRAINT article_entity_association_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id)
+);
+
 CREATE SEQUENCE IF NOT EXISTS keyword_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE IF NOT EXISTS keyword (
@@ -88,19 +101,6 @@ CREATE TABLE IF NOT EXISTS article_keyword (
     CONSTRAINT article_keyword_uq_article_id_keyword_id UNIQUE(article_id, keyword_id),
     CONSTRAINT article_keyword_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
     CONSTRAINT article_keyword_fk_keyword_id FOREIGN KEY (keyword_id) REFERENCES keyword(id)
-);
-
-CREATE SEQUENCE IF NOT EXISTS article_search_entity_association_seq START WITH 1 INCREMENT BY 1;
-
-CREATE TABLE IF NOT EXISTS article_search_entity_association (
-    id integer NOT NULL DEFAULT nextval('article_search_entity_association_seq'),
-    article_id integer NOT NULL,
-    search_entity_id integer NOT NULL,
-
-    CONSTRAINT article_entity_association_pk PRIMARY KEY (id),
-    CONSTRAINT article_entity_association_uq UNIQUE (article_id, search_entity_id),
-    CONSTRAINT article_entity_association_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
-    CONSTRAINT article_entity_association_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id)
 );
 
 CREATE SEQUENCE IF NOT EXISTS quote_seq START WITH 1 INCREMENT BY 1;

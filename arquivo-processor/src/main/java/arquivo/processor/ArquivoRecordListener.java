@@ -23,8 +23,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @EnableKafka
@@ -41,7 +40,6 @@ public class ArquivoRecordListener {
     private final ArticleRepository articleRepository;
     private final SiteRepository siteRepository;
     private final SearchEntityRepository searchEntityRepository;
-    private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
     private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
 
@@ -61,14 +59,12 @@ public class ArquivoRecordListener {
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
-                          ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
                           IntegrationLogRepository integrationLogRepository,
                           RateLimiterRepository rateLimiterRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.objectMapper = objectMapper;
         this.articleRepository = articleRepository;
         this.siteRepository = siteRepository;
         this.searchEntityRepository = searchEntityRepository;
-        this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.integrationLogRepository = integrationLogRepository;
         this.kafkaTemplate = kafkaTemplate;
 
@@ -103,7 +99,8 @@ public class ArquivoRecordListener {
         Article article = articleRepository.findByTrimmedUrlAndSiteId(trimUrl(event.url()), event.siteId()).orElse(null);
         if (article != null) { // TODO good candidate for index
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity));
+            article.getSearchEntities().add(searchEntity);
+            articleRepository.save(article);
             reusedCounter++;
             LOG.debug("New article association articleId={} title={} url={} for entity={}", article.getId(), event.title(), event.url(), searchEntity.getName());
 
@@ -121,8 +118,11 @@ public class ArquivoRecordListener {
             final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, searchEntity);
             if (score.total() > 5) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
-                article = articleRepository.saveAndFlush(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson));
-                articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity));
+                article = new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson);
+                Set<SearchEntity> searchEntities = new HashSet<>();
+                searchEntities.add(searchEntity);
+                article.setSearchEntities(searchEntities);
+                articleRepository.save(article);
 
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;

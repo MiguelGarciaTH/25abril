@@ -5,6 +5,8 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class SearchEntity {
@@ -54,6 +56,14 @@ public class SearchEntity {
     @Column(columnDefinition = "text")
     private String biography;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "article_search_entity_association",
+            joinColumns = { @JoinColumn(name = "search_entity_id") },
+            inverseJoinColumns = { @JoinColumn(name = "article_id") }
+    )
+    Set<Article> articles;
+
     public SearchEntity() {
 
     }
@@ -62,6 +72,7 @@ public class SearchEntity {
         this.name = name;
         this.aliases = aliases;
         this.type = type;
+        this.articles = new HashSet<>();
     }
 
     public int getId() {
@@ -122,5 +133,13 @@ public class SearchEntity {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public Set<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(Set<Article> articles) {
+        this.articles = articles;
     }
 }

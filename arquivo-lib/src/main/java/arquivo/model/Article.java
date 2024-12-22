@@ -7,7 +7,9 @@ import org.hibernate.annotations.Parameter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Article {
@@ -51,6 +53,14 @@ public class Article {
     @Column(columnDefinition = "jsonb")
     private JsonNode summaryScoreDetails;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "article_search_entity_association",
+            joinColumns = { @JoinColumn(name = "article_id") },
+            inverseJoinColumns = { @JoinColumn(name = "search_entity_id") }
+    )
+    Set<SearchEntity> searchEntities;
+
     public Article() {
 
     }
@@ -66,6 +76,7 @@ public class Article {
         this.textScoreDetails = textScoreDetails;
         this.summaryScore = summaryScore;
         this.summaryScoreDetails = summaryScoreDetails;
+        this.searchEntities = new HashSet<>();
     }
 
     public int getId() {
@@ -150,5 +161,13 @@ public class Article {
 
     public void setSummaryScoreDetails(JsonNode summaryScoreDetails) {
         this.summaryScoreDetails = summaryScoreDetails;
+    }
+
+    public Set<SearchEntity> getSearchEntities() {
+        return searchEntities;
+    }
+
+    public void setSearchEntities(Set<SearchEntity> searchEntities) {
+        this.searchEntities = searchEntities;
     }
 }
