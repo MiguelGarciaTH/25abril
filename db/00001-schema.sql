@@ -42,8 +42,6 @@ CREATE TABLE IF NOT EXISTS search_entity (
 
 CREATE INDEX names_idx ON search_entity USING GIN (names_vector);
 
-CREATE SEQUENCE IF NOT EXISTS changelog_seq START WITH 1 INCREMENT BY 1;
-
 CREATE SEQUENCE IF NOT EXISTS article_seq START WITH 1 INCREMENT BY 1;
 
 CREATE TABLE IF NOT EXISTS article (
@@ -73,15 +71,21 @@ CREATE TABLE IF NOT EXISTS keyword (
     id integer NOT NULL DEFAULT nextval('keyword_seq'),
     keyword varchar(80),
 
-    CONSTRAINT keyword_pk PRIMARY KEY (id)
+    CONSTRAINT keyword_pk PRIMARY KEY (id),
+    CONSTRAINT keyword_uq_keyword UNIQUE(keyword)
 );
 
+CREATE SEQUENCE IF NOT EXISTS article_keyword_seq START WITH 1 INCREMENT BY 1;
+
+
 CREATE TABLE IF NOT EXISTS article_keyword (
+    id integer NOT NULL DEFAULT nextval('article_keyword_seq'),
     article_id integer not null,
     keyword_id integer not null,
-    score numeric(2,2),
+    score numeric(5,5),
 
-    CONSTRAINT article_keyword_pk PRIMARY KEY (article_id, keyword_id),
+    CONSTRAINT article_keyword_pk PRIMARY KEY (id),
+    CONSTRAINT article_keyword_uq_article_id_keyword_id UNIQUE(article_id, keyword_id),
     CONSTRAINT article_keyword_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
     CONSTRAINT article_keyword_fk_keyword_id FOREIGN KEY (keyword_id) REFERENCES keyword(id)
 );
