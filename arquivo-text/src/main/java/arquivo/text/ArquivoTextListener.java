@@ -86,7 +86,7 @@ public class ArquivoTextListener {
                         .setThreshold(SafetySetting.HarmBlockThreshold.OFF)
                         .build()
         );
-        systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 500 and 1000 words");
+        systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 1000 and 1500 words");
 
         input = new HashMap<>();
         input.put("language", "pt");
@@ -141,18 +141,18 @@ public class ArquivoTextListener {
             article.setSummaryScore(score.total());
             article.setSummaryScoreDetails(scoreJson);
             article = articleRepository.save(article);
+            newSummaryCounter++;
 
             final List<KeywordScore> keywordList = getKeywords(summary);
-            final List<ArticleKeyword> keywords = new ArrayList<>(keywordList.size());
             for (var ks : keywordList) {
-                Keyword keyword = keywordRepository.findByKeyword(ks.keyword);
-                if (keyword == null) {
-                    keyword = keywordRepository.save(new Keyword(ks.keyword));
+                if (ks.score() > 0.0) {
+                    Keyword keyword = keywordRepository.findByKeyword(ks.keyword());
+                    if (keyword == null) {
+                        keyword = keywordRepository.save(new Keyword(ks.keyword()));
+                    }
+                    articleKeywordRepository.save(new ArticleKeyword(article, keyword, ks.score()));
                 }
-                keywords.add(new ArticleKeyword(article, keyword, ks.score()));
             }
-            articleKeywordRepository.saveAll(keywords);
-            newSummaryCounter++;
 
         } catch (IOException e) {
             LOG.error("Error using Vertex API: {}", event.articleId(), e);
@@ -212,8 +212,14 @@ public class ArquivoTextListener {
             }
 
             final String response = generatedContentResponse.getCandidates(0).getContent().getPartsList().get(0).getText();
-
-            return objectMapper.readTree(response).get("summary").asText();
+            final JsonNode responseJson = objectMapper.readTree(response);
+            // don't know why sometimes the summary is "resumo"
+            if (!responseJson.has("summary") && responseJson.has("resumo")) {
+                return responseJson.get("resumo").asText();
+            } else {
+                return responseJson.get("summary").asText();
+            }
         }
     }
 }
+
