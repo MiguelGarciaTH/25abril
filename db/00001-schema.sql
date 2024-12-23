@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS search_entity (
     id integer NOT NULL DEFAULT nextval('search_entity_seq'),
     name varchar(255) NOT NULL,
     aliases text,
-    type varchar(50) NOT NULL CHECK (type in ('CAPITAES','ESCRITORES', 'CANTORES', 'JORNALISTAS','MOVIMENTOS','EVENTOS','LOCAIS','OPRESSORES','RESISTENTES')),
+    type varchar(50) NOT NULL CHECK (type in ('CAPITAES','ESCRITORES', 'MUSICOS', 'JORNALISTAS','MOVIMENTOS','EVENTOS','LOCAIS','OPRESSORES','RESISTENTES','POLITICOS')),
     image_url text,
     biography text,
     birth_date varchar(50),

@@ -13,7 +13,7 @@ public class SearchEntity {
 
     public enum Type {
         CAPITAES,
-        CANTORES,
+        MUSICOS,
         EVENTOS,
         MOVIMENTOS,
         LOCAIS,
@@ -21,6 +21,7 @@ public class SearchEntity {
         ESCRITORES,
         OPRESSORES,
         JORNALISTAS,
+        POLITICOS
     }
 
     @Id
