@@ -1,6 +1,7 @@
 package arquivo.repository;
 
 import arquivo.model.Article;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -8,11 +9,12 @@ import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
-    @Query(nativeQuery = true, value = """
-            select *
-            from article a
-            where a.trimmed_url = ?1
-            and a.site_id = ?2
+    @EntityGraph(value = "Article.searchEntities")
+    @Query(value = """
+            select a
+            from Article a
+            where a.trimmedUrl = ?1
+            and a.site.id = ?2
             """)
     Optional<Article> findByTrimmedUrlAndSiteId(String originalUrl, int siteId);
 

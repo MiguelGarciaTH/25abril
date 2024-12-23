@@ -1,4 +1,7 @@
 import arquivo.Processor;
+import arquivo.model.Article;
+import arquivo.model.SearchEntity;
+import arquivo.model.Site;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
@@ -7,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +73,7 @@ public class Tester {
 
     @Test
     public void testTrimmedUrl() {
-        String url =  "https://arquivo.pt/wayback/20160904003551/https://www.publico.pt/culturaipsilon/noticia/morreu-maria-isabel-barreno-uma-das-tres-marias-1743111";
+        String url = "https://arquivo.pt/wayback/20160904003551/https://www.publico.pt/culturaipsilon/noticia/morreu-maria-isabel-barreno-uma-das-tres-marias-1743111";
         String url2 = "https://arquivo.pt/wayback/20160904003551/https://www.publico.pt/culturaipsilon/noticia/morreu-maria-isabel-barreno-uma-das-tres-marias-1743111";
         String[] splitted = url.split("\\/\\/");
         System.out.println(splitted[2]);
@@ -148,5 +154,20 @@ public class Tester {
             title = title.replaceFirst(" ", "");
         }
         return title;
+    }
+
+    @Test
+    void testEntityGraph() {
+        Site s = new Site("name", "url");
+        s = siteRepository.save(s);
+        SearchEntity se = new SearchEntity("name" , "alias", SearchEntity.Type.CAPITAES);
+        se = searchEntityRepository.save(se);
+
+        Article a = new Article("title", "url", "trimmedUrl", LocalDateTime.now(ZoneOffset.UTC), s, 0, null);
+        a.setSearchEntities(Set.of(se));
+        a = articleRepository.save(a);
+
+        Article a2 = articleRepository.findByTrimmedUrlAndSiteId("trimmedUrl", s.getId()).orElse(null);
+        a2.getSearchEntities();
     }
 }

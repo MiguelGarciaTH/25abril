@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
+@NamedEntityGraph(name = "Article.searchEntities",
+        attributeNodes = @NamedAttributeNode("searchEntities")
+)
 public class Article {
 
     @Id

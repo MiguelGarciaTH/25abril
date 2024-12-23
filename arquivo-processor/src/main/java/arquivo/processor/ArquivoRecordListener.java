@@ -23,7 +23,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @EnableKafka
@@ -119,9 +121,7 @@ public class ArquivoRecordListener {
             if (score.total() > 5) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson);
-                Set<SearchEntity> searchEntities = new HashSet<>();
-                searchEntities.add(searchEntity);
-                article.setSearchEntities(searchEntities);
+                article.setSearchEntities(Set.of(searchEntity));
                 articleRepository.save(article);
 
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
