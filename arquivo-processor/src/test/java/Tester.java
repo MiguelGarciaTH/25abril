@@ -5,6 +5,7 @@ import arquivo.model.Site;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
