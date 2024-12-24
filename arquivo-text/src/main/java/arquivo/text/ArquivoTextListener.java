@@ -1,13 +1,11 @@
 package arquivo.text;
 
 import arquivo.model.*;
-import arquivo.repository.ArticleKeywordRepository;
-import arquivo.repository.ArticleRepository;
-import arquivo.repository.KeywordRepository;
-import arquivo.repository.SearchEntityRepository;
+import arquivo.repository.*;
 import arquivo.services.ContextualTextScoreService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +22,8 @@ import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Service
@@ -34,41 +34,43 @@ public class ArquivoTextListener {
 
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
-    private final Content systemInstruction;
-    private final GenerationConfig generationConfig;
-    private final List<SafetySetting> safetySettings;
     private final ContextualTextScoreService contextualTextScoreService = ContextualTextScoreService.getInstance();
     private final SearchEntityRepository searchEntityRepository;
     private final KeywordRepository keywordRepository;
     private final ArticleKeywordRepository articleKeywordRepository;
     private final WebClientService webClientService;
+    private final IntegrationLogRepository integrationLogRepository;
 
     private int receivedCounter = 0;
     private int summaryNullCounter = 0;
     private int vertexApiErrorCounter = 0;
     private int summaryAlreadySetCounter = 0;
     private int newSummaryCounter = 0;
+    private int jsonErrors = 0;
+
+    private final GenerativeModel model;
 
     private final Map<String, Object> input;
 
     ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SearchEntityRepository searchEntityRepository,
-                        KeywordRepository keywordRepository, ArticleKeywordRepository articleKeywordRepository) {
+                        KeywordRepository keywordRepository, ArticleKeywordRepository articleKeywordRepository,
+                        IntegrationLogRepository integrationLogRepository) {
         this.objectMapper = objectMapper;
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         this.articleRepository = articleRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.keywordRepository = keywordRepository;
         this.articleKeywordRepository = articleKeywordRepository;
+        this.integrationLogRepository = integrationLogRepository;
         this.webClientService = new WebClientService();
 
-        generationConfig =
-                GenerationConfig.newBuilder()
-                        .setMaxOutputTokens(1024)
-                        .setTemperature(0.2F)
-                        .setTopP(0.95F)
-                        .setResponseMimeType("application/json")
-                        .build();
-        safetySettings = Arrays.asList(
+        GenerationConfig generationConfig = GenerationConfig.newBuilder()
+                .setMaxOutputTokens(1024)
+                .setTemperature(0.2F)
+                .setTopP(0.95F)
+                .setResponseMimeType("application/json")
+                .build();
+        List<SafetySetting> safetySettings = Arrays.asList(
                 SafetySetting.newBuilder()
                         .setCategory(HarmCategory.HARM_CATEGORY_HATE_SPEECH)
                         .setThreshold(SafetySetting.HarmBlockThreshold.OFF)
@@ -86,7 +88,16 @@ public class ArquivoTextListener {
                         .setThreshold(SafetySetting.HarmBlockThreshold.OFF)
                         .build()
         );
-        systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 1000 and 1500 words");
+        Content systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 1000 and 1500 words");
+
+        VertexAI vertexAi = new VertexAI("sincere-hearth-442713-p7", "europe-west2");
+        model = new GenerativeModel.Builder()
+                .setModelName("gemini-1.5-flash-002")
+                .setVertexAi(vertexAi)
+                .setGenerationConfig(generationConfig)
+                .setSafetySettings(safetySettings)
+                .setSystemInstruction(systemInstruction)
+                .build();
 
         input = new HashMap<>();
         input.put("language", "pt");
@@ -124,12 +135,27 @@ public class ArquivoTextListener {
         }
 
         try {
-            String summary = summarize(event.text());
-            if (summary == null) {
+            String summaryResponse = summarize(event.text());
+            if (summaryResponse == null) {
                 LOG.error("Vertex returned a null summary: {}", event.articleId());
                 ack.acknowledge();
                 summaryNullCounter++;
                 return;
+            }
+            String summary;
+            try {
+                summary = getSummary(summaryResponse);
+            } catch (JsonEOFException ex) {
+                try {
+                    summaryResponse = summarize(event.text());
+                    summary = getSummary(summaryResponse);
+                } catch (JsonEOFException ex2) {
+                    LOG.error("Error parsing json (after retry): {}", event.articleId(), ex.getCause());
+                    integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, summaryResponse, ex2.getMessage()));
+                    ack.acknowledge();
+                    jsonErrors++;
+                    return;
+                }
             }
 
             // recalculates the score over text summary, stores is greater than 5
@@ -156,6 +182,7 @@ public class ArquivoTextListener {
 
         } catch (IOException e) {
             LOG.error("Error using Vertex API: {}", event.articleId(), e);
+            integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, event.text(), e.getMessage()));
             ack.acknowledge();
             vertexApiErrorCounter++;
             return;
@@ -164,6 +191,18 @@ public class ArquivoTextListener {
         ack.acknowledge();
 
         logStats();
+    }
+
+    private String getSummary(String summaryResponse) throws JsonProcessingException {
+        final JsonNode responseJson = objectMapper.readTree(summaryResponse);
+        // don't know why sometimes the summary is "resumo"
+        if (responseJson.has("summary")) {
+            return responseJson.get("summary").asText();
+        } else if (responseJson.has("resumo")) {
+            return responseJson.get("resumo").asText();
+        } else {
+            return responseJson.get("sumario").asText();
+        }
     }
 
     private void logStats() {
@@ -178,6 +217,9 @@ public class ArquivoTextListener {
         }
         if (summaryNullCounter > 0) {
             LOG.warn("Texts summary returned null : {}/{}", summaryNullCounter, receivedCounter);
+        }
+        if (jsonErrors > 0) {
+            LOG.warn("Json parsing errors : {}/{}", jsonErrors, receivedCounter);
         }
     }
 
@@ -196,30 +238,12 @@ public class ArquivoTextListener {
     }
 
     private String summarize(String text) throws IOException {
-        try (VertexAI vertexAi = new VertexAI("sincere-hearth-442713-p7", "europe-west2")) {
-            GenerativeModel model = new GenerativeModel.Builder()
-                    .setModelName("gemini-1.5-flash-002")
-                    .setVertexAi(vertexAi)
-                    .setGenerationConfig(generationConfig)
-                    .setSafetySettings(safetySettings)
-                    .setSystemInstruction(systemInstruction)
-                    .build();
-            var content = ContentMaker.fromMultiModalData(text);
-
-            GenerateContentResponse generatedContentResponse = model.generateContent(content);
-            if (generatedContentResponse.getCandidatesCount() == 0) {
-                return null;
-            }
-
-            final String response = generatedContentResponse.getCandidates(0).getContent().getPartsList().get(0).getText();
-            final JsonNode responseJson = objectMapper.readTree(response);
-            // don't know why sometimes the summary is "resumo"
-            if (!responseJson.has("summary") && responseJson.has("resumo")) {
-                return responseJson.get("resumo").asText();
-            } else {
-                return responseJson.get("summary").asText();
-            }
+        var content = ContentMaker.fromMultiModalData(text);
+        GenerateContentResponse generatedContentResponse = model.generateContent(content);
+        if (generatedContentResponse.getCandidatesCount() == 0) {
+            return null;
         }
+        return generatedContentResponse.getCandidates(0).getContent().getPartsList().get(0).getText();
     }
 }
 
