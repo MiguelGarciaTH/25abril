@@ -126,4 +126,15 @@ CREATE TABLE IF NOT EXISTS rate_limiter (
     CONSTRAINT rate_limiter_pk PRIMARY KEY (id)
 );
 
+CREATE SEQUENCE IF NOT EXISTS metric_seq START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE IF NOT EXISTS metric (
+    id integer NOT NULL DEFAULT nextval('metric_seq'),
+    "key" varchar(255),
+    "value" bigint,
+
+    CONSTRAINT metric_pk PRIMARY KEY (id),
+    CONSTRAINT metric_uq_key UNIQUE("key")
+);
+
 

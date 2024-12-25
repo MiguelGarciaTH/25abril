@@ -5,6 +5,7 @@ import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
 import arquivo.model.Site;
 import arquivo.repository.*;
+import arquivo.services.MetricService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -39,7 +40,7 @@ public class ArquivoCrawler {
     private final SearchEntityRepository searchEntityRepository;
     private final SiteRepository siteRepository;
     private final ArticleRepository articleRepository;
-
+    private final MetricService metricService;
     private final WebClientService webClientService;
 
     private final KafkaTemplate<String, String> kafkaTemplate;
@@ -59,11 +60,13 @@ public class ArquivoCrawler {
     public ArquivoCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
                           SiteRepository siteRepository, ArticleRepository articleRepository,
                           RateLimiterRepository rateLimiterRepository,
+                          MetricService metricService,
                           KafkaTemplate<String, String> kafkaTemplate) {
         this.integrationLogRepository = integrationLogRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.siteRepository = siteRepository;
         this.articleRepository = articleRepository;
+        this.metricService = metricService;
         this.kafkaTemplate = kafkaTemplate;
         this.webClientService = new WebClientService(rateLimiterRepository);
         this.objectMapper = new ObjectMapper();
@@ -117,6 +120,12 @@ public class ArquivoCrawler {
         LOG.info("\tArticles with no titles: {}/{}", noTitleCounter, totalFetchedCounter);
         LOG.info("\tArticles already stored: {}/{}", duplicateCounter, totalFetchedCounter);
         LOG.info("\tArticles sent: {}/{}", totalSentCounter, totalFetchedCounter);
+
+        metricService.setValue("crawler_total_articles_fetched", totalFetchedCounter);
+        metricService.setValue("crawler_total_articles_no_title", noTitleCounter);
+        metricService.setValue("crawler_total_articles_duplicates", duplicateCounter);
+        metricService.setValue("crawler_total_articles_sent_to_processor", totalSentCounter);
+
     }
 
     private boolean shouldSendToKafka(int entityId, int siteId, JsonNode result) {

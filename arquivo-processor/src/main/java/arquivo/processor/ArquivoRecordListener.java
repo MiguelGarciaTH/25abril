@@ -3,6 +3,7 @@ package arquivo.processor;
 import arquivo.model.*;
 import arquivo.repository.*;
 import arquivo.services.ContextualTextScoreService;
+import arquivo.services.MetricService;
 import arquivo.services.RateLimiterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,6 +44,7 @@ public class ArquivoRecordListener {
     private final SiteRepository siteRepository;
     private final SearchEntityRepository searchEntityRepository;
     private final RateLimiterService rateLimiterService;
+    private final MetricService metricService;
     private final IntegrationLogRepository integrationLogRepository;
 
     private int receivedCounter = 0;
@@ -62,11 +64,13 @@ public class ArquivoRecordListener {
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
                           IntegrationLogRepository integrationLogRepository,
+                          MetricService metricService,
                           RateLimiterRepository rateLimiterRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.objectMapper = objectMapper;
         this.articleRepository = articleRepository;
         this.siteRepository = siteRepository;
         this.searchEntityRepository = searchEntityRepository;
+        this.metricService = metricService;
         this.integrationLogRepository = integrationLogRepository;
         this.kafkaTemplate = kafkaTemplate;
 
@@ -211,5 +215,13 @@ public class ArquivoRecordListener {
         if (discardedCounter > 0) {
             LOG.warn("Articles discarded: {}/{}", discardedCounter, receivedCounter);
         }
+
+        metricService.setValue("processor_total_articles_received", receivedCounter);
+        metricService.setValue("processor_total_articles_created", newCounter);
+        metricService.setValue("processor_total_articles_reused", reusedCounter);
+        metricService.setValue("processor_total_articles_sent_to_text", totalSentCounter);
+        metricService.setValue("processor_total_articles_duplicated", duplicatesCounter);
+        metricService.setValue("processor_total_articles_empty_text", emptyTextCounter);
+        metricService.setValue("processor_total_articles_score_discarded", discardedCounter);
     }
 }

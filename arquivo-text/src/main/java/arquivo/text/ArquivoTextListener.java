@@ -3,6 +3,7 @@ package arquivo.text;
 import arquivo.model.*;
 import arquivo.repository.*;
 import arquivo.services.ContextualTextScoreService;
+import arquivo.services.MetricService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.io.JsonEOFException;
@@ -39,6 +40,7 @@ public class ArquivoTextListener {
     private final KeywordRepository keywordRepository;
     private final ArticleKeywordRepository articleKeywordRepository;
     private final WebClientService webClientService;
+    private final MetricService metricService;
     private final IntegrationLogRepository integrationLogRepository;
 
     private int receivedCounter = 0;
@@ -53,7 +55,7 @@ public class ArquivoTextListener {
     private final Map<String, Object> input;
 
     ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SearchEntityRepository searchEntityRepository,
-                        KeywordRepository keywordRepository, ArticleKeywordRepository articleKeywordRepository,
+                        KeywordRepository keywordRepository, MetricService metricService, ArticleKeywordRepository articleKeywordRepository,
                         IntegrationLogRepository integrationLogRepository) {
         this.objectMapper = objectMapper;
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
@@ -62,6 +64,7 @@ public class ArquivoTextListener {
         this.keywordRepository = keywordRepository;
         this.articleKeywordRepository = articleKeywordRepository;
         this.integrationLogRepository = integrationLogRepository;
+        this.metricService = metricService;
         this.webClientService = new WebClientService();
 
         GenerationConfig generationConfig = GenerationConfig.newBuilder()
@@ -200,8 +203,10 @@ public class ArquivoTextListener {
             return responseJson.get("summary").asText();
         } else if (responseJson.has("resumo")) {
             return responseJson.get("resumo").asText();
-        } else {
+        } else if (responseJson.has("sumario")) {
             return responseJson.get("sumario").asText();
+        } else {
+            return null;
         }
     }
 
@@ -221,6 +226,13 @@ public class ArquivoTextListener {
         if (jsonErrors > 0) {
             LOG.warn("Json parsing errors : {}/{}", jsonErrors, receivedCounter);
         }
+
+        metricService.setValue("text_total_articles_received", receivedCounter);
+        metricService.setValue("text_total_articles_new_summary", newSummaryCounter);
+        metricService.setValue("text_total_articles_repeated_summary", summaryAlreadySetCounter);
+        metricService.setValue("text_total_articles_error_vertex_ai", vertexApiErrorCounter);
+        metricService.setValue("text_total_articles_error_json_parsing", jsonErrors);
+        metricService.setValue("text_total_articles_error_null_summary", summaryNullCounter);
     }
 
     private List<KeywordScore> getKeywords(String text) {
