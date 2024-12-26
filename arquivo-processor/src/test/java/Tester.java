@@ -164,7 +164,7 @@ public class Tester {
         SearchEntity se = new SearchEntity("name" , "alias", SearchEntity.Type.CAPITAES);
         se = searchEntityRepository.save(se);
 
-        Article a = new Article("title", "url", "trimmedUrl", LocalDateTime.now(ZoneOffset.UTC), s, 0, null);
+        Article a = new Article("title", "url", "trimmedUrl", LocalDateTime.now(ZoneOffset.UTC), s, "test", 0, null);
         a.setSearchEntities(Set.of(se));
         a = articleRepository.save(a);
 

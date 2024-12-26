@@ -62,7 +62,7 @@ public class ContextualTextScoreService {
         namesPattern = new HashMap<>();
     }
 
-    public Score score(String title, String url, String text, SearchEntity searchEntity) {
+    public Score contextualScore(String title, String url, String text) {
         long score = 0;
         final Map<String, Long> keywordTextCounter = new HashMap<>();
 
@@ -75,7 +75,25 @@ public class ContextualTextScoreService {
         }
         score += countContextualKeyword;
 
+        final Matcher urlMatcher = keywordPattern.matcher(url);
+        final long countNamesUrl = urlMatcher.results().count();
+        keywordTextCounter.put("countContextualUrl", countNamesUrl);
+        score *= Math.max(1, countNamesUrl * 2);
+
+        final Matcher titleMatcher = keywordPattern.matcher(title);
+        final long countNamesTitle = titleMatcher.results().count();
+        keywordTextCounter.put("countContextuaTitle", countNamesTitle);
+        score *= Math.max(1, countNamesTitle * 2);
+
+        return new Score((double) score / text.length(), keywordTextCounter);
+    }
+
+    public Score searchEntityscore(String title, String url, String text, SearchEntity searchEntity) {
+        long score = 0;
+        final Map<String, Long> keywordTextCounter = new HashMap<>();
+
         final Pattern pattern = getNamePattern(searchEntity);
+
         final Matcher namesMatcher = pattern.matcher(text);
         final long countNamesKeywords = namesMatcher.results().count();
         keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
@@ -83,7 +101,7 @@ public class ContextualTextScoreService {
             // the article is not about the search entity
             return new Score(0, keywordTextCounter);
         }
-        score += (countNamesKeywords * countContextualKeyword);
+        score += countNamesKeywords;
 
         final Matcher urlMatcher = pattern.matcher(url);
         final long countNamesUrl = urlMatcher.results().count();

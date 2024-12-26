@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @EnableKafka
@@ -104,12 +103,9 @@ public class ArquivoRecordListener {
 
         Article article = articleRepository.findByTrimmedUrlAndSiteId(trimUrl(event.url()), event.siteId()).orElse(null);
         if (article != null) { // TODO good candidate for index
-            final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            article.getSearchEntities().add(searchEntity);
-            articleRepository.save(article);
+            publish(new TextRecord(article.getId(), event.searchEntityId()));
+            LOG.debug("New article association articleId={} title={} url={} for entity={}", article.getId(), event.title(), event.url(), event.searchEntityId());
             reusedCounter++;
-            LOG.debug("New article association articleId={} title={} url={} for entity={}", article.getId(), event.title(), event.url(), searchEntity.getName());
-
         } else { //new article
             final Site site = getSite(event.siteId());
             final String text = getText(event.textUrl());
@@ -121,16 +117,13 @@ public class ArquivoRecordListener {
             }
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, searchEntity);
-            if (score.total() > 0.001) {
+            final ContextualTextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text);
+            if (score.total() > 0) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
-                article = new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson);
-                article.setSearchEntities(Set.of(searchEntity));
-                articleRepository.save(article);
-
+                article = articleRepository.save(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, text, score.total(), scoreJson));
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;
-                publish(new TextRecord(article.getId(), searchEntity.getId(), text));
+                publish(new TextRecord(article.getId(), searchEntity.getId()));
             } else {
                 discardedCounter++;
             }

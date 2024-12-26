@@ -6,7 +6,6 @@ import arquivo.services.ContextualTextScoreService;
 import arquivo.services.MetricService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.io.JsonEOFException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +34,7 @@ public class ArquivoTextListener {
 
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
+    private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
     private final ContextualTextScoreService contextualTextScoreService = ContextualTextScoreService.getInstance();
     private final SearchEntityRepository searchEntityRepository;
     private final KeywordRepository keywordRepository;
@@ -48,18 +48,24 @@ public class ArquivoTextListener {
     private int vertexApiErrorCounter = 0;
     private int summaryAlreadySetCounter = 0;
     private int newSummaryCounter = 0;
+    private int newAssociationCounter = 0;
+    private int duplicatedArticleEntity = 0;
     private int jsonErrors = 0;
 
     private final GenerativeModel model;
 
     private final Map<String, Object> input;
+    private int retry = 0;
 
-    ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SearchEntityRepository searchEntityRepository,
+    ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository,
+                        ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
+                        SearchEntityRepository searchEntityRepository,
                         KeywordRepository keywordRepository, MetricService metricService, ArticleKeywordRepository articleKeywordRepository,
                         IntegrationLogRepository integrationLogRepository) {
         this.objectMapper = objectMapper;
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         this.articleRepository = articleRepository;
+        this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.keywordRepository = keywordRepository;
         this.articleKeywordRepository = articleKeywordRepository;
@@ -111,7 +117,7 @@ public class ArquivoTextListener {
     @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
 
-        LOG.debug("Received on topic {} record {}", record.topic(), record.value());
+        LOG.info("Received on topic {} record {}", record.topic(), record.value());
         receivedCounter++;
 
         final TextRecord event;
@@ -130,48 +136,77 @@ public class ArquivoTextListener {
             return;
         }
 
-        if (article.getSummary() != null && !article.getSummary().isBlank()) {
-            LOG.warn("Summary already set, we will skip: {}", event.articleId());
+        final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
+        if (searchEntity == null) {
+            LOG.warn("Should not happen searchEntity: {} is null", event.searchEntityId());
             ack.acknowledge();
-            summaryAlreadySetCounter++;
             return;
         }
 
-        try {
-            String summaryResponse = summarize(event.text());
-            if (summaryResponse == null) {
-                LOG.error("Vertex returned a null summary: {}", event.articleId());
-                ack.acknowledge();
-                summaryNullCounter++;
-                return;
-            }
-            String summary;
+        final ArticleSearchEntityAssociation articleSearchEntityAssociation = articleSearchEntityAssociationRepository.findByArticleIdAndSearchEntityId(article.getId(), searchEntity.getId()).orElse(null);
+        if (articleSearchEntityAssociation != null) {
+            LOG.warn("Record repeated we already set summary and score for article: {} and search entity: {} ", article.getId(), searchEntity.getId());
+            duplicatedArticleEntity++;
+            ack.acknowledge();
+            return;
+        }
+
+        String summary = article.getSummary();
+
+        if (summary == null || summary.isBlank()) {
             try {
-                summary = getSummary(summaryResponse);
-            } catch (JsonEOFException ex) {
-                try {
-                    summaryResponse = summarize(event.text());
-                    summary = getSummary(summaryResponse);
-                } catch (JsonEOFException ex2) {
-                    LOG.error("Error parsing json (after retry): {}", event.articleId(), ex.getCause());
-                    integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, summaryResponse, ex2.getMessage()));
+                // process summary
+                String summaryResponse = summarize(article.getText());
+                if (summaryResponse == null) {
+                    LOG.error("Vertex returned a null summary: {}", event.articleId());
                     ack.acknowledge();
+                    summaryNullCounter++;
+                    return;
+                }
+
+                summary = getSummary(summaryResponse);
+
+                // keep retrying : 3x
+                while (summary == null && retry < 3) {
+                    LOG.error("Error parsing json (on retry {}): {} summary: {}", retry, event.articleId(), summary);
+                    Thread.sleep(500L);
+                    summaryResponse = summarize(article.getText());
+                    summary = getSummary(summaryResponse);
+                    retry++;
+                }
+
+                // give up on summary
+                if (summary == null) {
+                    LOG.error("Give up on parsing json (after retry {}): {} summary: {}", retry, event.articleId(), summary);
+                    integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, summaryResponse, null));
+                    ack.acknowledge();
+                    retry = 0;
                     jsonErrors++;
                     return;
                 }
+                retry = 0;
+
+            } catch (IOException e) {
+                LOG.error("Error using Vertex API: {}", event.articleId(), e);
+                integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, article.getText(), e.getMessage()));
+                ack.acknowledge();
+                vertexApiErrorCounter++;
+                return;
+            } catch (InterruptedException e) {
+                // do nothing
             }
 
-            // recalculates the score over text summary, stores is greater than 5
-            final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
-            final ContextualTextScoreService.Score score = contextualTextScoreService.score(article.getTitle(), article.getUrl(), summary, searchEntity);
-            final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
+            // score for article summary
+            final ContextualTextScoreService.Score contextualScore = contextualTextScoreService.contextualScore(article.getTitle(), article.getUrl(), summary);
+            final JsonNode contextualScoreJson = objectMapper.convertValue(contextualScore.keywordCounter(), JsonNode.class);
 
             article.setSummary(summary);
-            article.setSummaryScore(score.total());
-            article.setSummaryScoreDetails(scoreJson);
+            article.setSummaryScore(contextualScore.total());
+            article.setSummaryScoreDetails(contextualScoreJson);
             article = articleRepository.save(article);
             newSummaryCounter++;
 
+            // keywords by yake
             final List<KeywordScore> keywordList = getKeywords(summary);
             for (var ks : keywordList) {
                 if (ks.score() > 0.0) {
@@ -183,21 +218,26 @@ public class ArquivoTextListener {
                 }
             }
 
-        } catch (IOException e) {
-            LOG.error("Error using Vertex API: {}", event.articleId(), e);
-            integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, event.text(), e.getMessage()));
-            ack.acknowledge();
-            vertexApiErrorCounter++;
-            return;
+        } else {
+            summaryAlreadySetCounter++;
         }
 
-        ack.acknowledge();
+        final ContextualTextScoreService.Score entityScore = contextualTextScoreService.searchEntityscore(article.getTitle(), article.getUrl(), summary, searchEntity);
+        final JsonNode entityScoreJson = objectMapper.convertValue(entityScore.keywordCounter(), JsonNode.class);
+        articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, entityScore.total(), entityScoreJson));
+        newAssociationCounter++;
 
-        logStats();
+        ack.acknowledge();
+        //logStats();
     }
 
-    private String getSummary(String summaryResponse) throws JsonProcessingException {
-        final JsonNode responseJson = objectMapper.readTree(summaryResponse);
+    private String getSummary(String summaryResponse) {
+        final JsonNode responseJson;
+        try {
+            responseJson = objectMapper.readTree(summaryResponse);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
         // don't know why sometimes the summary is "resumo"
         if (responseJson.has("summary")) {
             return responseJson.get("summary").asText();
@@ -216,6 +256,9 @@ public class ArquivoTextListener {
         LOG.info("Stats:");
         LOG.info("Texts received: {}", receivedCounter);
         LOG.info("Texts new summary : {}/{}", newSummaryCounter, receivedCounter);
+        LOG.info("Texts new association : {}/{}", newAssociationCounter, receivedCounter);
+        LOG.info("Texts repeated association : {}/{}", duplicatedArticleEntity, receivedCounter);
+
         if (summaryAlreadySetCounter > 0) {
             LOG.warn("Texts already set summary : {}/{}", summaryAlreadySetCounter, receivedCounter);
         }
@@ -232,6 +275,7 @@ public class ArquivoTextListener {
         metricService.setValue("text_total_articles_received", receivedCounter);
         metricService.setValue("text_total_articles_new_summary", newSummaryCounter);
         metricService.setValue("text_total_articles_repeated_summary", summaryAlreadySetCounter);
+        metricService.setValue("text_total_articles_repeated_association", duplicatedArticleEntity);
         metricService.setValue("text_total_articles_error_vertex_ai", vertexApiErrorCounter);
         metricService.setValue("text_total_articles_error_json_parsing", jsonErrors);
         metricService.setValue("text_total_articles_error_null_summary", summaryNullCounter);

@@ -47,7 +47,6 @@ public class ArquivoCrawler {
 
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
 
-
     private long totalFetchedCounter = 0;
     private long noTitleCounter = 0;
     private long duplicateCounter = 0;

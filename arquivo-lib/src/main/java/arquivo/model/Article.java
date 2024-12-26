@@ -40,13 +40,16 @@ public class Article {
     private String trimmedUrl;
 
     @Column(columnDefinition = "text")
+    private String text;
+
+    @Column(columnDefinition = "text")
     private String summary;
 
-    private double textScore;
+    private double contextualScore;
 
     @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
     @Column(columnDefinition = "jsonb")
-    private JsonNode textScoreDetails;
+    private JsonNode contextualScoreDetails;
 
     private double summaryScore;
 
@@ -66,15 +69,16 @@ public class Article {
 
     }
 
-    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, double textScore, JsonNode textScoreDetails) {
+    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, String text, double contextualScore, JsonNode contextualScoreDetails) {
         this.url = url;
         this.trimmedUrl = trimmedUrl;
         this.date = date;
         this.site = site;
         this.title = title;
+        this.text =text;
         this.summary = null;
-        this.textScore = textScore;
-        this.textScoreDetails = textScoreDetails;
+        this.contextualScore = contextualScore;
+        this.contextualScoreDetails = contextualScoreDetails;
         this.searchEntities = new HashSet<>();
     }
 
@@ -138,20 +142,20 @@ public class Article {
         this.summaryScore = summaryScore;
     }
 
-    public double getTextScore() {
-        return textScore;
+    public double getContextualScore() {
+        return contextualScore;
     }
 
-    public void setTextScore(double textScore) {
-        this.textScore = textScore;
+    public void setContextualScore(double contextualScore) {
+        this.contextualScore = contextualScore;
     }
 
-    public JsonNode getTextScoreDetails() {
-        return textScoreDetails;
+    public JsonNode getContextualScoreDetails() {
+        return contextualScoreDetails;
     }
 
-    public void setTextScoreDetails(JsonNode textScoreDetails) {
-        this.textScoreDetails = textScoreDetails;
+    public void setContextualScoreDetails(JsonNode contextualScoreDetails) {
+        this.contextualScoreDetails = contextualScoreDetails;
     }
 
     public JsonNode getSummaryScoreDetails() {
@@ -168,5 +172,13 @@ public class Article {
 
     public void setSearchEntities(Set<SearchEntity> searchEntities) {
         this.searchEntities = searchEntities;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

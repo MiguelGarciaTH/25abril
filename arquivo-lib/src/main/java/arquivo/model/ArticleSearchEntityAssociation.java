@@ -1,5 +1,6 @@
 package arquivo.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -23,12 +24,27 @@ public class ArticleSearchEntityAssociation {
     @ManyToOne(fetch = FetchType.EAGER)
     private SearchEntity searchEntity;
 
+    private Double entityScore = 0.0;
+
+    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
+    @Column(columnDefinition = "jsonb")
+    private JsonNode entityScoreDetails;
+
     public ArticleSearchEntityAssociation() {
     }
 
     public ArticleSearchEntityAssociation(Article article, SearchEntity searchEntity) {
         this.article = article;
         this.searchEntity = searchEntity;
+        this.entityScore = 0.0;
+        this.entityScoreDetails = null;
+    }
+
+    public ArticleSearchEntityAssociation(Article article, SearchEntity searchEntity, double entityScore, JsonNode entityScoreDetails) {
+        this.article = article;
+        this.searchEntity = searchEntity;
+        this.entityScore = entityScore;
+        this.entityScoreDetails = entityScoreDetails;
     }
 
     public Article getArticle() {
@@ -45,5 +61,21 @@ public class ArticleSearchEntityAssociation {
 
     public void setSearchEntity(SearchEntity searchEntity) {
         this.searchEntity = searchEntity;
+    }
+
+    public JsonNode getEntityScoreDetails() {
+        return entityScoreDetails;
+    }
+
+    public void setEntityScoreDetails(JsonNode entityScoreDetails) {
+        this.entityScoreDetails = entityScoreDetails;
+    }
+
+    public Double getEntityScore() {
+        return entityScore;
+    }
+
+    public void setEntityScore(Double entityScore) {
+        this.entityScore = entityScore;
     }
 }
