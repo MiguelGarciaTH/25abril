@@ -205,6 +205,8 @@ public class ArquivoTextListener {
             return responseJson.get("resumo").asText();
         } else if (responseJson.has("sumario")) {
             return responseJson.get("sumario").asText();
+        } else if (responseJson.has("summaries")) {
+            return responseJson.get("summaries").get(0).asText();//return first
         } else {
             return null;
         }
