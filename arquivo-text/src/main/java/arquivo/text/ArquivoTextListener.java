@@ -163,7 +163,7 @@ public class ArquivoTextListener {
 
             // recalculates the score over text summary, stores is greater than 5
             final SearchEntity searchEntity = searchEntityRepository.findById(event.searchEntityId()).orElse(null);
-            final ContextualTextScoreService.Score score = contextualTextScoreService.scoreSummary(article.getTitle(), article.getUrl(), summary, searchEntity);
+            final ContextualTextScoreService.Score score = contextualTextScoreService.score(article.getTitle(), article.getUrl(), summary, searchEntity);
             final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
 
             article.setSummary(summary);

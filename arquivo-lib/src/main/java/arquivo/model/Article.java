@@ -6,9 +6,7 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -44,13 +42,13 @@ public class Article {
     @Column(columnDefinition = "text")
     private String summary;
 
-    private int textScore;
+    private double textScore;
 
     @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
     @Column(columnDefinition = "jsonb")
     private JsonNode textScoreDetails;
 
-    private int summaryScore;
+    private double summaryScore;
 
     @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
     @Column(columnDefinition = "jsonb")
@@ -68,7 +66,7 @@ public class Article {
 
     }
 
-    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, int textScore, JsonNode textScoreDetails) {
+    public Article(String title, String url, String trimmedUrl, LocalDateTime date, Site site, double textScore, JsonNode textScoreDetails) {
         this.url = url;
         this.trimmedUrl = trimmedUrl;
         this.date = date;
@@ -77,8 +75,6 @@ public class Article {
         this.summary = null;
         this.textScore = textScore;
         this.textScoreDetails = textScoreDetails;
-        this.summaryScore = summaryScore;
-        this.summaryScoreDetails = summaryScoreDetails;
         this.searchEntities = new HashSet<>();
     }
 
@@ -134,19 +130,19 @@ public class Article {
         this.summary = summary;
     }
 
-    public int getSummaryScore() {
+    public double getSummaryScore() {
         return summaryScore;
     }
 
-    public void setSummaryScore(int summaryScore) {
+    public void setSummaryScore(double summaryScore) {
         this.summaryScore = summaryScore;
     }
 
-    public int getTextScore() {
+    public double getTextScore() {
         return textScore;
     }
 
-    public void setTextScore(int textScore) {
+    public void setTextScore(double textScore) {
         this.textScore = textScore;
     }
 

@@ -122,7 +122,7 @@ public class ArquivoRecordListener {
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
             final ContextualTextScoreService.Score score = scoreService.score(event.title(), event.textUrl(), text, searchEntity);
-            if (score.total() > 5) {
+            if (score.total() > 0.001) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, score.total(), scoreJson);
                 article.setSearchEntities(Set.of(searchEntity));
