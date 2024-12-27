@@ -19,9 +19,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
@@ -53,6 +56,7 @@ public class ArquivoTextListener {
     private int jsonErrors = 0;
     private int discardedSummaryCounter = 0;
 
+    final DecimalFormat decimalFormat = new DecimalFormat("#.###########");
 
     private final GenerativeModel model;
 
@@ -116,10 +120,10 @@ public class ArquivoTextListener {
         input.put("number_of_keywords", 5);
     }
 
-    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory")
-    public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
+    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "5")
+    public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
 
-        LOG.debug("Received on topic {} record {}", record.topic(), record.value());
+        LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
         receivedCounter++;
 
         final TextRecord event;
@@ -203,7 +207,12 @@ public class ArquivoTextListener {
             final TextScoreService.Score contextualScore = textScoreService.contextualScore(article.getTitle(), article.getUrl(), summary);
             if (contextualScore.total() == 0) {
                 // the previous score (greater than zero) was due to some side-text-artifacts on the article (e.g., headlines on side columns)
-                LOG.info("Article {} is not about 25 de Abril (summary scoring) previous score: {}", event.articleId(), article.getContextualScore());
+                LOG.info("Article {} is not about 25 de Abril (summary scoring) previous score: {}", event.articleId(), decimalFormat.format(article.getContextualScore()));
+
+                // we are saving the article summary just to avoid keeping repeating unnecessary calls to vertex ia
+                article.setSummary(summary);
+                articleRepository.save(article);
+
                 discardedSummaryCounter++;
                 ack.acknowledge();
                 return;

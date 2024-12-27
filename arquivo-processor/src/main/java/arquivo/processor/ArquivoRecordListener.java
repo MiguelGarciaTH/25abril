@@ -179,10 +179,16 @@ public class ArquivoRecordListener {
         }
     }
 
+    int roundRobinIndex = 0;
+
     private void publish(TextRecord textRecord) {
         try {
-            kafkaTemplate.send(topic, objectMapper.writeValueAsString(textRecord));
+            kafkaTemplate.send(topic, roundRobinIndex, "" + roundRobinIndex, objectMapper.writeValueAsString(textRecord));
             totalSentCounter++;
+            roundRobinIndex++;
+            if (roundRobinIndex == 5) {
+                roundRobinIndex = 0;
+            }
             LOG.debug("Sent to topic {} value={}", topic, textRecord);
         } catch (JsonProcessingException e) {
             LOG.warn("Error processing article {} for summary processing", textRecord.articleId());
@@ -211,7 +217,7 @@ public class ArquivoRecordListener {
         }
     }
 
-    private void storeStats(){
+    private void storeStats() {
         metricService.setValue("processor_total_articles_received", receivedCounter);
         metricService.setValue("processor_total_articles_created", newCounter);
         metricService.setValue("processor_total_articles_reused", reusedCounter);
