@@ -3,7 +3,7 @@ package arquivo.crawler;
 import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
 import arquivo.repository.*;
-import arquivo.services.ContextualTextScoreService;
+import arquivo.services.TextScoreService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class ArquivoImageCrawler {
     private final SearchEntityRepository searchEntityRepository;
 
     private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=%s&offset=0&maxItems=200&prettyPrint=true";
-    private static final ContextualTextScoreService textScore = ContextualTextScoreService.getInstance();
+    private static final TextScoreService textScore = TextScoreService.getInstance();
 
     private final WebClientService webClientService;
 

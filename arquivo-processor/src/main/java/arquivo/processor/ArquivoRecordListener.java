@@ -2,7 +2,7 @@ package arquivo.processor;
 
 import arquivo.model.*;
 import arquivo.repository.*;
-import arquivo.services.ContextualTextScoreService;
+import arquivo.services.TextScoreService;
 import arquivo.services.MetricService;
 import arquivo.services.RateLimiterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,7 +58,7 @@ public class ArquivoRecordListener {
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
 
-    private final ContextualTextScoreService scoreService = ContextualTextScoreService.getInstance();
+    private final TextScoreService scoreService = TextScoreService.getInstance();
 
     ArquivoRecordListener(ObjectMapper objectMapper, ArticleRepository articleRepository, SiteRepository siteRepository,
                           SearchEntityRepository searchEntityRepository,
@@ -117,7 +117,7 @@ public class ArquivoRecordListener {
             }
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            final ContextualTextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text);
+            final TextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text);
             if (score.total() > 0) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = articleRepository.save(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, text, score.total(), scoreJson));
@@ -132,6 +132,7 @@ public class ArquivoRecordListener {
         ack.acknowledge();
 
         logStats();
+        storeStats();
     }
 
     private Site getSite(int siteId) {
@@ -208,7 +209,9 @@ public class ArquivoRecordListener {
         if (discardedCounter > 0) {
             LOG.warn("Articles discarded: {}/{}", discardedCounter, receivedCounter);
         }
+    }
 
+    private void storeStats(){
         metricService.setValue("processor_total_articles_received", receivedCounter);
         metricService.setValue("processor_total_articles_created", newCounter);
         metricService.setValue("processor_total_articles_reused", reusedCounter);

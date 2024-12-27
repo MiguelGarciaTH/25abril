@@ -11,6 +11,6 @@
 
 
     <!--<logger name="arquivo.processor.ArquivoRecordListener" level="DEBUG"/>
-    <logger name="arquivo.services.ContextualTextScoreService" level="DEBUG"/>-->
+    <logger name="arquivo.services.TextScoreService" level="DEBUG"/>-->
 
 </configuration>

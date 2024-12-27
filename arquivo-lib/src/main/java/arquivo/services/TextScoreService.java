@@ -12,11 +12,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ContextualTextScoreService {
+public class TextScoreService {
 
-    private static ContextualTextScoreService INSTANCE;
+    private static TextScoreService INSTANCE;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContextualTextScoreService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TextScoreService.class);
 
     private static Pattern keywordPattern;
 
@@ -42,15 +42,15 @@ public class ContextualTextScoreService {
 
     private final Map<Integer, Pattern> namesPattern;
 
-    public static ContextualTextScoreService getInstance() {
+    public static TextScoreService getInstance() {
         if (INSTANCE == null) {
-            INSTANCE = new ContextualTextScoreService();
+            INSTANCE = new TextScoreService();
             LOG.info("A new instance of ContextualTextScoreService was created");
         }
         return INSTANCE;
     }
 
-    public ContextualTextScoreService() {
+    public TextScoreService() {
         StringBuilder regexp = new StringBuilder();
         regexp.append("(");
         for (String word : contextualKeywords) {

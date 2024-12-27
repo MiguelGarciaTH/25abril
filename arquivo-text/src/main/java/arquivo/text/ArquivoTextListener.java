@@ -2,7 +2,7 @@ package arquivo.text;
 
 import arquivo.model.*;
 import arquivo.repository.*;
-import arquivo.services.ContextualTextScoreService;
+import arquivo.services.TextScoreService;
 import arquivo.services.MetricService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,7 +35,7 @@ public class ArquivoTextListener {
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
     private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
-    private final ContextualTextScoreService contextualTextScoreService = ContextualTextScoreService.getInstance();
+    private final TextScoreService textScoreService = TextScoreService.getInstance();
     private final SearchEntityRepository searchEntityRepository;
     private final KeywordRepository keywordRepository;
     private final ArticleKeywordRepository articleKeywordRepository;
@@ -51,6 +51,8 @@ public class ArquivoTextListener {
     private int newAssociationCounter = 0;
     private int duplicatedArticleEntity = 0;
     private int jsonErrors = 0;
+    private int discardedSummaryCounter = 0;
+
 
     private final GenerativeModel model;
 
@@ -117,7 +119,7 @@ public class ArquivoTextListener {
     @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack) {
 
-        LOG.info("Received on topic {} record {}", record.topic(), record.value());
+        LOG.debug("Received on topic {} record {}", record.topic(), record.value());
         receivedCounter++;
 
         final TextRecord event;
@@ -185,6 +187,7 @@ public class ArquivoTextListener {
                     return;
                 }
                 retry = 0;
+                article.setSummary(summary);
 
             } catch (IOException e) {
                 LOG.error("Error using Vertex API: {}", event.articleId(), e);
@@ -197,12 +200,19 @@ public class ArquivoTextListener {
             }
 
             // score for article summary
-            final ContextualTextScoreService.Score contextualScore = contextualTextScoreService.contextualScore(article.getTitle(), article.getUrl(), summary);
-            final JsonNode contextualScoreJson = objectMapper.convertValue(contextualScore.keywordCounter(), JsonNode.class);
+            final TextScoreService.Score contextualScore = textScoreService.contextualScore(article.getTitle(), article.getUrl(), summary);
+            if (contextualScore.total() == 0) {
+                // the previous score (greater than zero) was due to some side-text-artifacts on the article (e.g., headlines on side columns)
+                LOG.info("Article {} is not about 25 de Abril (summary scoring) previous score: {}", event.articleId(), article.getContextualScore());
+                discardedSummaryCounter++;
+                ack.acknowledge();
+                return;
+            }
 
-            article.setSummary(summary);
+            final JsonNode contextualScoreJson = objectMapper.convertValue(contextualScore.keywordCounter(), JsonNode.class);
             article.setSummaryScore(contextualScore.total());
             article.setSummaryScoreDetails(contextualScoreJson);
+
             article = articleRepository.save(article);
             newSummaryCounter++;
 
@@ -222,13 +232,14 @@ public class ArquivoTextListener {
             summaryAlreadySetCounter++;
         }
 
-        final ContextualTextScoreService.Score entityScore = contextualTextScoreService.searchEntityscore(article.getTitle(), article.getUrl(), summary, searchEntity);
+        final TextScoreService.Score entityScore = textScoreService.searchEntityscore(article.getTitle(), article.getUrl(), summary, searchEntity);
         final JsonNode entityScoreJson = objectMapper.convertValue(entityScore.keywordCounter(), JsonNode.class);
         articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, entityScore.total(), entityScoreJson));
         newAssociationCounter++;
 
         ack.acknowledge();
-        //logStats();
+        logStats();
+        storeStats();
     }
 
     private String getSummary(String summaryResponse) {
@@ -238,13 +249,16 @@ public class ArquivoTextListener {
         } catch (JsonProcessingException e) {
             return null;
         }
-        // don't know why sometimes the summary is "resumo"
         if (responseJson.has("summary")) {
             return responseJson.get("summary").asText();
         } else if (responseJson.has("resumo")) {
             return responseJson.get("resumo").asText();
         } else if (responseJson.has("sumario")) {
             return responseJson.get("sumario").asText();
+        } else if (responseJson.has("Resumo")) {
+            return responseJson.get("Resumo").asText();
+        } else if (responseJson.has("sumário")) {
+            return responseJson.get("sumário").asText();
         } else if (responseJson.has("summaries")) {
             return responseJson.get("summaries").get(0).asText();//return first
         } else {
@@ -256,6 +270,7 @@ public class ArquivoTextListener {
         LOG.info("Stats:");
         LOG.info("Texts received: {}", receivedCounter);
         LOG.info("Texts new summary : {}/{}", newSummaryCounter, receivedCounter);
+        LOG.info("Texts discarded summary : {}/{}", discardedSummaryCounter, receivedCounter);
         LOG.info("Texts new association : {}/{}", newAssociationCounter, receivedCounter);
         LOG.info("Texts repeated association : {}/{}", duplicatedArticleEntity, receivedCounter);
 
@@ -271,9 +286,12 @@ public class ArquivoTextListener {
         if (jsonErrors > 0) {
             LOG.warn("Json parsing errors : {}/{}", jsonErrors, receivedCounter);
         }
+    }
 
+    private void storeStats() {
         metricService.setValue("text_total_articles_received", receivedCounter);
         metricService.setValue("text_total_articles_new_summary", newSummaryCounter);
+        metricService.setValue("text_total_articles_discarded_summary", discardedSummaryCounter);
         metricService.setValue("text_total_articles_repeated_summary", summaryAlreadySetCounter);
         metricService.setValue("text_total_articles_repeated_association", duplicatedArticleEntity);
         metricService.setValue("text_total_articles_error_vertex_ai", vertexApiErrorCounter);
