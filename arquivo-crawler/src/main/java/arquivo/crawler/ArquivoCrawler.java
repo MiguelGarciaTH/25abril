@@ -27,6 +27,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -82,6 +83,9 @@ public class ArquivoCrawler {
         final List<SearchEntity> entities = searchEntityRepository.findAll();
         final List<Site> sites = siteRepository.findAll();
         final List<UrlRecord> urls = prepareSearchUrl(entities, sites);
+        // shuffling aims to optimize the messages sent to kafka. If we shuffle we may avoid sending duplicated ahead.
+        Collections.shuffle(urls);
+
         LOG.info("Number of URLs to hit Arquivo.pt {} (#entities:{} and #sites:{})", urls.size(), entities.size(), sites.size());
 
         for (UrlRecord url : urls) {
