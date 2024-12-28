@@ -196,7 +196,7 @@ public class ArquivoRecordListener {
             LOG.debug("Sent to topic {} and partition {} value={}", topic, roundRobinIndex, textRecord);
             totalSentCounter++;
             roundRobinIndex++;
-            if (roundRobinIndex == 5) {
+            if (roundRobinIndex == 6) {
                 roundRobinIndex = 0;
             }
         } catch (JsonProcessingException e) {

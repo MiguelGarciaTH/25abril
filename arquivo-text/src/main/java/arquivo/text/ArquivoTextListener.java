@@ -129,7 +129,7 @@ public class ArquivoTextListener {
         summaryNullCounter = metricService.loadValue("text_total_articles_error_null_summary");
     }
 
-    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "5")
+    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "6")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
