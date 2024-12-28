@@ -193,12 +193,12 @@ public class ArquivoRecordListener {
     private void publish(TextRecord textRecord) {
         try {
             kafkaTemplate.send(topic, roundRobinIndex, "" + roundRobinIndex, objectMapper.writeValueAsString(textRecord));
+            LOG.debug("Sent to topic {} and partition {} value={}", topic, roundRobinIndex, textRecord);
             totalSentCounter++;
             roundRobinIndex++;
             if (roundRobinIndex == 5) {
                 roundRobinIndex = 0;
             }
-            LOG.debug("Sent to topic {} value={}", topic, textRecord);
         } catch (JsonProcessingException e) {
             LOG.warn("Error processing article {} for summary processing", textRecord.articleId());
         }
