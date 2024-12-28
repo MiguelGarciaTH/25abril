@@ -218,8 +218,9 @@ public class ArquivoTextListener {
                 // the previous score (greater than zero) was due to some side-text-artifacts on the article (e.g., headlines on side columns)
                 LOG.info("Article {} is not about 25 de Abril (summary scoring) previous score: {}", event.articleId(), decimalFormat.format(article.getContextualScore()));
 
-                // we are saving the article summary just to avoid keeping repeating unnecessary calls to vertex ia
+                // we are saving the article summary just to avoid keeping repeating unnecessary calls to vertex AI
                 article.setSummary(summary);
+                article.setSummaryScore(0.0);
                 articleRepository.save(article);
 
                 discardedSummaryCounter++;
