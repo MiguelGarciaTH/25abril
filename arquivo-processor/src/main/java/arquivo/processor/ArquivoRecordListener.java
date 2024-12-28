@@ -46,14 +46,14 @@ public class ArquivoRecordListener {
     private final MetricService metricService;
     private final IntegrationLogRepository integrationLogRepository;
 
-    private int receivedCounter = 0;
-    private int duplicatesCounter = 0;
-    private int reusedCounter = 0;
-    private int newCounter = 0;
-    private int emptyTextCounter = 0;
-    private int retryCounter = 0;
-    private int totalSentCounter = 0;
-    private int discardedCounter = 0;
+    private long receivedCounter;
+    private long duplicatesCounter;
+    private long reusedCounter;
+    private long newCounter;
+    private long emptyTextCounter;
+    private long retryCounter;
+    private long totalSentCounter;
+    private long discardedCounter;
 
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
@@ -77,6 +77,15 @@ public class ArquivoRecordListener {
 
         final List<SearchEntity> searchEntities = searchEntityRepository.findAll();
         LOG.info("Pre caching names patterns for {} search entities", searchEntities.size());
+
+
+        receivedCounter = metricService.loadValue("processor_total_articles_received");
+        newCounter = metricService.loadValue("processor_total_articles_created");
+        reusedCounter = metricService.loadValue("processor_total_articles_reused");
+        totalSentCounter = metricService.loadValue("processor_total_articles_sent_to_text");
+        duplicatesCounter = metricService.loadValue("processor_total_articles_duplicated");
+        emptyTextCounter = metricService.loadValue("processor_total_articles_empty_text");
+        discardedCounter = metricService.loadValue("processor_total_articles_score_discarded");
     }
 
     @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")

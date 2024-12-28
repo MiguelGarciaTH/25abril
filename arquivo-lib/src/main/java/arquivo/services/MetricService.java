@@ -30,4 +30,13 @@ public class MetricService {
             metricRepository.save(metric);
         }
     }
+
+    @Transactional(readOnly = true)
+    public long loadValue(String key) {
+        Metric metric = metricRepository.findByKey(key);
+        if (metric != null) {
+            return metric.getValue();
+        }
+        return 0;
+    }
 }

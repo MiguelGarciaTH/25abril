@@ -47,10 +47,10 @@ public class ArquivoCrawler {
 
     private final DateTimeFormatter arquivoFormatter = DateTimeFormatter.ofPattern("uuuuMMddHHmmss");
 
-    private long totalFetchedCounter = 0;
-    private long noTitleCounter = 0;
-    private long duplicateCounter = 0;
-    private long totalSentCounter = 0;
+    private long totalFetchedCounter;
+    private long noTitleCounter;
+    private long duplicateCounter;
+    private long totalSentCounter;
 
     @Value("${crawler.topic}")
     private String topic;
@@ -69,6 +69,11 @@ public class ArquivoCrawler {
         this.kafkaTemplate = kafkaTemplate;
         this.webClientService = new WebClientService(rateLimiterRepository);
         this.objectMapper = new ObjectMapper();
+
+        totalFetchedCounter = metricService.loadValue("crawler_total_articles_fetched");
+        noTitleCounter = metricService.loadValue("crawler_total_articles_no_title");
+        duplicateCounter = metricService.loadValue("crawler_total_articles_duplicates");
+        totalSentCounter = metricService.loadValue("crawler_total_articles_sent_to_processor");
     }
 
     @EventListener(ApplicationReadyEvent.class)

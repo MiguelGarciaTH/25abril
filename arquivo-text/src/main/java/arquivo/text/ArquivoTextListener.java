@@ -46,15 +46,15 @@ public class ArquivoTextListener {
     private final MetricService metricService;
     private final IntegrationLogRepository integrationLogRepository;
 
-    private int receivedCounter = 0;
-    private int summaryNullCounter = 0;
-    private int vertexApiErrorCounter = 0;
-    private int summaryAlreadySetCounter = 0;
-    private int newSummaryCounter = 0;
-    private int newAssociationCounter = 0;
-    private int duplicatedArticleEntity = 0;
-    private int jsonErrors = 0;
-    private int discardedSummaryCounter = 0;
+    private long receivedCounter;
+    private long summaryNullCounter;
+    private long vertexApiErrorCounter;
+    private long summaryAlreadySetCounter;
+    private long newSummaryCounter;
+    private long newAssociationCounter;
+    private long duplicatedArticleEntity;
+    private long jsonErrors;
+    private long discardedSummaryCounter;
 
     final DecimalFormat decimalFormat = new DecimalFormat("#.###########");
 
@@ -118,6 +118,15 @@ public class ArquivoTextListener {
         input.put("language", "pt");
         input.put("max_ngram_size", 3);
         input.put("number_of_keywords", 5);
+
+        receivedCounter = metricService.loadValue("text_total_articles_received");
+        newSummaryCounter = metricService.loadValue("text_total_articles_new_summary");
+        discardedSummaryCounter = metricService.loadValue("text_total_articles_discarded_summary");
+        summaryAlreadySetCounter = metricService.loadValue("text_total_articles_repeated_summary");
+        duplicatedArticleEntity = metricService.loadValue("text_total_articles_repeated_association");
+        vertexApiErrorCounter = metricService.loadValue("text_total_articles_error_vertex_ai");
+        jsonErrors = metricService.loadValue("text_total_articles_error_json_parsing");
+        summaryNullCounter = metricService.loadValue("text_total_articles_error_null_summary");
     }
 
     @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "5")
