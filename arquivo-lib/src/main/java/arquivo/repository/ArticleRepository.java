@@ -1,6 +1,8 @@
 package arquivo.repository;
 
 import arquivo.model.Article;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +10,15 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
+
+    @EntityGraph(attributePaths = {"searchEntities", "site"})
+    @Query(value = """
+            select a
+            from Article a
+            where a.id = ?1
+            and a.summary is not null
+            """)
+    Optional<Article> findById(int id);
 
     @EntityGraph(value = "Article.searchEntities")
     @Query(value = """
@@ -32,4 +43,23 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             )
             """)
     boolean existsByTrimmedUrlAndSiteAndEntityId(String trimmedUrl, int siteId, int entityId);
+
+    @EntityGraph(attributePaths = {"searchEntities", "site"})
+    @Query(value = """
+            select a
+            from Article a
+            join a.searchEntities se
+            where a.summary is not null
+            and se.id =?1
+            """)
+    Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
+
+    @Query(nativeQuery = true, value =
+            """
+            select *
+            from article a
+            where a.summary is not null
+            and a.summary_vector @@ to_tsquery('portuguese', ?1)
+            """)
+    Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 }
