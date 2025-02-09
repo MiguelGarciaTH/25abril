@@ -1,0 +1,62 @@
+/* Header styles */
+
+.header-page-home {
+  margin-left: 10%; /* Ensure there's enough space for the side menu */
+  /* Adjust this based on the height of your header */
+  font-family: 'Mona Sans Condensed', sans-serif;
+  font-size: 5vw;
+  /* Use viewport width for scaling */
+  text-align: center;
+  font-weight: 60;
+  padding: 20px 0;
+  /* Optional: Add padding for better spacing */
+}
+
+.header-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Dark background color */
+  color: rgb(0, 0, 0);
+  padding: 20px 0;
+  z-index: 1;
+  background-color: white;
+  /* Ensure the header stays on top of the content */
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  /* Optional: Adds shadow for separation */
+}
+
+.header-page h1 {
+  margin: 0;
+  font-family: 'Mona Sans Condensed', sans-serif;
+  font-size: 2rem;
+  /* Adjust font size */
+}
+
+.header-page-link {
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+}
+
+
+.header-page nav ul {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  margin: 10px 0 0;
+  list-style-type: none;
+}
+
+.header-page nav ul li {
+  margin: 0 15px;
+}
+
+.header-page nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+

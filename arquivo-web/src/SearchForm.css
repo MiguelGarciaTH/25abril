@@ -1,0 +1,79 @@
+/* Center the search form and apply minimal styles */
+.search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%; /* Adjust width as percentage */
+  height: 50%; /* Adjust height as percentage */
+  max-width: 700px; /* Optional: Set maximum width */
+  margin: 0 auto;
+  padding: 20px 0;
+  position: absolute; /* Position relative to the viewport */
+  top: 50%; /* Position from the top */
+  left: 50%; /* Position from the left */
+  transform: translate(-50%, -50%); /* Move the form back by 50% of its own width and height to truly center it */
+}
+
+.search-input {
+  width: 80%;
+  padding: 18px 24px;
+  font-size: 20px;
+  font-family: 'Mona Sans Condensed', sans-serif;
+  font-weight: 400;
+  color: #333;
+  border: 2px solid #a5a5a5;
+  border-radius: 30px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Basic Sidebar styles */
+/* For smaller screens, adjust sidebar width */
+@media (max-width: 768px) {
+  .search-input {
+    width: 300px; /* Adjust to smaller size when the screen is smaller */
+    height: 10%; /* Adjust height as percentage */
+  }
+}
+
+/* For even smaller screens or mobile devices, further reduce width */
+@media (max-width: 480px) {
+  .search-input {
+    width: 200px; /* Make sidebar even smaller */
+    height: 10%; /* Adjust height as percentage */
+  }
+}
+
+.search-input::placeholder {
+  color: #888;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #333;
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-input:hover {
+  border-color: #333;
+}
+
+/* Style for the submit button (image) */
+button {
+  transform: rotate(25deg);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button img {
+  width: 50px;  /* Adjust size of the image */
+  height: 60px;
+}
+
+/* Optional: Add hover effect to the image button */
+button:hover img {
+  opacity: 0.8;
+}
