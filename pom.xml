@@ -30,7 +30,8 @@
 		<module>arquivo-processor</module>
 		<module>arquivo-rest</module>
         <module>arquivo-text</module>
-    </modules>
+		<module>arquivo-image</module>
+	</modules>
 
 	<dependencies>
 		<dependency>

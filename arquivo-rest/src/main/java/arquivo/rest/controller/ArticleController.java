@@ -54,10 +54,10 @@ public class ArticleController {
         }
     }
 
-    public record ArticleDetail(int id, String url, String title, String summary, double contextualScore,
+    public record ArticleDetail(int id, String url, String title, String summary, double contextualScore, double summaryScore,
                                 SiteDetail site) {
         ArticleDetail(Article article) {
-            this(article.getId(), article.getUrl(), article.getTitle(), article.getSummary(), article.getSummaryScore(), new SiteDetail(article.getSite()));
+            this(article.getId(), article.getUrl(), article.getTitle(), article.getSummary(), article.getContextualScore(), article.getSummaryScore(), new SiteDetail(article.getSite()));
         }
     }
 

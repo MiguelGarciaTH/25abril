@@ -36,7 +36,10 @@ public class ArquivoRecordListener {
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Value("${text-summary.topic}")
-    private String topic;
+    private String textSummaryTopic;
+
+    @Value("${image-crop.topic}")
+    private String imageCropTopic;
 
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
@@ -52,7 +55,8 @@ public class ArquivoRecordListener {
     private long newCounter;
     private long emptyTextCounter;
     private long retryCounter;
-    private long totalSentCounter;
+    private long totalTextEventSentCounter;
+    private long totalImageEventSentCounter;
     private long discardedCounter;
 
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
@@ -82,7 +86,8 @@ public class ArquivoRecordListener {
         receivedCounter = metricService.loadValue("processor_total_articles_received");
         newCounter = metricService.loadValue("processor_total_articles_created");
         reusedCounter = metricService.loadValue("processor_total_articles_reused");
-        totalSentCounter = metricService.loadValue("processor_total_articles_sent_to_text");
+        totalTextEventSentCounter = metricService.loadValue("processor_total_articles_sent_to_text");
+        totalImageEventSentCounter = metricService.loadValue("processor_total_articles_sent_to_image");
         duplicatesCounter = metricService.loadValue("processor_total_articles_duplicated");
         emptyTextCounter = metricService.loadValue("processor_total_articles_empty_text");
         discardedCounter = metricService.loadValue("processor_total_articles_score_discarded");
@@ -133,6 +138,7 @@ public class ArquivoRecordListener {
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;
                 publish(new TextRecord(article.getId(), searchEntity.getId()));
+                publish(new ImageRecord(article.getId(), article.getImagePath()));
             } else {
                 discardedCounter++;
             }
@@ -192,15 +198,25 @@ public class ArquivoRecordListener {
 
     private void publish(TextRecord textRecord) {
         try {
-            kafkaTemplate.send(topic, roundRobinIndex, "" + roundRobinIndex, objectMapper.writeValueAsString(textRecord));
-            LOG.debug("Sent to topic {} and partition {} value={}", topic, roundRobinIndex, textRecord);
-            totalSentCounter++;
+            kafkaTemplate.send(textSummaryTopic, roundRobinIndex, "" + roundRobinIndex, objectMapper.writeValueAsString(textRecord));
+            LOG.debug("Sent to topic {} and partition {} value={}", textSummaryTopic, roundRobinIndex, textRecord);
+            totalTextEventSentCounter++;
             roundRobinIndex++;
             if (roundRobinIndex == 6) {
                 roundRobinIndex = 0;
             }
         } catch (JsonProcessingException e) {
             LOG.warn("Error processing article {} for summary processing", textRecord.articleId());
+        }
+    }
+
+    private void publish(ImageRecord imageRecord) {
+        try {
+            kafkaTemplate.send(imageCropTopic, objectMapper.writeValueAsString(imageRecord));
+            LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
+            totalImageEventSentCounter++;
+        } catch (JsonProcessingException e) {
+            LOG.warn("Error processing article {} for summary processing", imageRecord.articleId());
         }
     }
 
@@ -213,7 +229,8 @@ public class ArquivoRecordListener {
         LOG.info("Articles received: {}", receivedCounter);
         LOG.info("Articles new: {}/{}", newCounter, receivedCounter);
         LOG.info("Articles re-used: {}/{}", reusedCounter, receivedCounter);
-        LOG.info("Articles sent to summary: {}/{}", totalSentCounter, receivedCounter);
+        LOG.info("Articles sent to summary: {}/{}", totalTextEventSentCounter, receivedCounter);
+        LOG.info("Articles sent to image: {}/{}", totalImageEventSentCounter, receivedCounter);
 
         if (duplicatesCounter > 0) {
             LOG.warn("Articles repeated warn: {}/{}", duplicatesCounter, receivedCounter);
@@ -230,7 +247,8 @@ public class ArquivoRecordListener {
         metricService.setValue("processor_total_articles_received", receivedCounter);
         metricService.setValue("processor_total_articles_created", newCounter);
         metricService.setValue("processor_total_articles_reused", reusedCounter);
-        metricService.setValue("processor_total_articles_sent_to_text", totalSentCounter);
+        metricService.setValue("processor_total_articles_sent_to_text", totalTextEventSentCounter);
+        metricService.setValue("processor_total_articles_sent_to_image", totalImageEventSentCounter);
         metricService.setValue("processor_total_articles_duplicated", duplicatesCounter);
         metricService.setValue("processor_total_articles_empty_text", emptyTextCounter);
         metricService.setValue("processor_total_articles_score_discarded", discardedCounter);

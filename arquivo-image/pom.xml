@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>25abril</artifactId>
+        <groupId>arquivo</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>arquivo-image</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+    </properties>
+
+
+    <dependencies>
+
+        <dependency>
+            <groupId>arquivo</groupId>
+            <artifactId>arquivo-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <!-- deb packaging config -->
+        <extensions>
+            <extension>
+                <groupId>org.vafer</groupId>
+                <artifactId>jdeb</artifactId>
+                <version>1.7</version>
+            </extension>
+        </extensions>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.vafer</groupId>
+                    <artifactId>jdeb</artifactId>
+                    <configuration>
+                        <controlDir>deb/control</controlDir>
+                        <dataSet>
+                            <data>
+                                <type>directory</type>
+                                <src>deb/data/etc</src>
+                                <conffile>true</conffile>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/etc</prefix>
+                                    <filemode>640</filemode>
+                                    <user>root</user>
+                                    <group>arquivo</group>
+                                </mapper>
+                            </data>
+                            <data>
+                                <type>file</type>
+                                <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/opt/25abril/arquivo-image</prefix>
+                                    <user>arquivo</user>
+                                    <group>arquivo</group>
+                                </mapper>
+                            </data>
+                            <data>
+                                <type>file</type>
+                                <src>deb/data/opt/25abril/arquivo-image/run.sh</src>
+                                <mapper>
+                                    <type>perm</type>
+                                    <prefix>/opt/25abril/arquivo-image</prefix>
+                                    <filemode>755</filemode>
+                                    <user>arquivo</user>
+                                    <group>arquivo</group>
+                                </mapper>
+                            </data>
+                        </dataSet>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

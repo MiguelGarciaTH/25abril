@@ -54,12 +54,21 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
 
-    @Query(nativeQuery = true, value =
-            """
-            select *
-            from article a
-            where a.summary is not null
-            and a.summary_vector @@ to_tsquery('portuguese', ?1)
+    @Query(nativeQuery = true, value = """
+            SELECT a.*
+            FROM article a
+            WHERE a.summary IS NOT NULL
+            AND (
+                a.summary_vector @@ to_tsquery('portuguese', ?1)
+                or
+                a.id in (
+                    select distinct(aes.article_id)
+                    from article_search_entity_association aes
+                    inner join search_entity se on se.id = aes.search_entity_id
+                    where se.names_vector @@ to_tsquery('portuguese', ?1)
+                )
+            )
+            ORDER BY ((a.contextual_score * 100) + a.summary_score * 10) DESC
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 }

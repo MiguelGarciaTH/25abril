@@ -23,7 +23,7 @@ public class RateLimiterService {
     @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
     public void increment(String description) {
         RateLimiter rateLimiter = rateLimiterRepository.findByDescription(description);
-        int counter = rateLimiter.getCounter();
+        int counter;
         int pauseTimeMillis = rateLimiter.getSleepTime();
         while (rateLimiter.isLocked()) {
             try {
@@ -31,7 +31,7 @@ public class RateLimiterService {
                 Thread.sleep(10_000L);
                 rateLimiter = rateLimiterRepository.findByDescription(description);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOG.error("Error", e);
             }
         }
         if (!rateLimiter.isLocked() && rateLimiter.getCounter() == rateLimiter.getCounterLimit()) {
@@ -44,8 +44,7 @@ public class RateLimiterService {
                 rateLimiter.setCounter(0);
                 rateLimiterRepository.save(rateLimiter);
             } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                LOG.error("Error", e);            }
         } else {
             counter = rateLimiter.getCounter();
             counter++;

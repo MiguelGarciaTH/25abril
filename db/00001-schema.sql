@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS article (
     title text NOT NULL,
     url text NOT NULL,
     trimmed_url text NOT NULL,
+    image_path text NOT NULL,
+    has_image boolean NOT NULL default false,
     "text" text,
     "summary" text,
     contextual_score numeric(5,5),

@@ -1,0 +1,14 @@
+[Unit]
+Description=Arquivo image
+After=network.target multi-user.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/default/arquivo-image
+ExecStart=/opt/25abril/arquivo-image/run.sh
+User=arquivo
+SyslogIdentifier=ArquivoImage
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

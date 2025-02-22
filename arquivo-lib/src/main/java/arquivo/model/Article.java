@@ -27,6 +27,8 @@ public class Article {
 
     private LocalDateTime date;
 
+    private boolean hasImage;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private Site site;
 
@@ -38,6 +40,9 @@ public class Article {
 
     @Column(columnDefinition = "text")
     private String trimmedUrl;
+
+    @Column(columnDefinition = "text")
+    private String imagePath;
 
     @Column(columnDefinition = "text")
     private String text;
@@ -80,6 +85,7 @@ public class Article {
         this.contextualScore = contextualScore;
         this.contextualScoreDetails = contextualScoreDetails;
         this.searchEntities = new HashSet<>();
+        this.hasImage = false;
     }
 
     public int getId() {
@@ -180,5 +186,21 @@ public class Article {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public boolean hasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
     }
 }
