@@ -11,6 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -170,5 +176,30 @@ public class Tester {
 
         Article a2 = articleRepository.findByTrimmedUrlAndSiteId("trimmedUrl", s.getId()).orElse(null);
         a2.getSearchEntities();
+    }
+
+    @Test
+    void cropImage(){
+        String imageUrl ="https://arquivo.pt/screenshot?url=https%3A%2F%2Farquivo.pt%2FnoFrame%2Freplay%2F20120121220334%2Fhttp%3A%2F%2Fpublico.pt%2FCultura%2Fmorreu-jose-niza-compositor-de-e-depois-do-adeus-1513320";
+        URL url = null;
+        try {
+            url = new URL("https://s-media-cache-ak0.pinimg.com/236x/ac/bb/d4/acbbd49b22b8c556979418f6618a35fd.jpg");
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(url);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        BufferedImage dest = image.getSubimage(0, 0, 1010, 659);
+        File outputfile = new File("../../images/image.png");
+        try {
+            ImageIO.write(dest, "png", outputfile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
