@@ -2,7 +2,9 @@ package arquivo.crawler;
 
 import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
-import arquivo.repository.*;
+import arquivo.repository.IntegrationLogRepository;
+import arquivo.repository.RateLimiterRepository;
+import arquivo.repository.SearchEntityRepository;
 import arquivo.services.TextScoreService;
 import arquivo.services.WebClientService;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -41,9 +42,7 @@ public class ArquivoImageCrawler {
 
     @Autowired
     public ArquivoImageCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
-                               SiteRepository siteRepository, ChangelogRepository changeLogRepository,
-                               RateLimiterRepository rateLimiterRepository,
-                               KafkaTemplate<String, String> kafkaTemplate) {
+                               RateLimiterRepository rateLimiterRepository) {
         this.integrationLogRepository = integrationLogRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.webClientService = new WebClientService(rateLimiterRepository);
@@ -116,7 +115,7 @@ public class ArquivoImageCrawler {
         if (node.has("imgCaption")) {
             String caption = node.get("imgCaption").get(0).asText();
             score += scoreElem(name, caption);
-            score += textScore.searchEntityscore(null, null, caption, null).total();
+            score += (int) textScore.searchEntityscore(null, null, caption, null).total();
         }
         if (node.has("imgHeight") && node.has("imgWidth")) {
             score += scoreImageSize(node.get("imgHeight").asInt(), node.get("imgWidth").asInt());

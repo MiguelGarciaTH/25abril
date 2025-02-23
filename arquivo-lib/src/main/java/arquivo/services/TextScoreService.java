@@ -20,25 +20,7 @@ public class TextScoreService {
 
     private static Pattern keywordPattern;
 
-    private static final List<String> contextualKeywords = List.of(
-            "revolução dos cravos",
-            "revolução de abril",
-            "golpe de estado",
-            "golpe militar",
-            "estado novo",
-            "25 de abril",
-            "guerra colonial",
-            "ditadura",
-            "censura",
-            "salazarismo",
-            "salazarista",
-            "salazaristas",
-            "clandestinos",
-            "clandestinidade",
-            "1974",
-            "abril de 1974",
-            "prisioneiros políticos"
-    );
+
 
     private final Map<Integer, Pattern> namesPattern;
 
@@ -53,7 +35,7 @@ public class TextScoreService {
     public TextScoreService() {
         StringBuilder regexp = new StringBuilder();
         regexp.append("(");
-        for (String word : contextualKeywords) {
+        for (String word : Keywords.contextualKeywords) {
             regexp.append(word).append("|");
         }
         regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
