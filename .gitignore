@@ -32,8 +32,64 @@ build/
 ### VS Code ###
 .vscode/
 
+## IMAGES
+images/*
+
+
 ### npm modules
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+
+# dependencies
+arquivo-web/node_modules
+arquivo-web/.pnp
+arquivo-web/.pnp.js
+
+# testing
+arquivo-web/coverage
+
+# production
+arquivo-web/build
+
+# misc
+arquivo-web/.env
+arquivo-web/vite.config.js
+arquivo-web/.DS_Store
+arquivo-web/.env.local
+arquivo-web/.env.development.local
+arquivo-web/.env.test.local
+arquivo-web/.env.production.local
+
+arquivo-web/npm-debug.log*
+arquivo-web/yarn-debug.log*
+arquivo-web/yarn-error.log*
+
+# Logs
+arquivo-web/logs
+arquivo-web/*.log
+arquivo-web/npm-debug.log*
+arquivo-web/yarn-debug.log*
+arquivo-web/yarn-error.log*
+arquivo-web/pnpm-debug.log*
+arquivo-web/lerna-debug.log*
+
+node_modules
+arquivo-web/dist
+arquivo-web/dist-ssr
+arquivo-web/*.local
+
+# Editor directories and files
+arquivo-web/.vscode/*
+arquivo-web/!.vscode/extensions.json
+arquivo-web/.idea
+arquivo-web/.DS_Store
+arquivo-web/*.suo
+arquivo-web/*.ntvs*
+arquivo-web/*.njsproj
+arquivo-web/*.sln
+arquivo-web/*.sw?
+
+
 
 # dependencies
 arquivo-web-client/node_modules
