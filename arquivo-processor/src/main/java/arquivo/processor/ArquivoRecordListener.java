@@ -82,7 +82,6 @@ public class ArquivoRecordListener {
         final List<SearchEntity> searchEntities = searchEntityRepository.findAll();
         LOG.info("Pre caching names patterns for {} search entities", searchEntities.size());
 
-
         receivedCounter = metricService.loadValue("processor_total_articles_received");
         newCounter = metricService.loadValue("processor_total_articles_created");
         reusedCounter = metricService.loadValue("processor_total_articles_reused");
@@ -108,15 +107,15 @@ public class ArquivoRecordListener {
             return;
         }
 
-        if (articleRepository.existsByTrimmedUrlAndSiteAndEntityId(trimUrl(event.url()), event.siteId(), event.searchEntityId())) {
+        if (articleRepository.existsByTitleAndSiteAndEntityId(event.title(), event.siteId(), event.searchEntityId())) {
             LOG.warn("Article already exists we will skip it: {} (trimmed url: {})", event.title(), event.url());
             duplicatesCounter++;
             ack.acknowledge();
             return;
         }
 
-        Article article = articleRepository.findByTrimmedUrlAndSiteId(trimUrl(event.url()), event.siteId()).orElse(null);
-        if (article != null) { // TODO good candidate for index
+        Article article = articleRepository.findByTitleAndSiteId(event.title(), event.siteId()).orElse(null);
+        if (article != null) {
             publish(new TextRecord(article.getId(), event.searchEntityId()));
             LOG.debug("New article association articleId={} title={} url={} for entity={}", article.getId(), event.title(), event.url(), event.searchEntityId());
             reusedCounter++;
@@ -131,7 +130,7 @@ public class ArquivoRecordListener {
             }
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            final TextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text);
+            final TextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text, false);
             if (score.total() > 0) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = articleRepository.save(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, text, score.total(), scoreJson));

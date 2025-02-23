@@ -24,16 +24,16 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query(value = """
             select a
             from Article a
-            where a.trimmedUrl = ?1
+            where a.title = ?1
             and a.site.id = ?2
             """)
-    Optional<Article> findByTrimmedUrlAndSiteId(String originalUrl, int siteId);
+    Optional<Article> findByTitleAndSiteId(String title, int siteId);
 
     @Query(nativeQuery = true, value = """
             select exists(
                 select 1
                 from article a
-                where a.trimmed_url = ?1
+                where a.title = ?1
                 and a.site_id = ?2
                 and a.id in (
                     select aes.article_id
@@ -42,7 +42,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                 )
             )
             """)
-    boolean existsByTrimmedUrlAndSiteAndEntityId(String trimmedUrl, int siteId, int entityId);
+    boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
 
     @EntityGraph(attributePaths = {"searchEntities", "site"})
     @Query(value = """

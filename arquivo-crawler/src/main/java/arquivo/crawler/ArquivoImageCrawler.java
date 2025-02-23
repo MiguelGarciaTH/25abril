@@ -115,7 +115,7 @@ public class ArquivoImageCrawler {
         if (node.has("imgCaption")) {
             String caption = node.get("imgCaption").get(0).asText();
             score += scoreElem(name, caption);
-            score += (int) textScore.searchEntityscore(null, null, caption, null).total();
+            score += (int) textScore.searchEntityscore(null, null, caption, null, false).total();
         }
         if (node.has("imgHeight") && node.has("imgWidth")) {
             score += scoreImageSize(node.get("imgHeight").asInt(), node.get("imgWidth").asInt());

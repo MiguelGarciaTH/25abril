@@ -5,7 +5,6 @@ import arquivo.model.Site;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
-import com.fasterxml.jackson.core.json.JsonReadFeature;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -174,7 +173,7 @@ public class Tester {
         a.setSearchEntities(Set.of(se));
         a = articleRepository.save(a);
 
-        Article a2 = articleRepository.findByTrimmedUrlAndSiteId("trimmedUrl", s.getId()).orElse(null);
+        Article a2 = articleRepository.findByTitleAndSiteId("trimmedUrl", s.getId()).orElse(null);
         a2.getSearchEntities();
     }
 

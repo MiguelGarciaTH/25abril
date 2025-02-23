@@ -213,7 +213,7 @@ public class ArquivoTextListener {
             }
 
             // score for article summary
-            final TextScoreService.Score contextualScore = textScoreService.contextualScore(article.getTitle(), article.getUrl(), summary);
+            final TextScoreService.Score contextualScore = textScoreService.contextualScore(article.getTitle(), article.getUrl(), summary, true);
             if (contextualScore.total() == 0) {
                 // the previous score (greater than zero) was due to some side-text-artifacts on the article (e.g., headlines on side columns)
                 LOG.info("Article {} is not about 25 de Abril (summary scoring) previous score: {}", event.articleId(), decimalFormat.format(article.getContextualScore()));
@@ -251,7 +251,7 @@ public class ArquivoTextListener {
             summaryAlreadySetCounter++;
         }
 
-        final TextScoreService.Score entityScore = textScoreService.searchEntityscore(article.getTitle(), article.getUrl(), summary, searchEntity);
+        final TextScoreService.Score entityScore = textScoreService.searchEntityscore(article.getTitle(), article.getUrl(), summary, searchEntity, true);
         final JsonNode entityScoreJson = objectMapper.convertValue(entityScore.keywordCounter(), JsonNode.class);
         articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, entityScore.total(), entityScoreJson));
         newAssociationCounter++;

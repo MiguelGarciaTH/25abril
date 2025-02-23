@@ -21,7 +21,6 @@ public class TextScoreService {
     private static Pattern keywordPattern;
 
 
-
     private final Map<Integer, Pattern> namesPattern;
 
     public static TextScoreService getInstance() {
@@ -44,7 +43,7 @@ public class TextScoreService {
         namesPattern = new HashMap<>();
     }
 
-    public Score contextualScore(String title, String url, String text) {
+    public Score contextualScore(String title, String url, String text, boolean textScaling) {
         long score = 0;
         final Map<String, Long> keywordTextCounter = new HashMap<>();
 
@@ -60,17 +59,19 @@ public class TextScoreService {
         final Matcher urlMatcher = keywordPattern.matcher(url);
         final long countNamesUrl = urlMatcher.results().count();
         keywordTextCounter.put("countContextualUrl", countNamesUrl);
-        score *= Math.max(1, countNamesUrl * 2);
+        score *= Math.max(1, countNamesUrl * 10);
 
         final Matcher titleMatcher = keywordPattern.matcher(title);
         final long countNamesTitle = titleMatcher.results().count();
         keywordTextCounter.put("countContextuaTitle", countNamesTitle);
-        score *= Math.max(1, countNamesTitle * 2);
-
-        return new Score((double) score / text.length(), keywordTextCounter);
+        score *= Math.max(1, countNamesTitle * 10);
+        if (textScaling) {
+            return new Score((double) score / text.length(), keywordTextCounter);
+        }
+        return new Score((double) score, keywordTextCounter);
     }
 
-    public Score searchEntityscore(String title, String url, String text, SearchEntity searchEntity) {
+    public Score searchEntityscore(String title, String url, String text, SearchEntity searchEntity, boolean textScaling) {
         long score = 0;
         final Map<String, Long> keywordTextCounter = new HashMap<>();
 
@@ -88,14 +89,16 @@ public class TextScoreService {
         final Matcher urlMatcher = pattern.matcher(url);
         final long countNamesUrl = urlMatcher.results().count();
         keywordTextCounter.put("countNamesUrl", countNamesUrl);
-        score *= Math.max(1, countNamesUrl * 2);
+        score *= Math.max(1, countNamesUrl * 10);
 
         final Matcher titleMatcher = pattern.matcher(title);
         final long countNamesTitle = titleMatcher.results().count();
         keywordTextCounter.put("countNamesTitle", countNamesTitle);
-        score *= Math.max(1, countNamesTitle * 2);
-
-        return new Score((double) score / text.length(), keywordTextCounter);
+        score *= Math.max(1, countNamesTitle * 10);
+        if (textScaling) {
+            return new Score((double) score / text.length(), keywordTextCounter);
+        }
+        return new Score((double) score, keywordTextCounter);
     }
 
     private Pattern getNamePattern(SearchEntity searchEntity) {
