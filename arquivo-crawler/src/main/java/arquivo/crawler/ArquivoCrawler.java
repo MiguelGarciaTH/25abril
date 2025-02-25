@@ -53,7 +53,7 @@ public class ArquivoCrawler {
     private long duplicateCounter;
     private long totalSentCounter;
 
-    @Value("${crawler.topic}")
+    @Value("${processor.topic}")
     private String topic;
 
     @Autowired
@@ -157,7 +157,8 @@ public class ArquivoCrawler {
             final int siteId = url.site.getId();
             final int entityId = url.entity.getId();
             if (shouldSendToKafka(entityId, siteId, responseItem)) {
-                final CrawlerRecord record = new CrawlerRecord(entityId, siteId, responseItem.get("title").asText(), responseItem.get("linkToArchive").asText(), responseItem.get("linkToExtractedText").asText(), responseItem.get("linkToScreenshot").asText());
+                final CrawlerRecord record = new CrawlerRecord(entityId, siteId, responseItem.get("title").asText(), responseItem.get("linkToArchive").asText(),
+                        responseItem.get("linkToExtractedText").asText(), responseItem.get("linkToScreenshot").asText());
                 try {
                     kafkaTemplate.send(topic, objectMapper.writeValueAsString(record));
                     totalSentCounter++;

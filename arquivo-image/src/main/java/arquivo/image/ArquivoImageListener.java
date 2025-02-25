@@ -26,6 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -46,6 +49,7 @@ public class ArquivoImageListener {
     private long imageNullCounter;
     private long imageAlreadySetCounter;
     private long jsonErrors;
+    private final Path directory = Paths.get("images/");
 
 
     ArquivoImageListener(ObjectMapper objectMapper, ArticleRepository articleRepository,
@@ -63,7 +67,7 @@ public class ArquivoImageListener {
         imageNullCounter = metricService.loadValue("image_total_articles_error_null_image");
     }
 
-    @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "1")
+    @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
@@ -87,8 +91,12 @@ public class ArquivoImageListener {
         }
 
         if (!article.hasImage()) {
-            cropImage(article.getId(), event.imageUrl());
+            final String fileName = (article.getUrl().hashCode() & Integer.MAX_VALUE) + ".png";
+            if (!fileExists(fileName)) {
+                cropImage(fileName, event.imageUrl());
+            }
             article.setHasImage(true);
+            article.setImagePath("images/" + fileName);
             articleRepository.save(article);
             imageNewCounter++;
             integrationLogRepository.save(new IntegrationLog(event.imageUrl(), LocalDateTime.now(ZoneOffset.UTC), "processor-image", IntegrationLog.Status.TS, "", null));
@@ -101,7 +109,12 @@ public class ArquivoImageListener {
         storeStats();
     }
 
-    private void cropImage(int articleId, String imageUrl) {
+    private boolean fileExists(String filename) {
+        final Path filePath = directory.resolve(filename);
+        return (Files.exists(filePath) && Files.isRegularFile(filePath));
+    }
+
+    private void cropImage(String fileName, String imageUrl) {
         URL url;
         try {
             url = new URL(imageUrl);
@@ -117,8 +130,8 @@ public class ArquivoImageListener {
             integrationLogRepository.save(new IntegrationLog(imageUrl, LocalDateTime.now(ZoneOffset.UTC), "processor-image", IntegrationLog.Status.TE, "", e.getMessage()));
             throw new RuntimeException(e);
         }
-        final BufferedImage dest = image.getSubimage(0, 0, 1010, 659);
-        final File outputfile = new File("../../images/" + articleId + "-crop.png");
+        final BufferedImage dest = image.getSubimage(0, 0, image.getWidth(), Math.min(image.getHeight() / 2, (image.getWidth() + (image.getWidth() / 2))));
+        final File outputfile = new File("images/" + fileName);
         try {
             ImageIO.write(dest, "png", outputfile);
         } catch (IOException e) {
@@ -134,10 +147,10 @@ public class ArquivoImageListener {
         LOG.info("Articles new image : {}/{}", imageNewCounter, receivedCounter);
 
         if (imageAlreadySetCounter > 0) {
-            LOG.warn("Texts already set summary : {}/{}", imageAlreadySetCounter, receivedCounter);
+            LOG.warn("Article already set image : {}/{}", imageAlreadySetCounter, receivedCounter);
         }
         if (imageNullCounter > 0) {
-            LOG.warn("Texts summary returned null : {}/{}", imageNullCounter, receivedCounter);
+            LOG.warn("Articles image returned null : {}/{}", imageNullCounter, receivedCounter);
         }
         if (jsonErrors > 0) {
             LOG.warn("Json parsing errors : {}/{}", jsonErrors, receivedCounter);

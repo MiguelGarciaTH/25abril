@@ -131,13 +131,13 @@ public class ArquivoRecordListener {
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
             final TextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text, false);
-            if (score.total() > 0) {
+            if (score.total() > 10) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = articleRepository.save(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, text, score.total(), scoreJson));
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;
                 publish(new TextRecord(article.getId(), searchEntity.getId()));
-                publish(new ImageRecord(article.getId(), article.getImagePath()));
+                publish(new ImageRecord(article.getId(), event.imageUrl()));
             } else {
                 discardedCounter++;
             }
@@ -209,11 +209,17 @@ public class ArquivoRecordListener {
         }
     }
 
+    int roundRobinIndex2 = 0;
+
     private void publish(ImageRecord imageRecord) {
         try {
-            kafkaTemplate.send(imageCropTopic, objectMapper.writeValueAsString(imageRecord));
+            kafkaTemplate.send(imageCropTopic, roundRobinIndex2, "" + roundRobinIndex2, objectMapper.writeValueAsString(imageRecord));
             LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
             totalImageEventSentCounter++;
+            roundRobinIndex2++;
+            if (roundRobinIndex2 == 10) {
+                roundRobinIndex2 = 0;
+            }
         } catch (JsonProcessingException e) {
             LOG.warn("Error processing article {} for summary processing", imageRecord.articleId());
         }

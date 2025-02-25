@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,9 +68,9 @@ public class TextScoreService {
         keywordTextCounter.put("countContextuaTitle", countNamesTitle);
         score *= Math.max(1, countNamesTitle * 10);
         if (textScaling) {
-            return new Score((double) score / text.length(), keywordTextCounter);
+            return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue() / text.length(), keywordTextCounter);
         }
-        return new Score((double) score, keywordTextCounter);
+        return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
     }
 
     public Score searchEntityscore(String title, String url, String text, SearchEntity searchEntity, boolean textScaling) {
@@ -96,9 +98,9 @@ public class TextScoreService {
         keywordTextCounter.put("countNamesTitle", countNamesTitle);
         score *= Math.max(1, countNamesTitle * 10);
         if (textScaling) {
-            return new Score((double) score / text.length(), keywordTextCounter);
+            return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue() / text.length(), keywordTextCounter);
         }
-        return new Score((double) score, keywordTextCounter);
+        return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
     }
 
     private Pattern getNamePattern(SearchEntity searchEntity) {

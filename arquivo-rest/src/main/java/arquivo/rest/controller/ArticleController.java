@@ -26,7 +26,7 @@ public class ArticleController {
 
     @GetMapping("/{articleId}")
     public ArticleDTO getArticle(@PathVariable int articleId) {
-        final Article article = articleRepository.findById(articleId).orElse(null);
+        final Article article = articleRepository.findByIdWithSummary(articleId).orElse(null);
         if (article != null) {
             final ArticleDetail articleDetail = new ArticleDetail(article);
             final SearchEntityDetails searchEntityDetails = new SearchEntityDetails(article.getSearchEntities().size(), null);
@@ -43,7 +43,7 @@ public class ArticleController {
 
     @GetMapping
     public Page<ArticleDTO> getArticlesBySearchTerm(@RequestParam("search_term") String searchTerm, Pageable pageable) {
-        searchTerm = searchTerm.replaceAll(" " , " & ");
+        searchTerm = searchTerm.replaceAll(" ", " & ");
         final Page<Article> articlePages = articleRepository.findBySearchTerm(searchTerm, pageable);
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
     }
@@ -54,10 +54,10 @@ public class ArticleController {
         }
     }
 
-    public record ArticleDetail(int id, String url, String title, String summary, double contextualScore, double summaryScore,
-                                SiteDetail site) {
+    public record ArticleDetail(int id, String url, String title, String summary, double contextualScore,
+                                double summaryScore, String imagePath, SiteDetail site) {
         ArticleDetail(Article article) {
-            this(article.getId(), article.getUrl(), article.getTitle(), article.getSummary(), article.getContextualScore(), article.getSummaryScore(), new SiteDetail(article.getSite()));
+            this(article.getId(), article.getUrl(), article.getTitle(), article.getSummary(), article.getContextualScore(), article.getSummaryScore(), article.getImagePath(), new SiteDetail(article.getSite()));
         }
     }
 

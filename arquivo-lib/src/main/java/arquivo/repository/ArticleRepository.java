@@ -18,6 +18,13 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             where a.id = ?1
             and a.summary is not null
             """)
+    Optional<Article> findByIdWithSummary(int id);
+
+    @Query(value = """
+            select a
+            from Article a
+            where a.id = ?1
+            """)
     Optional<Article> findById(int id);
 
     @EntityGraph(value = "Article.searchEntities")
@@ -68,7 +75,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                     where se.names_vector @@ to_tsquery('portuguese', ?1)
                 )
             )
-            ORDER BY ((a.contextual_score * 100) + a.summary_score * 10) DESC
+            ORDER BY ((a.contextual_score) + a.summary_score) DESC
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 }
