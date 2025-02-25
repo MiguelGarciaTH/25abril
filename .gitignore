@@ -33,7 +33,7 @@ build/
 .vscode/
 
 ## IMAGES
-images/*
+arquivo-web/public/images/*
 
 
 ### npm modules
