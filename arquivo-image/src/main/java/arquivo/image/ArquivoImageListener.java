@@ -5,9 +5,7 @@ import arquivo.model.ImageRecord;
 import arquivo.model.IntegrationLog;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.IntegrationLogRepository;
-import arquivo.repository.RateLimiterRepository;
 import arquivo.services.MetricService;
-import arquivo.services.RateLimiterService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -41,7 +39,6 @@ public class ArquivoImageListener {
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
     private final MetricService metricService;
-    private final RateLimiterService rateLimiterService;
     private final IntegrationLogRepository integrationLogRepository;
 
     private long receivedCounter;
@@ -53,12 +50,11 @@ public class ArquivoImageListener {
 
 
     ArquivoImageListener(ObjectMapper objectMapper, ArticleRepository articleRepository,
-                         IntegrationLogRepository integrationLogRepository, MetricService metricService, RateLimiterRepository rateLimiterRepository) {
+                         IntegrationLogRepository integrationLogRepository, MetricService metricService) {
         this.objectMapper = objectMapper;
         this.articleRepository = articleRepository;
         this.integrationLogRepository = integrationLogRepository;
         this.metricService = metricService;
-        this.rateLimiterService = new RateLimiterService(rateLimiterRepository);
 
         receivedCounter = metricService.loadValue("image_total_articles_received");
         imageNewCounter = metricService.loadValue("image_total_new");
@@ -123,7 +119,6 @@ public class ArquivoImageListener {
         }
         BufferedImage image;
         try {
-            //rateLimiterService.increment("arquivo.pt");
             image = ImageIO.read(url);
         } catch (IOException e) {
             imageNullCounter++;
@@ -131,7 +126,7 @@ public class ArquivoImageListener {
             throw new RuntimeException(e);
         }
         final BufferedImage dest = image.getSubimage(0, 0, image.getWidth(), Math.min(image.getHeight() / 2, (image.getWidth() + (image.getWidth() / 2))));
-        final File outputfile = new File("images/" + fileName);
+        final File outputfile = new File("arquivo-web/public/images/" + fileName);
         try {
             ImageIO.write(dest, "png", outputfile);
         } catch (IOException e) {
