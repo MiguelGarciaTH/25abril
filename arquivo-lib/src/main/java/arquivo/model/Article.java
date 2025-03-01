@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NamedEntityGraph(name = "Article.searchEntities",
-        attributeNodes = @NamedAttributeNode("searchEntities")
+@NamedEntityGraph(name = "Article.searchEntitiesAssociations",
+        attributeNodes = @NamedAttributeNode("searchEntitiesAssociations")
 )
 public class Article {
 
@@ -68,7 +68,7 @@ public class Article {
             joinColumns = { @JoinColumn(name = "article_id") },
             inverseJoinColumns = { @JoinColumn(name = "search_entity_id") }
     )
-    Set<SearchEntity> searchEntities;
+    Set<ArticleSearchEntityAssociation> searchEntitiesAssociations;
 
     public Article() {
 
@@ -84,7 +84,7 @@ public class Article {
         this.summary = null;
         this.contextualScore = contextualScore;
         this.contextualScoreDetails = contextualScoreDetails;
-        this.searchEntities = new HashSet<>();
+        this.searchEntitiesAssociations = new HashSet<>();
         this.hasImage = false;
     }
 
@@ -172,12 +172,12 @@ public class Article {
         this.summaryScoreDetails = summaryScoreDetails;
     }
 
-    public Set<SearchEntity> getSearchEntities() {
-        return searchEntities;
+    public Set<ArticleSearchEntityAssociation> getSearchEntitiesAssociations() {
+        return searchEntitiesAssociations;
     }
 
-    public void setSearchEntities(Set<SearchEntity> searchEntities) {
-        this.searchEntities = searchEntities;
+    public void setSearchEntitiesAssociations(Set<ArticleSearchEntityAssociation> searchEntitiesAssociations) {
+        this.searchEntitiesAssociations = searchEntitiesAssociations;
     }
 
     public String getText() {

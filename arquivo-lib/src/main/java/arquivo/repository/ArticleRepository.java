@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
-    @EntityGraph(attributePaths = {"searchEntities", "site"})
+    @EntityGraph(attributePaths = {"searchEntityAssociations", "site"})
     @Query(value = """
             select a
             from Article a
@@ -27,7 +27,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Optional<Article> findById(int id);
 
-    @EntityGraph(value = "Article.searchEntities")
+    @EntityGraph(value = "Article.searchEntityAssociations")
     @Query(value = """
             select a
             from Article a
@@ -51,13 +51,11 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
 
-    @EntityGraph(attributePaths = {"searchEntities", "site"})
+    @EntityGraph(attributePaths = {"searchEntityAssociations", "site"})
     @Query(value = """
             select a
             from Article a
-            join a.searchEntities se
             where a.summary is not null
-            and se.id =?1
             """)
     Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
 
@@ -75,7 +73,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                     where se.names_vector @@ to_tsquery('portuguese', ?1)
                 )
             )
-            ORDER BY ((a.contextual_score) + a.summary_score) DESC
+            ORDER BY a.summary_score DESC
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 }

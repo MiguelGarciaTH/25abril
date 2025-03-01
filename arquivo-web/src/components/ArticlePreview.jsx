@@ -29,7 +29,7 @@ function ArticlePreview({ item }) {
                 </span>
                 <p>
                     <span class="headline hl4">{item.articleDetail.site.name}</span>
-                    Relevância: {item.articleDetail.contextualScore + item.articleDetail.summaryScore}
+                    Relevância: {item.articleDetail.summaryScore}
                 </p>
             </div>
             <p>

@@ -5,12 +5,17 @@ import com.google.cloud.vertexai.VertexAI;
 import com.google.cloud.vertexai.api.*;
 import com.google.cloud.vertexai.generativeai.ContentMaker;
 import com.google.cloud.vertexai.generativeai.GenerativeModel;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,12 +67,92 @@ public class Tester {
 
             GenerateContentResponse generatedContentResponse = model.generateContent(content);
 
-            System.out.println("THIS WILL FAIL:\n"+generatedContentResponse.getCandidates(0).getContent().getPartsList().get(0).getText());
+            System.out.println("THIS WILL FAIL:\n" + generatedContentResponse.getCandidates(0).getContent().getPartsList().get(0).getText());
             final JsonNode responseJson = objectMapper.readTree(generatedContentResponse.getCandidates(0).getContent().getPartsList().get(0).getText());
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Test
+    void testWiki() {
+
+        // Search term (page title), e.g., "Salgueiro Maia"
+        String searchTerm = "Salgueiro_Maia";
+
+        try {
+            // Step 1: Search for the image on Wikipedia API
+            String searchUrl = "https://en.wikipedia.org/w/api.php?action=query&format=json&titles="
+                    + searchTerm + "&prop=images";
+            URL url = new URL(searchUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(5000); // 5 seconds timeout
+            connection.setReadTimeout(5000);    // 5 seconds timeout
+
+            // Get response code to check if the request is successful
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // Parse the JSON response
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                JSONObject query = jsonResponse.getJSONObject("query");
+                JSONObject pages = query.getJSONObject("pages");
+
+                // Extract the image title
+                String pageId = String.valueOf(pages.keys().next());
+                String imageTitle = pages.getJSONObject(pageId).getJSONArray("images")
+                        .getJSONObject(0).getString("title");
+                System.out.println(imageTitle);
+                // Step 2: Use the image title to get the image file URL
+                String fileUrl = "https://commons.wikimedia.org/w/api.php?action=query&format=json&titles="
+                        + imageTitle + "&prop=imageinfo&iiprop=url";
+                URL fileUrlRequest = new URL(fileUrl);
+                HttpURLConnection fileConnection = (HttpURLConnection) fileUrlRequest.openConnection();
+                fileConnection.setRequestMethod("GET");
+                fileConnection.setConnectTimeout(5000); // 5 seconds timeout
+                fileConnection.setReadTimeout(5000);    // 5 seconds timeout
+
+                int fileResponseCode = fileConnection.getResponseCode();
+                if (fileResponseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader fileIn = new BufferedReader(new InputStreamReader(fileConnection.getInputStream()));
+                    StringBuilder fileResponse = new StringBuilder();
+                    while ((inputLine = fileIn.readLine()) != null) {
+                        fileResponse.append(inputLine);
+                    }
+                    fileIn.close();
+
+                    // Parse the file JSON response
+                    JSONObject fileJsonResponse = new JSONObject(fileResponse.toString());
+                    JSONObject fileQuery = fileJsonResponse.getJSONObject("query");
+                    JSONObject filePages = fileQuery.getJSONObject("pages");
+
+                    // Extract the file URL
+                    String fileId = (String) filePages.keys().next();
+                    String imageUrl = filePages.getJSONObject(fileId)
+                            .getJSONArray("imageinfo")
+                            .getJSONObject(0)
+                            .getString("url");
+
+                    // Print the actual image URL
+                    System.out.println("Image URL: " + imageUrl);
+                } else {
+                    System.out.println("Error fetching image details. Response Code: " + fileResponseCode);
+                }
+            } else {
+                System.out.println("Error: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
