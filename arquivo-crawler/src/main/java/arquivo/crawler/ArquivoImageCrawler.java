@@ -18,12 +18,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Component
 @EnableScheduling
@@ -35,7 +34,7 @@ public class ArquivoImageCrawler {
     private final IntegrationLogRepository integrationLogRepository;
     private final SearchEntityRepository searchEntityRepository;
 
-    private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=%s&offset=0&maxItems=200&prettyPrint=true";
+    private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=\"%s\"&offset=0&maxItems=100&prettyPrint=true&type=jpg,png&siteSearch=*.publico.pt,*.expresso.pt,*.tsf.pt,*.dn.pt,*.jn.pt,*.observador.pt";
     private static final TextScoreService textScore = TextScoreService.getInstance();
 
     private final WebClientService webClientService;
@@ -56,21 +55,28 @@ public class ArquivoImageCrawler {
         int total = 0;
         for (SearchEntity entity : entities) {
             if (entity.getImageUrl() == null) {
-                final String url = String.format(ARQUIVO_IMAGE_API_BASE_URL, entity.getName());
+                String url = String.format(ARQUIVO_IMAGE_API_BASE_URL, entity.getName());
                 LOG.info("Crawling image for: {} ({})", entity.getName(), entity.getType().name());
-
                 try {
-                    final JsonNode response = webClientService.get(url, "arquivo.pt");
-                    int responseSize = response.get("responseItems").size();
-                    //LOG.debug("Response for {}: {}", url, response.toPrettyString());
-                    LOG.info("Crawling image results: {}: {}", entity.getName(), responseSize);
-                    integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler-image", IntegrationLog.Status.TS, "", "Total responses: " + responseSize));
+                    int numerberOfImages = 0;
+                    List<ImageScore> images = new ArrayList<>();
+                    JsonNode response;
+                    do {
+                        response = webClientService.get(url, "arquivo.pt");
+                        if (response != null) {
+                            images.addAll(scoreImages(entity, response.get("responseItems")));
+                            numerberOfImages += response.get("responseItems").size();
+                            url = response.get("nextPage").asText();
+                        }
+                    } while (response != null && response.has("nextPage") && !response.get("nextPage").asText().equals(response.get("previousPage").asText()));
 
-                    final String imgSrc = getBestImage(entity, response.get("responseItems"));
+                    LOG.info("Crawling image results: {}: {}", entity.getName(), numerberOfImages);
+                    integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler-image", IntegrationLog.Status.TS, "", "Total responses: " + numerberOfImages));
+                    final String imgSrc = getBestImage(images);
                     entity.setImageUrl(imgSrc);
                     searchEntityRepository.save(entity);
 
-                    total += responseSize;
+                    total += numerberOfImages;
                 } catch (WebClientResponseException e) {
                     LOG.error("Failed to get {}", url);
                     integrationLogRepository.save(new IntegrationLog(url, LocalDateTime.now(ZoneOffset.UTC), "crawler-image", IntegrationLog.Status.TR, "", e.getMessage()));
@@ -81,91 +87,104 @@ public class ArquivoImageCrawler {
         LOG.info("Finished: {} results founds in {} mins", total, ChronoUnit.MINUTES.between(today, finished));
     }
 
-    private String getBestImage(SearchEntity entity, JsonNode responseItems) {
-        final List<TitleScore> titleScores = new ArrayList<>();
+    private List<ImageScore> scoreImages(SearchEntity entity, JsonNode responseItems) {
+        final List<ImageScore> titleScores = new ArrayList<>();
         for (JsonNode node : responseItems) {
             if (node.has("pageTitle")) {
-                int score = scoreImage(entity.getName(), node);
-                titleScores.add(new TitleScore(entity.getName(), score, node.get("imgLinkToArchive").asText()));
+                ImageScore imageScore = scoreImage(entity, node);
+                if (imageScore.score > 0) {
+                    System.out.println(imageScore);
+                    titleScores.add(imageScore);
+                }
+            }
+        }
+        return titleScores;
+    }
+
+    private String getBestImage(List<ImageScore> titleScores) {
+        titleScores.sort(Comparator.comparingDouble(ImageScore::score));
+        if (!titleScores.isEmpty()) {
+            if (titleScores.size() == 1) {
+                return titleScores.get(0).url();
             }
 
+            //should return the last element (with the highest score)
+            return titleScores.get(titleScores.size() - 1).url();
         }
-        titleScores.sort(Comparator.comparingInt(TitleScore::score));
-        return titleScores.get(titleScores.size() - 1).url();
+        return null;
     }
 
-    private record TitleScore(String title, int score, String url) {
+    private record ImageScore(String title, double score, String url, Map<String, Double> imageScore) {
 
     }
 
-    private int scoreImage(String name, JsonNode node) {
-        int score = 0;
+    private ImageScore scoreImage(SearchEntity entity, JsonNode node) {
+        double score = 0;
+        Map<String, Double> scoreDetails = new HashMap<>();
         if (node.has("imgSrc")) {
-            String url = node.get("imgSrc").asText();
-            score = scoreElem(name, url);
+            final String url = URLDecoder.decode(node.get("imgSrc").asText());
+            double count = textScore.searchEntityscore(url, entity).total();
+            score += count;
+            scoreDetails.put("url", count);
         }
         if (node.has("pageTitle")) {
-            String title = node.get("pageTitle").asText();
-            score = scoreElem(name, title);
+            final String title = node.get("pageTitle").asText();
+            double count = textScore.searchEntityscore(title, entity).total();
+            score += count;
+            scoreDetails.put("title", count);
         }
         if (node.has("imgAlt")) {
-            String alt = node.get("imgAlt").get(0).asText();
-            score += scoreElem(name, alt);
+            double count = 0.0;
+            for (var altElem : node.get("imgAlt")) {
+                final String alt = altElem.asText();
+                count += textScore.searchEntityscore(alt, entity).total();
+            }
+            score += count;
+            scoreDetails.put("alt", count);
         }
         if (node.has("imgCaption")) {
-            String caption = node.get("imgCaption").get(0).asText();
-            score += scoreElem(name, caption);
-            score += (int) textScore.searchEntityscore(null, null, caption, null, false).total();
+            double count = 0.0;
+            for (var captionElem : node.get("imgCaption")) {
+                final String caption = captionElem.asText();
+                count += textScore.searchEntityscore(caption, entity).total();
+            }
+            score += count;
+            scoreDetails.put("caption", count);
         }
-        if (node.has("imgHeight") && node.has("imgWidth")) {
-            score += scoreImageSize(node.get("imgHeight").asInt(), node.get("imgWidth").asInt());
+        if (node.has("imgHeight") && node.has("imgWidth") && score > 0.0) {
+            double count = scoreImageSize(node.get("imgHeight").asInt(), node.get("imgWidth").asInt());
+            score += count;
+            scoreDetails.put("size", count);
         }
-        return score;
+        return new ImageScore(entity.getName(), score, node.get("imgLinkToArchive").asText(), scoreDetails);
     }
 
-    private int scoreImageSize(int height, int width) {
+    private double scoreImageSize(int height, int width) {
         int imageArea = height * width;
-        int score = 0;
+        double score = 0;
         if (imageArea <= 2500) { // 50*50
             return score;
         }
-        if (imageArea > 2500 && imageArea <= 10000) { // 100*100
-            score = 1;
+        if (imageArea <= 10000) { // 100*100
+            score = 0.5;
         }
         if (imageArea > 10000 && imageArea <= 40000) { // 200*200
-            score = 3;
+            score = 0.7;
         }
         if (imageArea > 40000 && imageArea <= 90000) { // 300*300
-            score = 4;
+            score = 0.9;
         }
         if (imageArea > 90000 && imageArea <= 160000) { // 400*400
-            score = 5;
+            score = 1.0;
         }
         if (imageArea > 160000 && imageArea <= 250000) { // 500*500
-            score = 6;
+            score = 1.2;
         }
         if (imageArea > 250000 && imageArea <= 360000) { // 600*600
-            score = 7;
+            score = 1.5;
         }
         if (imageArea >= 360000) { // > 600*600
-            score = 10;
-        }
-        return score;
-    }
-
-    private int scoreElem(String name, String title) {
-        if (title.equals(name)) {
-            return 10;
-        }
-        if (title.contains(name)) {
-            return 5;
-        }
-        int score = 0;
-        String[] nameParts = name.split(" ");
-        for (String part : nameParts) {
-            if (title.contains(part)) {
-                score++;
-            }
+            score = 1.8;
         }
         return score;
     }

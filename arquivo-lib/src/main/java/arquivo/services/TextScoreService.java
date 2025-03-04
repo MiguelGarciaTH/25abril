@@ -103,6 +103,22 @@ public class TextScoreService {
         return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
     }
 
+    public Score searchEntityscore(String text, SearchEntity searchEntity) {
+        final Map<String, Long> keywordTextCounter = new HashMap<>();
+
+        final Pattern pattern = getNamePattern(searchEntity);
+
+        final Matcher namesMatcher = pattern.matcher(text);
+        final long countNamesKeywords = namesMatcher.results().count();
+        keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
+        if (countNamesKeywords == 0) {
+            // the article is not about the search entity
+            return new Score(0, keywordTextCounter);
+        }
+
+        return new Score(BigDecimal.valueOf(countNamesKeywords).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
+    }
+
     private Pattern getNamePattern(SearchEntity searchEntity) {
         if (!namesPattern.containsKey(searchEntity.getId())) {
             final List<String> names = mergeNamesToList(searchEntity);
