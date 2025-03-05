@@ -1,0 +1,43 @@
+.polaroid-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-left: 380px;
+    margin-top: 4%;
+    grid-template-columns: 1fr; /* One column layout */
+    gap: 10px; /* Optional space between the divs */
+    margin-right: 200px;
+}
+
+.polaroid {
+    background: white;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 200px; /* Set a fixed width for all polaroids */
+    margin: 20px;
+    border: 1px solid #ddd;
+    border-bottom-width: 40px; /* Thicker bottom border for label */
+    transform: rotate(-2deg); /* Slight rotation for a more realistic look */
+    transition: transform 0.2s;
+}
+
+.polaroid:hover {
+    transform: rotate(0deg); /* Straighten on hover */
+}
+
+.polaroid img {
+    width: 100%; /* Ensure the image fits within the polaroid */
+    height: auto;
+    filter: grayscale(100%); /* Make the image black and white */
+}
+
+.polaroid .label {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    right: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    text-align: center;
+}
