@@ -1,12 +1,14 @@
 .polaroid-container {
+    margin-top: 150px;
+    padding: 0 20px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
-    margin-left: 380px;
-    margin-top: 4%;
-    grid-template-columns: 1fr; /* One column layout */
-    gap: 10px; /* Optional space between the divs */
-    margin-right: 200px;
+    justify-content: center;
+    gap: 40px;
+    width: 100%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .polaroid {
@@ -14,30 +16,85 @@
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    width: 200px; /* Set a fixed width for all polaroids */
-    margin: 20px;
-    border: 1px solid #ddd;
-    border-bottom-width: 40px; /* Thicker bottom border for label */
-    transform: rotate(-2deg); /* Slight rotation for a more realistic look */
-    transition: transform 0.2s;
-}
-
-.polaroid:hover {
-    transform: rotate(0deg); /* Straighten on hover */
+    width: 2.7in;
+    height: 3.9in;
+    border: 3px solid #ddd;
+    border-bottom-width: 1px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Courier New', Courier, monospace;
 }
 
 .polaroid img {
-    width: 100%; /* Ensure the image fits within the polaroid */
-    height: auto;
+    width: 100%;
+    height: calc(100% - 40px); /* Adjust height to leave space for the label */
+    object-fit: cover; /* Crop and center the image */
     filter: grayscale(100%); /* Make the image black and white */
 }
 
+.polaroid .placeholder {
+    width: 100%;
+    height: calc(100% - 40px);
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1em;
+    color: #333;
+}
+
 .polaroid .label {
-    position: absolute;
-    bottom: 10px;
+    bottom: 0;
     left: 0;
     right: 0;
-    font-size: 1.2em;
-    font-weight: bold;
+    height: 40px;
+    background: white;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1em;
+    font-weight: normal;
     text-align: center;
+    line-height: 20px; /* Center the text vertically */
+    text-overflow: ellipsis;
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break long words */
+}
+
+/* Media queries for responsive design */
+@media screen and (max-width: 1200px) {
+    .polaroid-container {
+        max-width: 1000px;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .polaroid-container {
+        max-width: 800px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .polaroid-container {
+        padding: 0 10px;
+        gap: 20px;
+    }
+    
+    .polaroid {
+        width: calc(50% - 20px);
+        height: auto;
+        aspect-ratio: 2.7/3.9;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .polaroid-container {
+        padding: 0 5px;
+        gap: 10px;
+    }
+    
+    .polaroid {
+        width: calc(100% - 10px);
+        max-width: 2.7in;
+        margin: 0 auto;
+    }
 }

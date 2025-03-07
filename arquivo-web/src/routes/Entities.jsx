@@ -1,30 +1,36 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from "../components/Header";
 import Entity from '../components/Entity';
+import SearchBar from '../components/SearchBar';
 
 import "../index.css";
 
 const Entities = () => {
-    const [entities, setResults] = useState([]);
-    const [loading, setLoading] = useState(true); // Initially true to show loading state on first load
+    const [entities, setEntities] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(1); // Page state for pagination
+    const [page, setPage] = useState(0);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [searchTimer, setSearchTimer] = useState(null);
 
-    const fetchData = useCallback(async (pageNumber) => {
+    const fetchData = useCallback(async (pageNumber, query = "") => {
         setLoading(true);
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}`);
+            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=10?&search_term=${query}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
             const entityData = data.content || [];
 
-            // If it's the first page, replace the entities, else append
-            setResults((prevEntity) => (pageNumber === 1 ? entityData : [...prevEntity, ...entityData]));
-
+            setEntities((prevEntities) => {
+                if (pageNumber === 0) {
+                    return entityData;
+                }
+                return [...prevEntities, ...entityData];
+            });
         } catch (error) {
             setError(error.message);
         } finally {
@@ -32,40 +38,83 @@ const Entities = () => {
         }
     }, []);
 
-    // Initial data fetch
     useEffect(() => {
-        fetchData(0);
-    }, [fetchData]);
+        fetchData(page, searchQuery);
+    }, [fetchData, page, searchQuery]);
 
-    // Scroll event to trigger more data fetch on reaching bottom
     useEffect(() => {
-        const handleScroll = () => {
-            const bottom = window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 1;
-            if (bottom && !loading) {
-                setPage((prevPage) => {
-                    const nextPage = prevPage + 1;
-                    fetchData(nextPage); // Fetch next page
-                    return nextPage;
-                });
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && !loading) {
+                    setPage((prevPage) => prevPage + 1);
+                }
+            },
+            {
+                rootMargin: '100px',
+            }
+        );
+
+        const sentinel = document.getElementById('sentinel');
+        if (sentinel) {
+            observer.observe(sentinel);
+        }
+
+        return () => {
+            if (sentinel) {
+                observer.unobserve(sentinel);
             }
         };
+    }, [loading]);
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [loading, fetchData]);
+    const handleSearchChange = (e) => {
+        const newQuery = e.target.value;
+        setSearchQuery(newQuery);
 
-    if (loading && page === 1) return <div>Loading...</div>; // Loading indicator on first load
+        if (searchTimer) {
+            clearTimeout(searchTimer);
+        }
+
+        const timer = setTimeout(() => {
+            setEntities([]);
+            setPage(0);
+            fetchData(0, newQuery);
+        }, 500);
+
+        setSearchTimer(timer);
+    };
+
+    // Handle search input focus and keydown events
+    const handleSearchInput = (e) => {
+        // Prevent the browser find-in-page functionality for "Ctrl+F" and "Cmd+F"
+        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+            e.preventDefault(); // Prevent the default find action
+        }
+    };
+
+    if (loading && page === 0) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <div>
             <Header isHome={false} />
+            <SearchBar
+                value={searchQuery}
+                onChange={handleSearchChange}
+                onKeyDown={handleSearchInput} // Prevent the find-in-page when typing
+            />
             <div className="polaroid-container">
                 {entities.map((entity) => (
-                    <Entity key={`${entity.id}-${page}`} entityId={entity.id} entityName={entity.name} entityBio={entity.biography} entityImage={entity.imageUrl} />
+                    <Entity
+                        key={entity.id}
+                        entityId={entity.id}
+                        entityName={entity.name}
+                        entityBio={entity.biography}
+                        entityImage={entity.imageUrl}
+                    />
                 ))}
             </div>
-            {loading && page > 0 && <div>Loading more...</div>} {/* Optional: show loader for subsequent pages */}
+            <div id="sentinel" style={{ height: '1px', background: 'transparent' }} />
+            {loading && page > 0 && <div>Loading more...</div>}
         </div>
     );
 };
