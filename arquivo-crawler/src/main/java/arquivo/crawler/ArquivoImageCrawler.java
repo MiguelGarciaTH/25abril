@@ -38,13 +38,15 @@ public class ArquivoImageCrawler {
     private static final TextScoreService textScore = TextScoreService.getInstance();
 
     private final WebClientService webClientService;
+    private final FaceDetection faceDetection;
 
     @Autowired
     public ArquivoImageCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
-                               RateLimiterRepository rateLimiterRepository) {
+                               RateLimiterRepository rateLimiterRepository, FaceDetection faceDetection) {
         this.integrationLogRepository = integrationLogRepository;
         this.searchEntityRepository = searchEntityRepository;
         this.webClientService = new WebClientService(rateLimiterRepository);
+        this.faceDetection = faceDetection;
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -120,13 +122,20 @@ public class ArquivoImageCrawler {
 
     private ImageScore scoreImage(SearchEntity entity, JsonNode node) {
         double score = 0;
-        Map<String, Double> scoreDetails = new HashMap<>();
+        double confidence = 0.0;
+        final Map<String, Double> scoreDetails = new HashMap<>();
         if (node.has("imgSrc")) {
             final String url = URLDecoder.decode(node.get("imgSrc").asText());
             double count = textScore.searchEntityscore(url, entity).total();
             score += count;
             scoreDetails.put("url", count);
+            confidence = faceDetection.detectFace(url);
+            scoreDetails.put("faces", confidence);
+            if (confidence == 0.0) {
+                return new ImageScore(entity.getName(), 0, node.get("imgLinkToArchive").asText(), Map.of("No faces", 0.0));
+            }
         }
+
         if (node.has("pageTitle")) {
             final String title = node.get("pageTitle").asText();
             double count = textScore.searchEntityscore(title, entity).total();
@@ -156,6 +165,10 @@ public class ArquivoImageCrawler {
             score += count;
             scoreDetails.put("size", count);
         }
+
+        // multiply confidence
+        score = score * confidence;
+
         return new ImageScore(entity.getName(), score, node.get("imgLinkToArchive").asText(), scoreDetails);
     }
 

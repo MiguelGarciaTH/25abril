@@ -19,7 +19,16 @@
             <artifactId>arquivo-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-vision</artifactId>
+            <version>3.50.0</version>
+        </dependency>
+
     </dependencies>
+
+
 
     <build>
         <!-- deb packaging config -->
