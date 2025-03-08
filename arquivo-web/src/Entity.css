@@ -49,6 +49,7 @@
     left: 0;
     right: 0;
     height: 40px;
+    padding-top: 10px; /* Add padding to move text down */
     background: white;
     font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
@@ -58,6 +59,15 @@
     text-overflow: ellipsis;
     white-space: normal; /* Allow text to wrap */
     word-wrap: break-word; /* Break long words */
+}
+
+/* Add this new class for styling individual letters */
+.polaroid .label span {
+    display: inline-block;
+    transform: var(--random-transform);
+    position: relative;
+    top: var(--random-offset);
+    opacity: 1; /* Full opacity for better readability */
 }
 
 /* Media queries for responsive design */
@@ -97,4 +107,43 @@
         max-width: 2.7in;
         margin: 0 auto;
     }
+}
+
+/* Add after your existing code */
+
+/* Base overlay styles */
+.polaroid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    mix-blend-mode: soft-light;
+    opacity: var(--overlay-opacity, 0.3);
+    background: 
+        radial-gradient(circle at var(--spot1-x, 20%) var(--spot1-y, 30%), rgba(255,255,255,0.8) 0%, transparent 50%),
+        radial-gradient(circle at var(--spot2-x, 70%) var(--spot2-y, 60%), rgba(255,255,255,0.6) 0%, transparent 40%),
+        repeating-linear-gradient(
+            var(--scratch-angle, -45deg),
+            transparent,
+            transparent 2px,
+            rgba(0,0,0,0.1) 2px,
+            rgba(0,0,0,0.1) 3px
+        );
+}
+
+/* Dust and scratches overlay */
+.polaroid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    opacity: var(--noise-opacity, 0.1);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
