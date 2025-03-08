@@ -28,7 +28,7 @@
 .polaroid img {
     width: 100%;
     height: calc(100% - 40px); /* Adjust height to leave space for the label */
-    object-fit: cover; /* Crop and center the image */
+    object-fit: contain; /* Crop and center the image */
     filter: grayscale(100%); /* Make the image black and white */
 }
 
