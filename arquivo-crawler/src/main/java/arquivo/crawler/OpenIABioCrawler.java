@@ -42,9 +42,11 @@ public class OpenIABioCrawler {
     public void bios() {
         final List<SearchEntity> entities = searchEntityRepository.findAll();
         for (SearchEntity entity : entities) {
-            final String bio = getBio(entity.getName());
-            entity.setBiography(bio);
-            searchEntityRepository.save(entity);
+            if (entity.getBiography() == null) {
+                final String bio = getBio(entity.getName());
+                entity.setBiography(bio);
+                searchEntityRepository.save(entity);
+            }
         }
     }
 
@@ -62,7 +64,7 @@ public class OpenIABioCrawler {
                 .put("content", "Write a short biography of " + name + ". Write the text in Portuguese from Portugal " +
                         "(PT-pt) and don't forget that " + name + " was some how related with '25 de Abril' or 'Estado Novo', " +
                         "therefore, if the bio does not refer these events, probably your are fetching the wrong name. " +
-                        "And after te name put birth and death date between (), just the years."));
+                        "And after te name put birth and death date between (), just the years. Keep the short bio under 100 words please."));
         json.put("messages", messages);
 
         // Create RequestBody with the JSON content
@@ -84,7 +86,7 @@ public class OpenIABioCrawler {
                 if (response.isSuccessful()) {
                     String responseBody = response.body().string();
                     JSONObject jsonResponse = new JSONObject(responseBody);
-                    LOG.info("Bio fetched successfully for {}",name);
+                    LOG.info("Bio fetched successfully for {}", name);
                     return jsonResponse.getJSONArray("choices")
                             .getJSONObject(0)
                             .getJSONObject("message")
