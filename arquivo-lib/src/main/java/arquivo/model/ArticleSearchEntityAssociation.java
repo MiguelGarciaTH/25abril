@@ -18,7 +18,7 @@ public class ArticleSearchEntityAssociation {
     @GeneratedValue(generator = "sequence-per-table")
     private int id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
 
     @ManyToOne(fetch = FetchType.EAGER)
