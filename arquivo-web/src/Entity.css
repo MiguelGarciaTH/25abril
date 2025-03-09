@@ -160,6 +160,16 @@
     width: 2.7in;
     height: 3.9in;
     cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.polaroid-wrapper:link,
+.polaroid-wrapper:visited,
+.polaroid-wrapper:hover,
+.polaroid-wrapper:active {
+    text-decoration: none;
+    color: inherit;
 }
 
 .bio-popup {
