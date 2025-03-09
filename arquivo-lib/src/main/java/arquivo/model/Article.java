@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NamedEntityGraph(name = "Article.searchEntitiesAssociations",
+@NamedEntityGraph(name = "searchEntitiesAssociations",
         attributeNodes = @NamedAttributeNode("searchEntitiesAssociations")
 )
 public class Article {
