@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import "../Entity.css";
 
 function Entity({ entityId, entityName, entityImage, entityBio }) {
     const [showBio, setShowBio] = useState(false);
 
     return (
-        <div 
+        <Link 
+            to={`/articles/${entityId}`}
             className="polaroid-wrapper"
             onMouseEnter={() => setShowBio(true)}
             onMouseLeave={() => setShowBio(false)}
@@ -26,7 +28,7 @@ function Entity({ entityId, entityName, entityImage, entityBio }) {
                     </div>
                 </div>
             )}
-        </div>
+        </Link>
     );
 }
 
