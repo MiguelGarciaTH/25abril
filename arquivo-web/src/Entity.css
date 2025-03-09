@@ -23,6 +23,13 @@
     position: relative;
     overflow: hidden;
     font-family: 'Courier New', Courier, monospace;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.polaroid:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    border-color: #999; /* Slightly darker border on hover */
 }
 
 .polaroid img {
@@ -146,4 +153,47 @@
     mix-blend-mode: multiply;
     opacity: var(--noise-opacity, 0.1);
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.polaroid-wrapper {
+    position: relative;
+    width: 2.7in;
+    height: 3.9in;
+    cursor: pointer;
+}
+
+.bio-popup {
+    position: absolute;
+    width: 300px;
+    background: white;
+    padding: 15px;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    left: calc(100% + 10px);
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.bio-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Position popup on the left for items on the right side of the container */
+.polaroid-wrapper:nth-child(3n) .bio-popup,
+.polaroid-wrapper:nth-child(4n) .bio-popup {
+    left: auto;
+    right: calc(100% + 10px);
+}
+
+.bio-content {
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
 }
