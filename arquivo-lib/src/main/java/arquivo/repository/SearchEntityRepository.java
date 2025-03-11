@@ -28,7 +28,7 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
     @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se WHERE se.names_vector @@ to_tsquery('portuguese', :searchTerm)")
     Page<SearchEntity> findBySearchTerm(String searchTerm, Pageable pageable);
 
-    @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se")
+    @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se order by se.name asc")
     Page<SearchEntity> findAll(Pageable pageable);
 
 }
