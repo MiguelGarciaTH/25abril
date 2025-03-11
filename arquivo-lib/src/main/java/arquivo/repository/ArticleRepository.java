@@ -51,7 +51,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
 
-    @EntityGraph(attributePaths = {"searchEntityAssociations", "site"})
+    @EntityGraph(attributePaths = {"site"})
     @Query(value = """
             select a
             from Article a
