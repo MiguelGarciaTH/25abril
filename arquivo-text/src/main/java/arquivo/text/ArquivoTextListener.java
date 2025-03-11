@@ -103,7 +103,7 @@ public class ArquivoTextListener {
                         .setThreshold(SafetySetting.HarmBlockThreshold.OFF)
                         .build()
         );
-        Content systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 1000 and 1500 words");
+        Content systemInstruction = ContentMaker.fromMultiModalData("* Translate to Portuguese from Portugal, not from Portuguese from Brazil\n* Just focus on the summary\n* Keep the summary between 1000 and 1010 words");
 
         VertexAI vertexAi = new VertexAI("sincere-hearth-442713-p7", "europe-west2");
         model = new GenerativeModel.Builder()
