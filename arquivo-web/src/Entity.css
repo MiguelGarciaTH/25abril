@@ -195,13 +195,6 @@
     visibility: visible;
 }
 
-/* Position popup on the left for items on the right side of the container */
-.polaroid-wrapper:nth-child(3n) .bio-popup,
-.polaroid-wrapper:nth-child(4n) .bio-popup {
-    left: auto;
-    right: calc(100% + 10px);
-}
-
 .bio-content {
     max-height: 300px;
     overflow-y: auto;

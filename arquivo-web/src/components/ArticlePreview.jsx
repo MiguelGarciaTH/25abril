@@ -2,20 +2,16 @@ import { Link } from "react-router-dom";
 import React, { useState } from 'react';
 import "../Article.css";
 
-
 function ArticlePreview({ item }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-
-
         <div class="collumn">
-
             <div
                 className="head"
-                onMouseEnter={() => setIsHovered(true)} // Trigger hover state
-                onMouseLeave={() => setIsHovered(false)} // Reset hover state
-                style={{ position: 'relative' }} // Set relative positioning for the pop-up to work
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                style={{ position: 'relative' }}
             >
                 <span class="headline hl3">
                     <Link class="headline hl3"
@@ -32,7 +28,7 @@ function ArticlePreview({ item }) {
                     Relevância: {item.articleDetail.summaryScore}
                 </p>
             </div>
-            <p>
+            <p className="article-summary">
                 {item.articleDetail.summary}
             </p>
         </div>
