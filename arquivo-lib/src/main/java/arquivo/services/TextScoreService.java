@@ -65,7 +65,7 @@ public class TextScoreService {
 
         final Matcher titleMatcher = keywordPattern.matcher(title);
         final long countNamesTitle = titleMatcher.results().count();
-        keywordTextCounter.put("countContextuaTitle", countNamesTitle);
+        keywordTextCounter.put("countContextualTitle", countNamesTitle);
         score *= Math.max(1, countNamesTitle * 10);
         if (textScaling) {
             return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue() / text.length(), keywordTextCounter);
