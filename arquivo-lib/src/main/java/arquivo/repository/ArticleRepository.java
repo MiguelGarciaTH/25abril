@@ -73,6 +73,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                     where se.names_vector @@ to_tsquery('portuguese', ?1)
                 )
             )
+            and a.summary_score > 0
             ORDER BY a.summary_score DESC
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
