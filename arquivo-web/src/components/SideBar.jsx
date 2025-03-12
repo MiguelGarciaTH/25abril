@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { HiHome } from 'react-icons/hi';
 import { BsPeople } from 'react-icons/bs';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
+import { AiOutlineBarChart } from "react-icons/ai";
+import { AiFillFileText } from "react-icons/ai";
+import { AiOutlineGithub } from "react-icons/ai";
 import '../SideBar.css';
 
 const Sidebar = () => {
@@ -29,11 +31,19 @@ const Sidebar = () => {
                         </Link>
                         <Link to="/entities" className="icon-link">
                             <BsPeople className="sidebar-icon" />
-                            <span className="link-text">People</span>
+                            <span className="link-text">Entidades</span>
+                        </Link>
+                        <Link to="/data" className="icon-link">
+                            <AiOutlineBarChart className="sidebar-icon" />
+                            <span className="link-text">Dados</span>
                         </Link>
                         <Link to="/about" className="icon-link">
-                            <AiOutlineInfoCircle className="sidebar-icon" />
-                            <span className="link-text">About</span>
+                            <AiFillFileText className="sidebar-icon" />
+                            <span className="link-text">Sobre</span>
+                        </Link>
+                        <Link to="https://github.com/MiguelGarciaTH/25abril" className="icon-link">
+                            <AiOutlineGithub className="sidebar-icon" />
+                            <span className="link-text">github</span>
                         </Link>
                     </div>
                 </div>
