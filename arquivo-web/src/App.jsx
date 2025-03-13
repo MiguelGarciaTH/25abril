@@ -6,6 +6,7 @@ import About from './routes/About';
 import SearchResults from './components/SearchResults';
 import Entities from './routes/Entities';
 import Articles from './routes/Articles';
+import Data from './routes/Data';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/about" element={<About />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/data" element={<Data />} />
           <Route path="/entities" element={<Entities />} />
           <Route path="/search-results" element={<SearchResults />} />
           <Route 

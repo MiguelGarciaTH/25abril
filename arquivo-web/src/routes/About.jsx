@@ -39,27 +39,6 @@ const About = () => {
                 <strong> Público, Diário de Notícias, Jornal de Notícias, Expresso, Observador, SIC Notícias e TSF</strong>.
 
 
-                <h2>Alguns dados</h2>
-                Numéro de entidades selecionadas 122 distribuidas por categorias:
-                <li>MILITARES	14</li>
-                <li>CANTORES	13</li>
-                <li>EVENTOS	    14</li>
-                <li>MOVIMENTOS	25</li>
-                <li>RESISTENTES	18</li>
-                <li>ESCRITORES	8</li>
-                <li>OPRESSORES	22</li>
-                <li>JORNALISTAS	8</li>
-
-                <br />
-                Foram processados e guardados 12829 artigos (ou seja artigos com relevância) distribuidos da seguinte forma pelos sites:
-                <li>Diário de Notícias	1309</li>
-                <li>TSF	509</li>
-                <li>Expresso	171</li>
-                <li>Público	566</li>
-                <li>Observador	7441</li>
-                <li>Jornal de Notícias	588</li>
-                <li>SIC Notícias	2245 </li>
-
                 <h2>Considerações pessoais</h2>
                 Em relação, às entidades de pesquisa foram selecionadas com base no conhecimento do autor do tema através de livros, podcasts, documentários, e de conversas
                 com pessoas que viveram o 25 de Abril na primeira pessoa. Portanto, o autor pede desde já desculpa por não ter sido tão completo como o tema exige.
