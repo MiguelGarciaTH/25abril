@@ -7,7 +7,8 @@ insert into quote(author, "text") values
 
 insert into rate_limiter(description, counter, counter_limit, sleep_time, locked) values
     ('arquivo.pt', 0, 245, 60000, false),
-    ('dbpedia', 0, 95, 60000, false);
+    ('dbpedia', 0, 95, 60000, false),
+    ('google-api', 0, 1200, 60000, false);
 
 insert into site(name, acronym, url) values
     ('Público', null, 'http://www.publico.pt'),
@@ -33,121 +34,123 @@ insert into search_entity (name, aliases, type) values
 ('Manuel Alegre', null, 'POLITICOS'),
 ('Nuno Teotónio Pereira', null, 'POLITICOS'),
 ('Humberto Delgado', 'Humberto da Silva Delgado, O General sem medo', 'POLITICOS'),
-('Salgado Zenha', null, 'POLITICOS'),
------- RESISTENTES
-('Margarida Tengarrinha',null, 'RESISTENTES'),
-('Catarina Eufémia', null, 'RESISTENTES'),
-('Aurora Rodrigues', null, 'RESISTENTES'),
-('Conceição Matos', null, 'RESISTENTES'),
-('José Dias Coelho', null, 'RESISTENTES'),
-('Samora Machel', null , 'RESISTENTES'),
-('Jonas Savimbi', null, 'RESISTENTES'),
-('José Manuel Tengarrinha', null, 'RESISTENTES'),
-('Domingos Abrantes', null,  'RESISTENTES'),
-('Henrique Galvão', null, 'RESISTENTES'),
-('Carlos Antunes', null, 'RESISTENTES'),
-('Hermínio da Palma Inácio', 'Palma Inácio', 'RESISTENTES'),
-('José António Ribeiro Santos', 'José Ribeiro Santos', 'RESISTENTES'),
-('Amílcar Cabral', null, 'RESISTENTES'),
-('Alípio de Freitas', null, 'RESISTENTES'),
-('Agostinho Neto', null, 'RESISTENTES'),
-('Isabel do Carmo', null, 'RESISTENTES'),
-('Camilo Mortágua', null, 'RESISTENTES'),
-('Maria Lamas', null, 'RESISTENTES'),
-('Emídio Santana', null, 'RESISTENTES'),
------- MUSICOS
-('Sérgio Godinho', null, 'MUSICOS'),
-('Fausto Bordalo Dias', null, 'MUSICOS'),
-('José Mário Branco', 'Zé Mário Branco', 'MUSICOS'),
-('Adriano Correia de Oliveira', null, 'MUSICOS'),
-('Ruy Mingas', 'Rui Mingas', 'MUSICOS'),
-('Francisco Fanhais', 'Padre Fanhais', 'MUSICOS'),
-('José Barata-Moura', 'José Barata Moura', 'MUSICOS'),
-('Luís Cília', null, 'MUSICOS'),
-('Manuel Freire', null, 'MUSICOS'),
-('Vitorino Salomé', null, 'MUSICOS'),
-('José Jorge Letria', 'Jorge Letria', 'MUSICOS'),
-('José Afonso', 'Zeca Afonso', 'MUSICOS'),
-('Fernando Lopes Graça', 'Fernando Lopes-Graça', 'MUSICOS'),
-('Carlos Paredes', null, 'MUSICOS'),
-('Paulo de Carvalho', null, 'MUSICOS'),
------- ESCRITORES
-('Natália Correia', null,  'ESCRITORES'),
-('Maria Teresa Horta',  'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
-('Maria Isabel Barreno', 'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
-('Maria Velho da Costa', 'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
-('Sophia de Mello Breyner Andresen', 'Sophia de Mello Breyner', 'ESCRITORES'),
-('Luís de Sttau Monteiro', 'Stau Monteiro', 'ESCRITORES'),
-('José Cardoso Pires', null, 'ESCRITORES'),
-('Bernardo Santareno', null, 'ESCRITORES'),
-('José Gomes Ferreira', null ,'ESCRITORES'),
-('Soeiro Pereira Gomes', null, 'ESCRITORES'),
-('Ferreira de Castro', null, 'ESCRITORES'),
----- JORNALISTAS
-('Joaquim Furtado', null,  'JORNALISTAS'),
-('Raul Rego', null,  'JORNALISTAS'),
-('Adelino Gomes', null, 'JORNALISTAS'),
-('Francisco Sousa Tavares', null, 'JORNALISTAS'),
-('João Paulo Diniz', null, 'JORNALISTAS'),
-('Leite de Vasconcelos', null, 'JORNALISTAS'),
-('Rádio Clube Português', 'RCP', 'JORNALISTAS'),
-('Rádio Renascença', null, 'JORNALISTAS'),
-('Carlos Albino', null, 'JORNALISTAS'),
-('Álvaro Guerra', null, 'JORNALISTAS'),
-('João Abel Manta', 'Abel Manta', 'JORNALISTAS'),
------ OPRESSAO
-('Barbieri Cardoso', null, 'OPRESSORES'),
-('Óscar Aníbal Piçarra de Castro Cardoso', 'Óscar Cardoso', 'OPRESSORES'),
-('Secretariado Nacional de Informação', 'SNI', 'OPRESSORES'),
-('Pedro Feytor Pinto', null, 'OPRESSORES'),
-('António Rosa Casaco', null, 'OPRESSORES'),
-('Alexandre Carvalho Neto', null, 'OPRESSORES'),
-('Marcello Caetano', 'Marcelo Caetano', 'OPRESSORES'),
-('António de Oliveira Salazar', null, 'OPRESSORES'),
-('Óscar Carmona', null,'OPRESSORES'),
-('Duarte Pacheco', null, 'OPRESSORES'),
-('Cardeal Manuel Gonçalves Cerejeira', 'Cardeal Cerejeira', 'OPRESSORES'),
-('Américo Tomás', 'Américo Thomaz','OPRESSORES'),
-('Kaúlza de Arriaga', null, 'OPRESSORES'),
-('Fernando da Silva Pais', 'Silva Pais', 'OPRESSORES'),
-----('Veiga Simão', null, 'OPRESSORES'),
-----('Baltasar Rebelo de Sousa', null, 'OPRESSORES'),
-----('José Hermano Saraiva', null, 'OPRESSORES'),
-('Eduardo Fontes', 'Dadinho Fontes', 'OPRESSORES'),
-('Adelino da Silva Tinoco', 'Inspector Tinoco', 'OPRESSORES'),
-('Madalena Oliveira', 'Leninha, PIDE Leninha', 'OPRESSORES'),
-('Polícia Internacional e de Defesa do Estado','PIDE, PIDE/DGS, Direcção-Geral de Segurança, P.I.D.E, Rua António Maria cardoso', 'OPRESSORES'),
-('Prisão de Caxias', null, 'OPRESSORES'),
-('Prisão do Aljube', null,  'OPRESSORES'),
-('Prisão de Peniche', null, 'OPRESSORES'),
-('Legião Portuguesa', null, 'OPRESSORES'),
-('António Joaquim Tavares Ferro', 'António Ferro', 'OPRESSORES'),
-('Tarrafal', 'Campo de Concentração do Tarrafal, Campo da Morte Lenta', 'OPRESSORES'),
-('União Nacional', 'UN, Ação Nacional Popular', 'OPRESSORES'),
----- MFA
-('António de Spínola', 'General Spínola, Spínola',  'CAPITAES'),
-('António Ramalho Eanes','Ramalho Eanes', 'CAPITAES'),
-('Vasco Lourenço', null, 'CAPITAES'),
-('Francisco da Costa Gomes','Costa Gomes', 'CAPITAES'),
-('Carlos Fabião', null, 'CAPITAES'),
-('Otelo Saraiva de Carvalho', 'Otelo', 'CAPITAES'),
-('Almada Contreiras', null, 'CAPITAES'),
-('José Alves Costa', null, 'CAPITAES'),
-('Figueiras Soares', null, 'CAPITAES'),
-('Rosa Coutinho', null , 'CAPITAES'),
-('Salgueiro Maia', 'Capitão Maia', 'CAPITAES'),
-('Ernesto Melo Antunes','Melo Antunes', 'CAPITAES'),
-('Fisher Lopes Pires', null, 'CAPITAES'),
-('Garcia dos Santos', null, 'CAPITAES'),
-('Jaime Neves', null, 'CAPITAES'),
-('Vasco Gonçalves', null, 'CAPITAES'),
-('José Pinheiro de Azevedo','Pinheiro de Azevedo', 'CAPITAES'),
-('Vítor Alves', 'Vitor Manuel Rodrigues Alves', 'CAPITAES'),
-('Capitães de Abril', 'Movimento dos Capitães', 'CAPITAES'),
-('Diniz de Almeida', null, 'CAPITAES'),
-('Carlos Matos Gomes', null, 'CAPITAES'),
-('Jorge Golias', null, 'CAPITAES'),
-('Manuel Duran Clemente', null, 'CAPITAES');
+('Salgado Zenha', null, 'POLITICOS');
+-------- RESISTENTES
+--('Celeste Caeiro',null, 'RESISTENTES'),
+--('Margarida Tengarrinha',null, 'RESISTENTES'),
+--('Catarina Eufémia', null, 'RESISTENTES'),
+--('Aurora Rodrigues', null, 'RESISTENTES'),
+--('Conceição Matos', null, 'RESISTENTES'),
+--('José Dias Coelho', null, 'RESISTENTES'),
+--('Samora Machel', null , 'RESISTENTES'),
+--('Jonas Savimbi', null, 'RESISTENTES'),
+--('José Manuel Tengarrinha', null, 'RESISTENTES'),
+--('Domingos Abrantes', null,  'RESISTENTES'),
+--('Henrique Galvão', null, 'RESISTENTES'),
+--('Carlos Antunes', null, 'RESISTENTES'),
+--('Hermínio da Palma Inácio', 'Palma Inácio', 'RESISTENTES'),
+--('José António Ribeiro Santos', 'José Ribeiro Santos', 'RESISTENTES'),
+--('Amílcar Cabral', null, 'RESISTENTES'),
+--('Alípio de Freitas', null, 'RESISTENTES'),
+--('Agostinho Neto', null, 'RESISTENTES'),
+--('Isabel do Carmo', null, 'RESISTENTES'),
+--('Camilo Mortágua', null, 'RESISTENTES'),
+--('Maria Lamas', null, 'RESISTENTES'),
+--('Emídio Santana', null, 'RESISTENTES'),
+-------- MUSICOS
+--('Sérgio Godinho', null, 'MUSICOS'),
+--('Fausto Bordalo Dias', null, 'MUSICOS'),
+--('José Mário Branco', 'Zé Mário Branco', 'MUSICOS'),
+--('Adriano Correia de Oliveira', null, 'MUSICOS'),
+--('Ruy Mingas', 'Rui Mingas', 'MUSICOS'),
+--('Francisco Fanhais', 'Padre Fanhais', 'MUSICOS'),
+--('José Barata-Moura', 'José Barata Moura', 'MUSICOS'),
+--('Luís Cília', null, 'MUSICOS'),
+--('Manuel Freire', null, 'MUSICOS'),
+--('Vitorino Salomé', null, 'MUSICOS'),
+--('José Jorge Letria', 'Jorge Letria', 'MUSICOS'),
+--('José Afonso', 'Zeca Afonso', 'MUSICOS'),
+--('Fernando Lopes Graça', 'Fernando Lopes-Graça', 'MUSICOS'),
+--('Carlos Paredes', null, 'MUSICOS'),
+--('Paulo de Carvalho', null, 'MUSICOS'),
+-------- ESCRITORES
+--('Natália Correia', null,  'ESCRITORES'),
+--('Maria Teresa Horta',  'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
+--('Maria Isabel Barreno', 'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
+--('Maria Velho da Costa', 'Três Marias, Novas Cartas Portuguesas', 'ESCRITORES'),
+--('Sophia de Mello Breyner Andresen', 'Sophia de Mello Breyner', 'ESCRITORES'),
+--('Luís de Sttau Monteiro', 'Stau Monteiro', 'ESCRITORES'),
+--('José Cardoso Pires', null, 'ESCRITORES'),
+--('Bernardo Santareno', null, 'ESCRITORES'),
+--('José Gomes Ferreira', null ,'ESCRITORES'),
+--('Soeiro Pereira Gomes', null, 'ESCRITORES'),
+--('Ferreira de Castro', null, 'ESCRITORES'),
+------ JORNALISTAS
+--('Joaquim Furtado', null,  'JORNALISTAS'),
+--('Raul Rego', null,  'JORNALISTAS'),
+--('Adelino Gomes', null, 'JORNALISTAS'),
+--('Francisco Sousa Tavares', null, 'JORNALISTAS'),
+--('João Paulo Diniz', null, 'JORNALISTAS'),
+--('Leite de Vasconcelos', null, 'JORNALISTAS'),
+--('Rádio Clube Português', 'RCP', 'JORNALISTAS'),
+--('Rádio Renascença', null, 'JORNALISTAS'),
+--('Carlos Albino', null, 'JORNALISTAS'),
+--('Álvaro Guerra', null, 'JORNALISTAS'),
+--('João Abel Manta', 'Abel Manta', 'JORNALISTAS'),
+------- OPRESSAO
+--('Barbieri Cardoso', null, 'OPRESSORES'),
+--('Óscar Aníbal Piçarra de Castro Cardoso', 'Óscar Cardoso', 'OPRESSORES'),
+--('Secretariado Nacional de Informação', 'SNI', 'OPRESSORES'),
+--('Pedro Feytor Pinto', null, 'OPRESSORES'),
+--('António Rosa Casaco', null, 'OPRESSORES'),
+--('Alexandre Carvalho Neto', null, 'OPRESSORES'),
+--('Marcello Caetano', 'Marcelo Caetano', 'OPRESSORES'),
+--('António de Oliveira Salazar', null, 'OPRESSORES'),
+--('Óscar Carmona', null,'OPRESSORES'),
+--('Duarte Pacheco', null, 'OPRESSORES'),
+--('Cardeal Manuel Gonçalves Cerejeira', 'Cardeal Cerejeira', 'OPRESSORES'),
+--('Américo Tomás', 'Américo Thomaz','OPRESSORES'),
+--('Kaúlza de Arriaga', null, 'OPRESSORES'),
+--('Fernando da Silva Pais', 'Silva Pais', 'OPRESSORES'),
+------('Veiga Simão', null, 'OPRESSORES'),
+------('Baltasar Rebelo de Sousa', null, 'OPRESSORES'),
+------('José Hermano Saraiva', null, 'OPRESSORES'),
+--('Eduardo Fontes', 'Dadinho Fontes', 'OPRESSORES'),
+--('Adelino da Silva Tinoco', 'Inspector Tinoco', 'OPRESSORES'),
+--('Madalena Oliveira', 'Leninha, PIDE Leninha', 'OPRESSORES'),
+--('Polícia Internacional e de Defesa do Estado','PIDE, PIDE/DGS, Direcção-Geral de Segurança, P.I.D.E, Rua António Maria cardoso', 'OPRESSORES'),
+--('Prisão de Caxias', null, 'OPRESSORES'),
+--('Prisão do Aljube', null,  'OPRESSORES'),
+--('Prisão de Peniche', null, 'OPRESSORES'),
+--('Legião Portuguesa', null, 'OPRESSORES'),
+--('António Joaquim Tavares Ferro', 'António Ferro', 'OPRESSORES'),
+--('Tarrafal', 'Campo de Concentração do Tarrafal, Campo da Morte Lenta', 'OPRESSORES'),
+--('União Nacional', 'UN, Ação Nacional Popular', 'OPRESSORES'),
+------ MFA
+--('António de Spínola', 'General Spínola, Spínola',  'CAPITAES'),
+--('António Ramalho Eanes','Ramalho Eanes', 'CAPITAES'),
+--('Vasco Lourenço', null, 'CAPITAES'),
+--('Francisco da Costa Gomes','Costa Gomes', 'CAPITAES'),
+--('Carlos Fabião', null, 'CAPITAES'),
+--('Otelo Saraiva de Carvalho', 'Otelo', 'CAPITAES'),
+--('Almada Contreiras', null, 'CAPITAES'),
+--('José Alves Costa', null, 'CAPITAES'),
+--('Figueiras Soares', null, 'CAPITAES'),
+--('Rosa Coutinho', null , 'CAPITAES'),
+--('Salgueiro Maia', 'Capitão Maia', 'CAPITAES'),
+--('Ernesto Melo Antunes','Melo Antunes', 'CAPITAES'),
+--('Fisher Lopes Pires', null, 'CAPITAES'),
+--('Garcia dos Santos', null, 'CAPITAES'),
+--('Jaime Neves', null, 'CAPITAES'),
+--('Vasco Gonçalves', null, 'CAPITAES'),
+--('José Pinheiro de Azevedo','Pinheiro de Azevedo', 'CAPITAES'),
+--('Vítor Alves', 'Vitor Manuel Rodrigues Alves', 'CAPITAES'),
+--('Capitães de Abril', 'Movimento dos Capitães', 'CAPITAES'),
+--('Diniz de Almeida', null, 'CAPITAES'),
+--('Carlos Matos Gomes', null, 'CAPITAES'),
+--('Jorge Golias', null, 'CAPITAES'),
+--('Manuel Duran Clemente', null, 'CAPITAES');
+
 ----('Bravia Chaimite', null, 'CAPITAES')
 ----('Página 1', null, 'JORNAIS'),
 ----('Seara Nova', null, 'JORNAIS'),
@@ -207,175 +210,3 @@ insert into search_entity (name, aliases, type) values
 --('Coliseu dos Recreios', '29 de Março, o primeiro dos cantos livres', 'EVENTOS'),
 --('Processo Revolucionário em Curso', 'PREC', 'EVENTOS');
 --
----- adds missing data from external online sources
---update search_entity set image_url = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjRt-8jd22AUxL1Y17ChMMMUGdC50MNFoDO4MVr1QISNCTzW5Vrd8xYAh1FdVoW0T_M9MQHi1uJ3aHcZXSgFn9YWuIt-6r7pDxgQ9x3t8pGcrC1gn_7vQYZMZPL23zshVDcFKgwQeyBeq8/s1600/images.jpg' where name = 'Fisher Lopes Pires';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Ernesto_Melo_Antunes_1975-05-21.png/1024px-Ernesto_Melo_Antunes_1975-05-21.png' where name = 'Ernesto Melo Antunes';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/5/56/PIDE_Badge.png' where name = 'Polícia Internacional e de Defesa do Estado';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Ernesto_Melo_Antunes_1975-05-21.png/200px-Ernesto_Melo_Antunes_1975-05-21.png' where name = 'Ernesto Melo Antunes';
---update search_entity set image_url = 'http://1.bp.blogspot.com/-9eFFqRa8S0k/VQLIqHd7bZI/AAAAAAAAlI4/WETBX0vvc_I/s1600/images.jpg' where name = 'Fisher Lopes Pires';
---update search_entity set biography = 'Em 1950 entrou para a Escola do Exército. Fez quatro comissões de serviço na Guiné Portuguesa. Em dezembro de 1973, quando era major, Carlos Fabião denunciou numa aula do Instituto de Altos Estudos Militares, a preparação de um golpe de estado de Direita, que seria conduzido por Kaúlza de Arriaga. Fez parte do Movimento dos Capitães, que na Revolução de 25 de Abril de 1974 derrubou o regime político existente em Portugal desde 1926.' where name ='Carlos Fabião';
---update search_entity set biography = 'Nuno Manuel Guimarães FISHER LOPES PIRES, Militar de Abril, nasceu em Santarém, a 17-02-1930, e faleceu no Hospital Militar, em Lisboa, a 11-07-2013. Foi 2º Comandante do Regimento de Engenharia I até Fevereiro de 1974, altura em que já tinha sido captado pelo Movimento dos Capitães. Activo membro do Movimento dos Capitães, foi Adjunto do Comando de Coordenação e Controle Operacional da Pontinha no dia 25 de Abril de 1974; membro da Junta de Salvação Nacional (JSN) e Conselheiro da Revolução.' where name ='Carlos Fabião';
---update search_entity set image_url = 'https://dasculturas.com/wp-content/uploads/2014/03/garcia-leandro.jpg' where name ='Garcia dos Santos';
---update search_entity set biography = 'Amadeu Garcia dos Santos GCC • GCA • GCL (Lisboa, Misericórdia, Bairro Alto, 13 de Agosto de 1935), mais conhecido por General Garcia dos Santos, é um militar português que participou na Revolução dos Cravos. Posteriormente, presidiu à Junta Autónoma de Estradas.' where name ='Garcia dos Santos';
---update search_entity set biography = 'Jaime Alberto Gonçalves das Neves, mais conhecido por Jaime Neves GOTE (Sabrosa, São Martinho de Anta, 28 de março de 1936 – Lisboa, 27 de janeiro de 2013) foi um militar português, combatente da Guerra Colonial Portuguesa. Posteriormente participante da Revolução de 25 de Abril de 1974, e agente decisivo nas operações de defesa contra o Golpe de 25 de Novembro de 1975 que levaram ao fim do Processo Revolucionário em Curso.' where name ='Jaime Neves';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/thumb/4/45/Francisco_Salgado_Zenha.jpg/200px-Francisco_Salgado_Zenha.jpg' where name = 'Salgado Zenha';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/thumb/5/5f/Salgueiro_Maia.jpg/200px-Salgueiro_Maia.jpg' where name = 'Salgueiro Maia';
---update search_entity set image_url = 'https://etcetaljornal.pt/j/wp-content/uploads/2021/05/vasco-gon%C3%A7alves-01.jpg' where name = 'Vasco Gonçalves';
---update search_entity set image_url = 'https://cdn.sabado.pt/images/2019-06/img_640x426$2019_06_16_18_40_09_591557.jpg' where name = 'Vasco Lourenço';
---update search_entity set biography = 'Vasco Correia Lourenço GCIH • GCL (Lousa, Castelo Branco, 19 de junho de 1942) é um militar português na reserva que pertenceu à comissão política do Movimento das Forças Armadas (MFA) à época da Revolução dos Cravos. Vasco Lourenço ingressou na Academia Militar em 1960. Pertenceu à Infantaria, tendo combatido na Guerra Colonial, cumprindo uma comissão militar na Guiné de 1969 a 1971. No dia 25 de Abril de 1974 era capitão nos Açores. Enquanto membro activo do Movimento dos Capitães, pertenceu à comissão política do MFA. Nesta condição foi nomeado para o Conselho de Estado em 24 de Julho de 1974, passando mais tarde a integrar a estrutura informal do Conselho dos Vinte e a partir de 14 de Março de 1975 tornou-se membro do Conselho da Revolução, funções que manteve até à sua extinção em 1982. Passou à reserva militar no posto de tenente-coronel a 20 de Abril de 1988. Pertence desde a sua fundação aos corpos gerentes da Associação 25 de Abril. É maçon do Grande Oriente Lusitano. A 24 de Setembro de 1983 foi agraciado com a Grã-Cruz da Ordem da Liberdade, e a 19 de Abril de 1986 foi agraciado com a Grã-Cruz da Ordem do Infante D. Henrique.' where name = 'Vasco Lourenço';
---update search_entity set biography = 'Camilo Tavares Mortágua • GOL (Oliveira de Azeméis, 29 de janeiro de 1934) é um antifascista português que lutou contra a ditadura do Estado Novo, tendo militado na Liga de Unidade e Acção Revolucionária (LUAR). Em junho de 2005, foi condecorado com o grau de Grande Oficial da Ordem da Liberdade da República Portuguesa.' where name ='Camilo Mortágua';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/7/76/Carlos_Antunes.jpg' where name = 'Carlos Antunes';
---update search_entity set image_url = 'https://www.avante.pt/images/cms-image-000024515.jpg' where name = 'Catarina Eufémia';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c0/DomingosAbrantes1980%28NL%29.jpg' where name = 'Domingos Abrantes';
---update search_entity set image_url = 'https://cdn-images.rtp.pt/arquivo/2020/02/Delgado0.jpg?crop=top&fit=crop&h=461&ixlib=php-1.1.0&w=860' where name = 'Humberto Delgado';
---update search_entity set image_url = 'https://www.museudoneorealismo.pt/thumbs/cmvfxira/uploads/writer_file/image/28879/jose_dias_coelho_1_1200_2500.jpg' where name = 'José Dias Coelho';
---update search_entity set image_url = 'https://cdn.britannica.com/00/138900-050-BAE45D4E/Mario-Soares-1974.jpg' where name = 'Mário Soares';
---update search_entity set image_url = 'https://www.antenalivre.pt/pic/850x460/_jose_mario_branco_5aa11acfb5e5f.jpg' where name = 'José Mário Branco';
---update search_entity set image_url = 'https://images.impresa.pt/expresso/2022-10-27-texto-1---Nuno-Calvet.jpg-2badc44f-1/original/mw-860' where name = 'Luís de Sttau Monteiro';
---update search_entity set image_url = 'https://www.spautores.pt/wp-content/uploads/2022/01/IL-Premio-Igrejas-Caeiroa-Adelino-Gomes-a-20-04-2015-322.jpg' where name = 'Adelino Gomes';
---update search_entity set biography = 'Adelino Clemente Gomes (Marrazes, 10 de agosto de 1944) é um jornalista português. Após frequentar o Liceu Nacional de Leiria, estudou Filosofia e Direito na Universidade de Lisboa, cursos que nunca concluiu para se dedicar ao jornalismo. Na rádio foi locutor do Rádio Clube Português, da Rádio Renascença e da Deutsche Welle, diretor de informação e realizador de programas na Radiodifusão Portuguesa. Destacou-se como jornalista na cobertura da Revolução dos Cravos (Ver: Cravos de Abril), sendo ao mesmo tempo um dos mais importantes colaboradores do repórter alemão Horst Hano, da ARD, durante o tempo em que este atuou em Portugal (1974/76). Trabalhou como repórter na RTP em 1975, no período mais delicado da revolução, cobrindo acontecimentos como o 11 de Março de 1975, o início da guerra civil em Angola e a guerra civil em Timor. Retomou esse dossier no Público, jornal que ajudou a fundar em 1989 e do qual foi diretor-adjunto e redator-principal. É coautor do disco O dia 25 de Abril (duplo álbum com a reportagem sobre a revolução) e dos livros Portugal 2020 (1998), O 25 de Abril de 1974 — 76 fotografias e um retrato (1999), Carlos Gil - um fotógrafo na revolução (2004), As flores nascem na prisão, Timor-Leste - ano 1 (2004) e coautor de Os dias loucos do PREC (2006). A 10 de junho de 1991, foi agraciado com o grau de Comendador da Ordem do Infante D. Henrique.' where name = 'Adelino Gomes';
---update search_entity set biography = 'Francisco José Carneiro de Sousa Tavares (Lisboa, 12 de junho de 1920 – Lisboa, 25 de maio de 1993) foi um reconhecido advogado, jornalista e político português. Assumia-se como social-democrata, anti-colonialista, monárquico, anti-regionalista ou, antes de mais nada, defensor da liberdade como valor primordial por si mesmo.' where name = 'Francisco Sousa Tavares';
---update search_entity set biography = 'João Paulo Diniz nasceu em Belém, Lisboa, em 1949.Cedo manifestou uma enorme paixão pela Rádio.A Rádio Peninsular foi o seu ponto de partida, graças ao empenho de Aurélio Carlos Moreira, actual Decano dos Locutores Portugueses.Posteriormente, outras portas se abriram para novos desafios. Ao todo foram milhares de horas “No Ar”, outras tantas de reportagens e entrevistas, que o levaram a mais de meia centena de países dos cinco continentes. Em exclusivo entrevistou Nelson Mandela, Fidel Castro, Salvador Dalí e Frank Sinatra. No Vaticano conversou com o Papa João Paulo II.Dirigiu a informação da RDP/Rádio Comercial, liderou audiências com o “Programa da Manhã” da Antena 1 e colaborou com as televisões TVI, SIC e RTP-Memória.No plano internacional, entre inúmeros desafios profissionais, trabalhou na BBC em Londres, na Rádio Alfa em Paris e no Gabinete de Comunicação Social de Macau.Em 2013 o Presidente da República, Cavaco Silva, distinguiu-o com a Ordem da Liberdade.' where name = 'João Paulo Diniz';
---update search_entity set image_url = 'https://www.spautores.pt/wp-content/uploads/2022/01/JS-Dia-do-Autor-2019-e-94-Aniversario-SPA_22-05-2019-112-1.png' where name = 'João Paulo Diniz';
---update search_entity set image_url = 'https://i1.sndcdn.com/artworks-000022231705-rh83jh-t500x500.jpg' where name = 'Leite de Vasconcelos';
---update search_entity set biography = 'Teodomiro Alberto Azevedo Leite de Vasconcelos (Arcos de Valdevez, Portugal, 4 de Agosto de 1944 - Maputo, Moçambique, 29 de Janeiro de 1997) foi um jornalista e escritor moçambicano.Bacharel em ciências sociais, Leite de Vasconcelos chegou a director da Rádio Moçambique. Foi ainda membro da direcção da Organização Nacional de Jornalistas e da Associação dos Escritores Moçambicanos. Em 1981 foi laureado com a "Medalha de Honra Julius Fucik" da Organização Internacional de Jornalistas.Para além dos seus escritos jornalísticos e de colaborações em vários jornais e revistas, Leite de Vasconcelos apenas publicou em vida o livro de poemas "Irmão do Universo" (1994). No entanto, várias das suas obras foram editadas como publicações póstumas. ' where name = 'Leite de Vasconcelos';
---update search_entity set biography = 'Filho de Manuel José Rego e de sua mulher Vitória da Purificação Pimenta. De 1924 a 1936 frequentou o Seminário das Missões do Espírito Santo, em Viana do Castelo, tendo concluído o curso de Teologia. Acabou, no entanto, por abandonar a carreira eclesiástica, tendo-se mesmo tornado anticlerical.Foi membro do Movimento de Unidade Democrática, o que o levou à prisão em 1945. Dirigiu os serviços de imprensa das candidaturas presidenciais dos generais Norton de Matos (1949) e Humberto Delgado (1958). Foi também preso em 1961, em 1965 e 1968 pelo «exercício de actividades contra a segurança do Estado», segundo a sua ficha na PIDE.Enquanto jornalista, colaborou na Seara Nova, no Jornal do Comércio, no Diário de Lisboa e no República, do qual se tornaria director em 1971. Após o encerramento deste em 1976 fundou A Luta. Em 1974 tornou-se ministro da Comunicação Social do primeiro Governo Provisório. De 1975 a 1999 foi deputado pelo Partido Socialista, primeiro da Assembleia Constituinte e depois na Assembleia da República da I (1976) à VII (1999) legislatura. Também foi Grão-Mestre do Grande Oriente Lusitano de 1988 a 1990. Raul Rego foi o primeiro Presidente da Assembleia Municipal de Lisboa, eleito nas listas do PS nas primeiras eleições locais democráticas após o 25 de Abril, realizadas em 12 de dezembro de 1976. ' where name = 'Raul Rego';
---update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Adelino da Silva Tinoco';
---update search_entity set biography = 'Adelino da Silva Tinoco, em 1945 entrou para a PIDE como aspirante, que a mais não podia com a instrução primária que levava. Natural de Arazede, concelho de Montemor-o-Velho. (in "Dossier P.I.D.E. - Os Horrores e Crimes de uma Polícia". Ed. Agência Portuguesa de Revistas. Lisboa. 1974)' where name = 'Adelino da Silva Tinoco';
---update search_entity set image_url = 'https://1.bp.blogspot.com/-FzlLU40anY0/TajIK-WC7DI/AAAAAAAAQo0/vJdz9s8tKIo/s1600/Arm%25C3%25A9nio+Estorninho-2.jpg' where name = 'Alexandre Carvalho Neto';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Fotografia_oficial_do_Presidente_da_Rep%C3%BAblica_Am%C3%A9rico_Tom%C3%A1s.jpg/1024px-Fotografia_oficial_do_Presidente_da_Rep%C3%BAblica_Am%C3%A9rico_Tom%C3%A1s.jpg' where name = 'Américo Tomás';
---update search_entity set image_url = 'https://cronicas03.wordpress.com/wp-content/uploads/2018/07/rosa-casaco2.jpg' where name = 'António Rosa Casaco';
---update search_entity set biography = 'António Rosa Casaco nasceu a 1 de Março de 1915, em Rossio ao Sul do Tejo (Abrantes). Oficialmente, é filho de pai incógnito. Um pai que, no entanto, está bem identificado e conheceu perfeitamente: António da Silva Martins Júnior, ex-campeão de tiro e participante nos Jogos Olímpicos de 1924, em Paris. O mesmo pai de dois conhecidos clínicos, – António e Francisco Gentil Martins, este último o oncologista que chegou a ser bastonário da Ordem dos Médicos.' where name = 'António Rosa Casaco';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/c/c9/Baltazar_Rebelo_de_Sousa_-_Louren%C3%A7o_Marques%2C_1968_%28Museu_da_Presid%C3%AAncia_da_Rep%C3%BAblica%29.png' where name = 'Baltasar Rebelo de Sousa';
---update search_entity set image_url = 'https://almanaquedosconflitos.wordpress.com/wp-content/uploads/2017/12/agostinho-barbieri-cardoso-fundador-do-exc3a9rcito-de-libertac3a7c3a3o-de-portugal-elp.jpg?w=413&h=590' where name = 'Barbieri Cardoso';
---update search_entity set image_url = 'https://www.fccerejeira.org/wp-content/uploads/2016/07/CCerejeira_4-200x300.png' where name = 'Cardeal Manuel Gonçalves cerejeira';
---update search_entity set biography = 'D. MANUEL GONÇALVES CEREJEIRA, 14º Cardeal Patriarca de Lisboa, nasceu em Lousado em 1888, filho de Avelino Gonçalves Cerejeira e de D. Joaquina Gonçalves Rebello.' where name = 'Cardeal Manuel Gonçalves Cerejeira';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/1/19/Duarte_Pacheco.jpg' where name = 'Duarte Pacheco';
---update search_entity set biography = 'Último de quatro filhos e sete filhas de José de Azevedo Pacheco (Loulé, São Clemente, 18 de Janeiro de 1864 - 1914), Comissário da Polícia de Loulé, e de sua mulher Maria do Carmo Pontes Bota (Loulé, São Clemente - 1905), doméstica, e sobrinho paterno de Marçal de Azevedo Pacheco.Ingressou aos 17 anos no Instituto Superior Técnico da Universidade Técnica de Lisboa, onde se forma em 1923 em Engenharia Eletrotécnica. Um ano depois é contratado como assistente e em 1925 já era professor catedrático, ensinando a cadeira de Matemáticas Gerais. Em 1926 torna-se diretor interino do IST e, em 10 de agosto de 1927, o Conselho Escolar determinava por unanimidade a sua nomeação como Diretor efetivo. Em 1928, com apenas 29 anos, ocupa pela primeira vez um cargo político, ao ser nomeado para Ministro da Instrução Pública, exercendo estas funções apenas durante uns curtos meses. A 18 de abril toma posse e a 10 de novembro demite-se. Era o primeiro governo de José Vicente de Freitas, estando Óscar Carmona na presidência da república.Nesse tempo teve uma missão que se veio a revelar de uma importância decisiva para o século XX português: vai a Coimbra convencer Salazar a regressar à pasta das Finanças. Salazar encontrava-se desiludido com a experiência anterior dos amargos cinco dias que participou do Governo de Mendes Cabeçadas e pela desgraça política financeira do General João Sinel de Cordes, com quem tinha tentado colaborar. É Duarte Pacheco que negoceia as condições extraordinárias que Salazar pretende para voltar a ocupar o cargo. A missão foi bem sucedida, tanto que Salazar toma posse a 28 de abril desse mesmo ano.É sob a orientação de Duarte Pacheco, que se dá início à construção dos edifícios do Instituto Superior Técnico em Lisboa, construindo-se aquele que viria a ser o primeiro campus universitário português. Existe uma história curiosa quanto à origem dos vidros do edifício do Instituto. Diz-se que foram enviados por diversas indústrias vidreiras como amostras solicitadas pelo próprio Ministro, a fim de determinar o de melhor qualidade, sendo utilizadas nas janelas do edifício sem se terem informado as indústrias solicitadas e sem ter havido nenhum tipo de remuneração dos vidros usados.Mas é com 33 anos que Duarte Pacheco encontra o seu próprio destino. Em 1932 volta a ser convidado por Salazar, que admirava o seu carácter, para participar no seu Governo, na pasta de Ministro das Obras Públicas e Comunicações. A 5 de julho assume pela primeira vez a pasta das Obras Públicas e Comunicações no Governo de Salazar, até 18 de janeiro de 1936, altura em que abandona as funções. Entretanto, a 1 de julho de 1933, é agraciado com a Grã-Cruz da Ordem Militar de Nosso Senhor Jesus Cristo. Em 1936, com uma reforma da corporação política, Duarte Pacheco é afastado do Governo, regressando ao Instituto Superior Técnico, mas ferido politicamente e profetiza que "hão de vir em peregrinação pedir-me desculpas e suplicar-me que regresse". Profecia que sai certa. Porque no dia 1 de janeiro de 1938 Duarte Pacheco é nomeado presidente da Câmara Municipal de Lisboa, e meses depois, a 25 de maio, em acumulação, novamente ministro do Governo, passando a ocupar a pasta das Obras Públicas e Comunicações, pasta que desta vez só abandonará com a morte ao serviço da Nação Portuguesa. A 18 de dezembro de 1940 é agraciado com a Grã-Cruz da Antiga, Nobilíssima e Esclarecida Ordem Militar de Sant''Iago da Espada, do Mérito Científico, Literário e Artístico.' where name = 'Duarte Pacheco';
---update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Eduardo Fontes';
---update search_entity set biography = 'Eduardo Vieira Fontes, mais conhecido por ''Dadinho'', nasceu em 30 de Agosto de 1922, na vila de Assomada, em Santiago, filho de embarcadiço. No liceu de São Vicente foi contemporâneo e amigo de Amílcar Cabral. Professor primário, concorreu ao quadro administrativo da Função Pública, o que lhe permitiu ir para Angola em 1948. É principalmente da sua rica experiência de funcionário colonial que trata o livro de memórias, "Guia de Marcha". Esteve no distrito diamantífero da Lunda e em Malanje. Logo após os massacres da UPA e da resposta por parte das autoridades coloniais, foi transferido para a Baía dos Tigres, no extremo-sul, num processo nebuloso que o leva a falar de "uma perseguição" movida pela PIDE e responsáveis do governo. Antes, frequentara em Lisboa o curso de Altos Estudos Ultramarinos, tendo sido aluno de Adriano Moreira. Quando este chegou a ministro do Ultramar, tirou-o do deserto da Baía dos Tigres, nomeando-o, sucessivamente, para Lobito, Benguela e, finalmente, Luanda.' where name = 'Eduardo Fontes';
---update search_entity set biography = 'Fernando Eduardo da Silva Pais (1905 Setúbal – 27 de janeiro de 1981), foi um oficial do Exército Português mais conhecido por ter sido o último dirigente da PIDE/DGS, a polícia política do Estado Novo em Portugal.Nascido na freguesia do Barreiro (Setúbal), em 1905, Fernando da Silva Pais alistou-se como recruta em 1926 e frequentou a Escola Militar em 1927. A certa altura, casou-se com Armanda, com quem teve uma filha, Annie Silva Pais, em 1935. Já em 1943, foi promovido a capitão, tendo sido nomeado director da Polícia Internacional e de Defesa do Estado (PIDE) a 6 de Abril de 1962. Foi durante o seu período como diretor, mais especificamente em 1965, que uma brigada da PIDE assassinou o General Humberto Delgado e a sua secretária, Arajaryr Campos. No entanto, a PIDE negou qualquer envolvimento. Durante a Revolução de 25 de Abril de 1974, terá alegadamente ordenado abrir fogo sobre a multidão que se acumulava nas ruas do Porto, mas tal ordem não foi respeitada. Silva Pais manteve-se no seu gabinete até dia 26 de Abril, tendo-se rendido por volta das 9h30. Segundo o próprio, António de Spínola ter-lhe-ia dito que dispunha de 24 horas para se ausentar do país, mas Silva Pais recusou e foi detido no dia seguinte, 27 de abril, e enviado para o forte de Caxias. Foi a julgamento a propósito do Caso Delgado, mas a sentença só foi lida meses depois da sua morte, em 1981.' where name = 'Fernando da Silva Pais';
---update search_entity set image_url = 'https://images.impresa.pt/expresso/2022-11-17-Silva-Pais-Fotobiografia_0001_T-_IDP_AA.jpg-8ac8e601-1/original/mw-860' where name = 'Fernando da Silva Pais';
---update search_entity set image_url = 'https://www.abrilabril.pt/sites/default/files/styles/node_aberto_vp768/public/assets/img/9542.jpg?itok=RVMbrQHU' where name = 'Madalena Oliveira';
---update search_entity set biography = '"PIDE Leninha" era o nome de código de Madalena Oliveira, uma agente feminina que desempenhou um papel proeminente na polícia política do Estado Novo em Portugal, conhecida como PIDE (Polícia Internacional e de Defesa do Estado). A PIDE era uma organização notória pela sua repressão e perseguição a opositores políticos durante o regime ditatorial que vigorou em Portugal de 1933 até à Revolução dos Cravos em 1974. Madalena Oliveira foi a única mulher a atingir o posto de chefe de brigada na PIDE, evidenciando a sua ascensão significativa dentro da hierarquia da organização. O seu codinome, "Leninha", sugere uma figura aparentemente inofensiva, mas na realidade, ela ganhou reputação como uma das agentes mais temidas devido à sua dedicação em aprimorar métodos de tortura. O seu envolvimento na PIDE implicava a participação ativa na repressão de opositores políticos, muitos dos quais eram membros do Partido Comunista Português (PCP) e outros grupos que se opunham ao regime salazarista. Essa atuação incluía interrogatórios violentos e práticas de tortura para extrair informações e silenciar a dissidência. Madalena Oliveira não resistiu a um cancro nos ovários e morreu a 22 de Novembro de 2003.' where name = 'Madalena Oliveira';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/1/15/Marcello_caetano.jpg' where name = 'Marcello Caetano';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/4/44/Carmona.jpg' where name = 'Óscar Carmona';
---update search_entity set biography = 'António Óscar de Fragoso Carmona ComC • ComA • GCA • ComSE (Lisboa, Pena, 24 de novembro de 1869–Lisboa, Lumiar, 18 de abril de 1951) foi um militar e governante português, como presidente do Ministério e presidente da República Portuguesa (terceiro da Ditadura e primeiro do Estado Novo). ' where name = 'Óscar Carmona';
---update search_entity set image_url = 'https://imagens.publico.pt/imagens.aspx/917659?tp=UH&db=IMAGENS&type=JPG' where name = 'Pedro Feytor Pinto';
---update search_entity set biography = 'Pedro Feytor Pinto foi director dos serviços de informação (SEIT) do governo marcelista. Um homem sempre informado, mas sempre na sombra. As circunstâncias ditaram ironicamente que se tenha acabado por tornar num dos protagonistas da deposição do prof. Marcello Caetano, alguém que tanto admirava. Feytor Pinto era uma das pessoas presentes no dia 25 de Abril de 1974 no próprio Convento do Carmo, em plena Revolução dos Cravos.' where name = 'Pedro Feytor Pinto';
---update search_entity set biography = 'José Veiga Simão GCC • GCSE • GOI • GCIH • GCIP (Guarda, 13 de fevereiro de 1929 – Lisboa, 3 de maio de 2014) foi um professor de Física e político português.' where name = 'Veiga Simão';
---update search_entity set biography = 'A Ação Revolucionária Armada (ARA) foi o braço armado do Partido Comunista Português (PCP), como organização semiautónoma que esteve em atividade de 1970 a 1973, sob a ditadura do Estado Novo então liderada por Marcello Caetano. A primeira reunião do Comité Central do PCP sobre o uso da violência como ação de autodefesa realizou-se em dezembro de 1962, e marcaria a posição do Partido em relação a este tema, procurando relacionar esta com as ações de massas. A violência não era posta de parte, podendo ser usada no paradigma do "levantamento nacional", desde que se esta fosse dirigida pelo Partido, e numa conjuntura de radicalização e intensificação da luta de massas, que pudesse levar a um ambiente revolucionário.' where name ='Ação Revolucionária Armada';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/5/5d/A%C3%A7%C3%A3orevolucion%C3%A1riaarmada.jpg' where name ='Ação Revolucionária Armada';
---update search_entity set biography = 'Os deputados da Ala Liberal constituíram uma geração de políticos adeptos de uma liberalização do regime do Estado Novo. Coube a personalidades que pontificaram na Ala Liberal do período antes do 25 de Abril, como entre outros José Pedro Pinto Leite, Francisco Sá Carneiro, Francisco Pinto Balsemão, Mota Amaral, Joaquim Magalhães Mota ou Miller Guerra, pôr a nu as fragilidades do regime, influenciando algumas decisões e rompendo com os cânones de uma linha mais dura e pouco flexível que aos pouco foi acabando por ceder.' where name = 'Ala Liberal';
---update search_entity set image_url = 'https://app.parlamento.pt/comunicar/V1/202104/72/img/5-3.png' where name = 'Ala Liberal';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Brigadas_Revolucion%C3%A1rias.png' where name = 'Brigadas Revolucionárias';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Logo_of_For%C3%A7as_Populares_25_de_Abril.svg/200px-Logo_of_For%C3%A7as_Populares_25_de_Abril.svg.png' where name = 'Forças Populares 25 de Abril';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/COPCON_Insignia.png/2560px-COPCON_Insignia.png' where name = 'Comando Operacional do Continente';
---update search_entity set image_url = 'https://static.lvengine.net/reconquista/Imgs/articles/article_55273/cgtp.jpg' where name = 'Confederação Geral dos Trabalhadores Portugueses — Intersindical Nacional';
---update search_entity set biography = 'A Confederação Geral dos Trabalhadores Portugueses - Intersindical Nacional (CGTP-IN ou simplesmente CGTP) MHIH • MHM é uma confederação sindical fundada a 1 de outubro de 1970 em Lisboa. A CGTP é membro da Confederação Europeia de Sindicatos. Como qualquer organização unitária, a CGTP afirma-se independente.' where name = 'Confederação Geral dos Trabalhadores Portugueses — Intersindical Nacional';
---update search_entity set biography = 'O Directório Democrato-Social foi uma estrutura da oposição democrática ao regime ditatorial do Estado Novo criada em 1949 por iniciativa de um grupo de antigos militantes republicanos, designados por Os Barbas, que incluía, entre outros, Mário de Azevedo Gomes, Jaime Cortesão e António Sérgio.' where name = 'Diretório Democrato-Social';
---update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Diretório Democrato-Social';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Ex%C3%A9rcito_de_Liberta%C3%A7%C3%A3o_de_Portugal.svg/800px-Ex%C3%A9rcito_de_Liberta%C3%A7%C3%A3o_de_Portugal.svg.png' where name = 'Exército de Libertação de Portugal';
---update search_entity set biography = 'O Exército de Libertação de Portugal (ELP) foi uma organização terrorista de extrema-direita criada por Agostinho Barbieri Cardoso (ex-subdiretor-geral da PIDE/Direção-Geral de Segurança) em 6 de janeiro de 1975. Fundada e dirigida através de Madrid, Espanha.' where name = 'Exército de Libertação de Portugal';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/23/Logotipo_FRELIMO.png' where name = 'Frente de Libertação de Moçambique';
---update search_entity set biography = 'A Frente de Libertação de Moçambique, também conhecida por seu acrónimo FRELIMO, é um partido político oficialmente fundado em 25 de junho de 1962 (como movimento nacionalista), com o objectivo de lutar pela independência de Moçambique do domínio colonial português. ' where name = 'Frente de Libertação de Moçambique';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Frente_Socialista_Popular_logo%2C_1975.svg/406px-Frente_Socialista_Popular_logo%2C_1975.svg.png' where name = 'Frente Socialista Popular';
---update search_entity set biography = 'Frente Socialista Popular (FSP) foi um partido político português criado em 1974, herdeiro do Movimento Socialista Popular de Manuel Serra, integrada como grupo autónomo do PS, até Dezembro de 1974. A criação da FSP nasce de uma cisão do PS procurando distanciar da corrente "direitista" e social democrata, dominante neste partido. Em 1976 apoiou a candidatura de Otelo Saraiva de Carvalho à Presidência da República.Concorreu às eleições para a Assembleia Constituinte em 1975 e para a Assembleia da República em 1976, tendo a partir daí integrado a Frente Eleitoral Povo Unido até 1978. Esta era uma coligação eleitoral onde para além da FSP incluía o MDP/CDE e o PCP. ' where name = 'Frente Socialista Popular';
---update search_entity set biography = 'A Junta de Salvação Nacional (JSN) foi um grupo de militares designados para sustentar o governo do Estado Português em 25 Abril de 1974, após o golpe de estado que derrubou o Estado Novo. Esta Junta esteve em funcionamento desde o comunicado do presidente António de Spínola, emitido às 01h30 do dia 26 de Abril de 1974, até à tomada de posse do Governo Provisório, ocorrida a 16 de Maio do mesmo ano. Embora com características diferentes, sem poder executivo directo, manteve-se até ser extinta após os acontecimentos de 11 de Março de 1975, sendo substituída pelo Conselho da Revolução instituído a 14 de Março de 1975 pela Assembleia do Movimento das Forças Armadas.' where name = 'Junta de Salvação Nacional';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/LUAR_Logo.png/604px-LUAR_Logo.png' where name = 'Liga de Unidade e Ação Revolucionária';
---update search_entity set biography = 'Liga de Unidade e Acção Revolucionária (LUAR) foi um movimento político fundado em Paris, em 19 de julho de 1967, sob a liderança de Hermínio da Palma Inácio, depois do assalto ao banco de Portugal na Figueira da Foz. Entre os principais aderentes, estão Camilo Mortágua, Emídio Guerreiro, futuro líder interino (na ausência, por motivos de saúde, de Francisco Sá Carneiro) do Partido Popular Democrático (hoje PSD) e Fernando Pereira Marques, futuro deputado do Partido Socialista. Foi dissolvida em 1976. ' where name = 'Liga de Unidade e Ação Revolucionária';
---update search_entity set image_url = 'https://www.esquerda.net/sites/default/files/styles/480y/public/MocidadePortuguesa03_0.jpg?itok=aOUgLxgY' where name = 'Mocidade Portuguesa';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Movimento_de_Esquerda_Socialista_logo%2C_1975.svg/593px-Movimento_de_Esquerda_Socialista_logo%2C_1975.svg.png' where name = 'Movimento de Esquerda Socialista';
---update search_entity set biography = 'O Movimento de Esquerda Socialista (MES) foi um partido português fundado em Fevereiro de 1975, uns meses a seguir à Revolução de 25 de Abril de 1974. O MES, apesar de ser um pequeno partido, agregava muitas tendências entre que provinham de uma cisão à esquerda na Comissão Democrática Eleitoral (CDE), dirigentes estudantis das lutas de 1969 em Coimbra, estudantes e sindicalistas. Ideologicamente à esquerda do PS e próximo do Partido Socialista Unificado francês (PSU), da Lotta Continua italiana ou do chileno Movimento de Esquerda Revolucionária (MIR), preconizava o autonomismo e o conselhismo. Apesar da sua curta vida política e fracos resultados eleitorais, alguns dirigentes do MES, tendo-se transferido mais tarde para o Partido Socialista, continuaram com uma presença activa na política portuguesa, tendo vindo a desempenhar vários cargos, entre o Parlamento, o Governo e a Presidência da República.' where name = 'Movimento de Esquerda Socialista';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Movimento_de_Unidade_Democr%C3%A1tica.png' where name = 'Movimento de Unidade Democrática';
---update search_entity set biography = 'Formado após o final da II Guerra Mundial, em 8 de Outubro de 1945, com a autorização do governo, o MUD era herdeiro do anterior MUNAF.O MUD foi criado para reorganizar a oposição, prepará-la para as eleições e proporcionar um debate público em torno da questão eleitoral. Conseguiu em pouco tempo grande adesão popular (principalmente entre intelectuais e profissionais liberais) e começou a tornar-se uma ameaça para o regime.1945. Cartaz do MUD com a frase «Sem eleições livres - não votes»Salazar ilegalizou-o em 1946, sob o pretexto de que tinha fortes ligações ao PCP. Apesar de tudo, viria ainda a apoiar a candidatura presidencial do general Norton de Matos, em 1949. ' where name = 'Movimento de Unidade Democrática';
---update search_entity set biography = 'O Movimento Maria da Fonte ou Plano Maria da Fonte foi uma organização terrorista portuguesa de extrema-direita. Ativa durante o Verão Quente de 1975 na zona do Minho, foi responsável por diversos assaltos e destruição de sedes de partidos de esquerda, principalmente as do Partido Comunista Português. O nome da organização foi inspirado na Revolução da Maria da Fonte, ocorrida em 1846, e alegava ser "o braço armado da Igreja nortenha contra as forças de esquerda". Entre os organizadores estavam o jornalista Paradela de Abreu, Sanches Osório, Jorge Jardim e o cónego Eduardo Melo Peixoto, este por indicação do Arcebispo de Braga D. Francisco Maria da Silva. Era além disso apoiada por algumas pessoas ligadas à sociedade civil, nomeadamente alguns empresário do Norte que financiaram o movimento. ' where name = 'Movimento Maria da Fonte';
---update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Movimento Maria da Fonte';
---update search_entity set biography = 'O Partido Comunista dos Trabalhadores Portugueses (PCTP/MRPP) é um partido político de Portugal, marxista-leninista com inspiração maoísta fundado em 18 de setembro de 1970, foi registado oficialmente no tribunal constitucional em 18 de fevereiro de 1975, passou a chamar-se PCTP em 26 de dezembro de 1976 a deixando o nome Movimento Reorganizativo do Partido do Proletariado (MRPP).' where name = 'Partido Comunista dos Trabalhadores Portugueses';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/PCTP-MRPP_logo.png/1024px-PCTP-MRPP_logo.png' where name = 'Partido Comunista dos Trabalhadores Portugueses';
---update search_entity set biography = 'O Partido Comunista Português (PCP) é um partido político de inspiração marxista-leninista e socialista, organizado no molde do centralismo democrático. É um dos partidos comunistas mais fortes da Europa Ocidental e o mais antigo partido político português com existência ininterrupta. O espectro político do PCP é definido como sendo de esquerda a extrema-esquerda. Desde 1987, concorre a quaisquer eleições nacionais, autárquicas e europeias em coligação com o Partido Ecologista "Os Verdes" (PEV), reunidos na Coligação Democrática Unitária (CDU). ' where name = 'Partido Comunista Português';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/CDS_%E2%80%93_People%27s_Party_logo.svg/1024px-CDS_%E2%80%93_People%27s_Party_logo.svg.png' where name = 'Partido do Centro Democrático Social';
---update search_entity set biography = 'O CDS – Partido Popular (CDS–PP) é um partido político português conservador inspirado pela democracia cristã, aberto também a liberais. Fundado em 19 de Julho de 1974, com o nome Partido do Centro Democrático Social (CDS), por Diogo Freitas do Amaral, Adelino Amaro da Costa, Basílio Horta, Victor Sá Machado, Valentim Xavier Pintado, João Morais Leitão e João Porto. Mais tarde, mudaria o nome apenas para Partido Popular (mantendo a sigla CDS–PP), e depois para a denominação utilizada presentemente. ' where name = 'Partido do Centro Democrático Social';
---update search_entity set biography = 'O Partido Popular Monárquico (PPM) é um partido político português inspirado pelo municipalismo, agrarianismo e tradicionalismo que defende a restauração da monarquia em Portugal. Foi fundado em 23 de maio de 1974 por Gonçalo Ribeiro Telles.' where name = 'Partido Popular Monárquico';
---update search_entity set image_url = 'https://www.psd.pt/sites/default/files/styles/timeline_460px_/public/2020-09/ppd-psd.jpg?itok=14nszuf1' where name = 'Partido Social Democrata';
---update search_entity set biography = 'O Partido Social Democrata (PPD/PSD) é um partido político português fundado em 6 de maio de 1974 por Francisco Sá Carneiro, Francisco Pinto Balsemão e Joaquim Magalhães Mota sob o nome Partido Popular Democrático (PPD). Foi legalizado em 25 de Janeiro de 1975, passando a designar-se a 3 de Outubro de 1976 como Partido Social Democrata (PSD). Sozinho ou em coligação, o PSD liderou 10 Governos na III República Portuguesa (11 com uma iniciativa presidencial). Apesar do nome ‘Social Democrata’, cunhado para disputar espaço político com a centro-esquerda, o PSD é atualmente um partido de centro-direita, com posições conservadoras em questões de costumes e liberais em questões económicas.' where name = 'Partido Social Democrata';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/c/ce/Partido_Socialista_%28Portugal%29.png?20211211155219' where name = 'Partido Socialista';
---update search_entity set biography = 'O Partido Socialista (PS) é um partido político português de centro-esquerda, fundado a 19 de abril de 1973 por militantes da Acção Socialista Portuguesa (ASP).' where name = 'Partido Socialista';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Uni%C3%A3o_Nacional_logo%2C_1938_version.svg/414px-Uni%C3%A3o_Nacional_logo%2C_1938_version.svg.png' where name = 'União Nacional';
---update search_entity set biography = 'A União Nacional (UN) foi uma organização política portuguesa frentista e fascista criada para apoio ao regime ditatorial do Estado Novo. A União Nacional estava intimamente ligada ao governo e detinha o monopólio da representação política. Até 1945, todas as formas de oposição se encontravam ilegalizadas, pelo que o partido não teve concorrentes nos atos eleitorais. Na sequência desfecho da II Guerra Mundial, Salazar concedeu algumas liberdades à oposição, tolerando a sua participação em campanhas eleitorais. No entanto, tanto a União Nacional como a Ação Nacional popular continuaram a ter o monopólio da representação parlamentar. Durante a direção de Marcello Caetano, foi permitida a criação de uma Ala Liberal com elevado grau de autonomia e que viria a questionar os princípios fundamentais do regime político.' where name = 'União Nacional';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Uni%C3%A3o_Democr%C3%A1tica_Popular_logo%2C_1975.svg/478px-Uni%C3%A3o_Democr%C3%A1tica_Popular_logo%2C_1975.svg.png' where name = 'União Democrática Popular';
---update search_entity set biography = 'A União Democrática Popular (UDP) foi um partido político marxista que nasceu em 1974 e que, em 1999, juntamente com o Partido Socialista Revolucionário e a Política XXI, esteve na origem da criação do Bloco de Esquerda. ' where name = 'União Democrática Popular';
---update search_entity set biography = 'O "Santa Maria" ficou célebre pelo seu sequestro, de 21 para 22 de janeiro de 1961, por um grupo de 24 exilados políticos portugueses e espanhóis - integrantes da Direção Revolucionária Ibérica de Libertação (DRIL) -, que então faziam oposição política aos governos de António de Oliveira Salazar e de Francisco Franco, sob o comando do capitão Henrique Galvão e de Jorge de Soutomayor, desencadeando a chamada "Operação Dulcineia". O paquete foi então chamado de "Santa Liberdade". Durante a ação foi assassinado o 3.º piloto, o oficial João José Nascimento Costa. O paquete acabou por fundear no porto do Recife, no Brasil, em 2 de fevereiro seguinte. O episódio constitui-se no primeiro sequestro político de um transatlântico na história contemporânea. ' where name = 'Assalto ao Santa Maria';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/pt/2/2f/A_Fuga_de_Peniche-Margarida_Tengarrinha.jpg' where name = 'Fuga de Peniche';
---update search_entity set biography = 'A Fuga de Peniche foi um episódio da história de Portugal — no contexto da oposição ao regime salazarista — ocorrido na prisão de alta-segurança de Peniche a 3 de janeiro de 1960.Participaram na fuga Álvaro Cunhal, Carlos Campos da Costa, Francisco Miguel Duarte, Francisco Martins Rodrigues, Guilherme Costa Carvalho, Jaime Serra, Joaquim Gomes, José Carlos, Pedro dos Santos Soares e Rogério Carvalho, além de um guarda da Guarda Nacional Republicana (GNR).' where name = 'Fuga de Peniche';
---update search_entity set biography = 'O Levantamento das Caldas, também referido como Intentona das Caldas, Revolta das Caldas ou Golpe das Caldas[1] , foi uma tentativa de golpe de Estado frustrada, ocorrida em 16 de Março de 1974, em Portugal.O golpe foi descrito pelo "capitão de Abril" Garcia dos Santos como "uma tentativa de avançar com o golpe que não foi devidamente preparada", tendo sido precursor da Revolução de 25 de Abril seguinte, que derrubou o regime ditatorial do Estado Novo Português. É referido, por vários autores, como o catalisador que aglutinou o oficialato em torno do Movimento das Forças Armadas (MFA), transformando-se no leitmotiv para a adesão de quase todas as unidades militares à Revolução de Abril, que o mundo viria a conhecer como a Revolução dos Cravos.Na coluna militar vinham duzentos homens comandados pelo Capitão Armando Marques Ramos, que foram presos e distribuídos pelos presídios de Santa Margarida, RAL1 e dos trinta e três oficiais que nela vinham integrados, os 11 considerados pelo regime como mais implicados, recolheram a prisão da Trafaria, onde permaneceram até dia 25 de Abril de 74.Ao verem os seus camaradas do Levantamento Militar das Caldas da Rainha, presos, na Trafaria, o oficialato dos três ramos das Forças Armadas, não poderia ficar impassível e permitir que a Ditadura triunfasse, continuando o país sem liberdade, democracia e paz e a suportar uma guerra infindável, sorvedouro de vidas e jorro de estropiados em três teatros de guerra distantes milhares de quilómetros entre si e da sua base logística.Os militares presos na Trafaria deram o pontapé de saída e o alento necessário para que o êxito da Revolução se alcançasse sem derramamento de sangue mas dando lugar a uma festa de flores.' where name = 'Golpe das Caldas';
---update search_entity set image_url = 'https://www.esquerda.net/sites/default/files/styles/480y/public/diario_de_noticias_golpe_das_caldas_0.jpg?itok=zIBlvg1G' where name = 'Golpe das Caldas';
---update search_entity set biography = 'O Massacre de Wiriyamu ou Operação Marosca foi um massacre da população civil em Wiriyamu, na província de Tete em Moçambique, por soldados portugueses durante a Guerra da Independência de Moçambique.' where name = 'Massacre de WiriyAmu';
---update search_entity set image_url = 'https://www.museudoaljube.pt/wp-content/uploads/2021/01/massacre-de-wirimau.jpg' where name = 'Massacre de WiriyAmu';
---update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Operação Mar Verde';
---update search_entity set biography = 'A Operação Mar Verde foi uma operação militar planeada pelas Forças Armadas Portuguesas e realizada em 22 de Novembro de 1970 no curso da Guerra Colonial Portuguesa na Guiné-Bissau. Foi concebida e executada pelo fuzileiro capitão-tenente Alpoim Calvão responsável pelo Centro de Operações Especiais da Guiné-Bissau com o apoio do brigadeiro António de Spínola que era o governante militar deste território.Esta operação era extremamente audaciosa e secreta porque envolvia o ataque com um pequeno número de homens à capital de um estado soberano, a República da Guiné que servia de santuário aos rebeldes do PAIGC. Mais melindrosa era pelo isolacionismo que Portugal tinha na comunidade internacional por querer manter as suas colónias a todo o preço. ' where name = 'Operação Mar Verde';
---update search_entity set image_url = 'https://www.goiania.go.leg.br/imagens/sem-foto/image' where name = 'Operação Nó Górdio';
---update search_entity set biography = 'A Operação Nó Górdio foi a maior e mais dispendiosa campanha militar portuguesa na província ultramarina de Moçambique, na África Oriental. Decorreu em 1970, durante a Guerra Colonial Portuguesa (1961 - 1974). Os objectivos desta campanha consistiam em erradicar as rotas de infiltração das guerrilhas independentistas ao longo da fronteira com a Tanzânia e destruir as suas bases permanentes em Moçambique. A Nó Górdio durou sete meses, mobilizou no total trinta e cinco mil militares e foi parcialmente bem-sucedida.A operação consistia num cerco intenso com vista ao isolamento do núcleo central do Planalto dos Macondes, onde se encontravam as grandes bases de Gungunhana (objectivo A), Moçambique (objectivo B) e Nampula (objectivo C). Após conseguido o isolamento, estava programado o assalto e destruição destes objectivos. Atingindo estes objectivos, esperava-se uma desarticulação e desmoralização da FRELIMO, embora esta não tenha sido impedida de actuar em qualquer dos teatros de operações, conforme se verificou posteriormente.A Nó Górdio foi lançada sob ordens de Kaúlza de Arriaga, entretanto promovido a comandante-chefe após oito meses de comando de forças terrestres no teatro de operações moçambicano, e executada pelo Comando Operacional das Forças de Intervenção (COFI). O início da Operação Nó Górdio foi marcado para 1 de Julho de 1970, com a presença do general Comandante-Chefe e do seu Estado-Maior em Mueda, prolongando-se até 6 de Agosto, tendo participado mais de oito mil homens, onde se incluía a totalidade das forças especiais (Comandos, pára-quedistas e Fuzileiros) e dos Grupos Especiais e a quase totalidade da artilharia de campanha, unidades de reconhecimento e de engenharia.' where name = 'Operação Nó Górdio';
---update search_entity set biography = 'A “Operação Outono”, nome de código do plano diabólico montado para aniquilar o general Humberto Delgado foi planeada depois do “Golpe de Beja” pela “tríade” que comandava a PIDE – Silva Pais, Barbieri Cardoso e Pereira de Carvalho. O plano de atrair o general a território português e aniquilar a sua atividade oposicionista foi muito facilitado pelo facto de, em finais de 1964, o general ter criado a Frente Portuguesa de Libertação Nacional, cindindo da FPLN (Frente de Argel) e preparando um novo “Golpe Militar” em tudo semelhante ao “Golpe de Beja” (1962), para o qual julgava poder contar com a colaboração de civis e militares a atuar no “interior”.' where name = 'Operação Outono';
---update search_entity set image_url = 'http://antt.dglab.gov.pt/wp-content/uploads/sites/17/2015/02/A-PT-TT-SNI-ARQF-RP-003-28573_m0001.jpg' where name = 'Operação Outono';
---update search_entity set biography = 'Portugal e o futuro, de António de Spínola, foi um livro publicado pelo editor Waldemar Paradela de Abreu com a chancela da Editora Arcádia, no dia 22 de Fevereiro de 1974.Nesse livro, o ex-governador da Guiné-Bissau advogava, após 13 anos de Guerra do Ultramar, uma solução política e não militar como sendo a única saída para o conflito.As acções do governo marcelista, a demissão dos generais António de Spínola e Francisco da Costa Gomes dos cargos que ocupavam no Estado-Maior General das Forças Armadas, e a organização de cerimónia de apoio ao regime pela designada "Brigada do Reumático", assim chamada por ser maioritariamente constituída por idosos oficiais-generais dos três ramos das Forças Armadas, vieram ainda mais mostrar quanto o regime se sentia ameaçado pelas ideias contidas no livro[1].No rescaldo da publicação Marcelo Caetano pede a demissão ao Presidente da República, que não a aceita' where name = 'Portugal e o Futuro';
---update search_entity set image_url = 'https://www.manuseado.pt/wp-content/uploads/2021/03/Portugal-e-o-Futuro-scaled-jpg-600x862.webp' where name = 'Portugal e o Futuro';
---update search_entity set biography = 'Primavera Marcelista designa o período inicial do governo de Marcelo Caetano, entre 1968 e 1970, no qual se operou uma certa modernização social e uma liberalização política, a “Primavera Marcelista”, criando a expectativa de uma verdadeira reforma do regime em Portugal, o que não chegou a acontecer.' where name = 'Primavera Marcelista';
---update search_entity set image_url = 'https://www.jpn.up.pt/wp-content/uploads/2014/12/marcelocaetano_dr.jpg' where name = 'Primavera Marcelista';
---update search_entity set image_url = 'https://www.museu.presidencia.pt/media/1297/003.jpg' where name = 'Crise Académica';
---update search_entity set biography = 'As crises académicas do Estado Novo foram uma série de protestos de estudantes universitários em oposição à repressão política do Estado Novo português. Embora estes protestos tenham ocorrido em vários anos entre 1928 e a restauração da democracia em 1974, foi na década de 1960 que conheceram maior intensidade e radicalização.' where name = 'Crise Académica';
---update search_entity set biography = 'O Processo Revolucionário em Curso (PREC), também conhecido como Período Revolucionário em Curso, designa, em sentido lato, o período de actividades revolucionárias, marcante na História de Portugal, decorrido durante a Revolução dos Cravos, iniciada com o golpe militar de 25 de Abril de 1974 e concluída com a aprovação da Constituição Portuguesa, em Abril de 1976.[1] O termo, no entanto, é frequentemente usado para aludir ao período crítico do Verão Quente de 1975, com o seu antes e o seu depois, que culmina com a Crise de 25 de Novembro de 1975.' where name = 'Processo Revolucionário em Curso';
---update search_entity set image_url = 'https://www.esquerda.net/sites/default/files/styles/480y/public/Enxada_Torre-Bela_0.jpg?itok=1JvKW7DJ' where name = 'Processo Revolucionário em Curso';
---update search_entity set biography = 'José Baptista Pinheiro de Azevedo OA • ComA • GCL (Luanda, 5 de junho de 1917 – Lisboa, 10 de agosto de 1983[1]) foi um oficial da Marinha e político português. Foi primeiro-ministro de Portugal do VI Governo Provisório.' where name = 'José Pinheiro de Azevedo';
---update search_entity set biography = 'José António Ribeiro Santos (Lisboa, 19 de Março de 1946 — Lisboa, 12 de Outubro de 1972), conhecido como Ribeiro Santos, foi um estudante português. Foi assassinado por um agente da polícia política devido à sua oposição ao regime ditatorial, tendo-se tornado num ícone do movimento estudantil contra o governo, até à Revolução de 25 de Abril de 1974, que restaurou a democracia em Portugal' where name = 'José Ribeiro Santos';
---update search_entity set biography = 'José Manuel Marques do Carmo Mendes Tengarrinha (Portimão, 12 de abril de 1932 – Estoril, 29 de junho de 2018) foi um jornalista, escritor, historiador, professor universitário, presidente do partido político MDP/CDE e deputado à Assembleia Constituinte e à Assembleia da Republica de Portugal. ' where name = 'José Manuel Tengarrinha';
---update search_entity set biography = 'O Rádio Clube Português foi originalmente uma emissora de radiodifusão fundada a 22 de novembro de 1931[1]. Mais tarde, Rádio Clube foi a designação de uma estação de rádio do Grupo Media Capital e, na atualidade, recuperando o seu nome original, é uma estação de rádio sediada em Newark (Nova Jérsia), nos Estados Unidos da América, dedicada às comunidades da diáspora portugues' where name = 'Rádio Clube Português';
---update search_entity set image_url = 'https://i.ytimg.com/vi/ecPdgi0ZOAU/maxresdefault.jpg' where name ='Rádio Clube Português';
---update search_entity set image_url = 'https://static.wikia.nocookie.net/logopedia/images/f/fb/R%C3%A1dio_Renascen%C3%A7a_1969.svg' where name = 'Rádio Renascença';
---update search_entity set biography = 'Francisco Júlio Amorim Fanhais OL (Vila Nova da Barquinha, Praia do Ribatejo, 17 de maio de 1941), mais conhecido por Francisco Fanhais, é um ex-sacerdote católico e cantor português, que em 1995 foi feito Oficial da Ordem da Liberdade, pelo governo português.' where name = 'Francisco Fanhais';
---update search_entity set biography = 'Janita Salomé (nascido João Eduardo Salomé Vieira[1] em Redondo, 17 de maio de 1947) é um cantor português. É irmão de Vitorino Salomé. ' where name = 'Janita Salomé';
---update search_entity set biography = 'Luís Fernando Castelo Branco Cília OL (Nova Lisboa, Angola, 1 de fevereiro de 1943) é um compositor e intérprete musical português. Luís Cília é um cantor de intervenção que no exílio, em França, denunciou a guerra colonial e a falta de liberdade em Portugal. Uma das suas músicas desse período mais conhecidas, Avante camarada, tornou-se uma espécie de segundo hino do Partido Comunista Português.' where name = 'Luís Cília';
---update search_entity set biography =  'Vitorino Salomé Vieira (born 11 July 1942), commonly known simply as Vitorino, is a Portuguese singer-songwriter.[1] His music combines the traditional music of his native region of Alentejo and urban popular song.' where name ='Vitorino Salomé';
---update search_entity set biography = 'Com a implantação do Estado Novo Português, o reduto sul do forte passou a ser utilizado como prisão política (24 de janeiro de 1935), tendo se destacado como a que maior número de presos políticos acolheu até à sua desativação com a Revolução dos Cravos (1974). A fuga mais emblemática ocorreu a 4 de Dezembro de 1961, quando oito dirigentes e militantes do PCP (designadamente Domingos Abrantes, que em 2013 contou, no Museu do Caramulo, os detalhes da fuga[1]) ali presos conseguiram escapar utilizando um Chrysler Imperial blindado que estivera ao serviço de Salazar. 'where name = 'Prisão de Caxias';
---update search_entity set biography = 'Na sequência do golpe militar de 28 de maio de 1926, a Fortaleza e Peniche receberam presos de natureza política e pessoas com residência controlada' where name = 'Prisão de Peniche';
---update search_entity set biography = 'Está instalado na cadeia do Aljube, situada em Lisboa, na freguesia de Santa Maria Maior, anterior freguesia da Sé, que foi um estabelecimento prisional que recebeu presos do foro eclesiástico até 1820, mulheres acusadas de delitos comuns até aos finais da década de 1920 e presos políticos do Estado Novo a partir de 1928 até ao seu encerramento em 1965. Foi posteriormente adaptado para presos de delito comum e ainda utilizado para instalação de serviços do Ministério da Justiça. ' where name = 'Prisão do Aljube';
---update search_entity set biography = 'O Campo de Concentração do Tarrafal, também designado Campo da Morte Lenta, é um campo de concentração situado na aldeia de Chão Bom, no Concelho de Tarrafal, na ilha de Santiago em Cabo Verde. Foi estabelecido em 1936, durante um processo de reorganização do sistema prisional do Estado Novo, com o objetivo de encarcerar presos políticos e sociais. A localização foi escolhida de forma estratégica, tanto por ser perfeita para que os testemunhos não viessem a público, tanto por ter um clima insalubre, com pouca água potável, e muitos mosquitos em épocas chuvosas, que facilitavam o aparecimento de doenças. O seu principal objetivo era aniquilar física e psicologicamente os opositores portugueses e africanos à ditadura Salazarista, isolando-os do resto mundo em condições subhumanas de cativeiro, maus tratos e insalubridade.' where name ='Tarrafal';
---update search_entity set biography = 'Vítor Manuel Rodrigues Alves GCL (Mafra, 30 de Setembro de 1935 — Lisboa, 9 de Janeiro de 2011) foi um militar português.' where name = 'Vítor Alves';
---update search_entity set biography = 'Emídio Santana (Lisboa, 4 de Julho de 1906 — Lisboa, 16 de Outubro de 1988) foi um dos mais importantes militantes portugueses do anarcossindicalismo nos anos 20, durante a clandestinidade e o pós-25 de Abril. Foi autor de diversos artigos e ensaios sobre o anarcossindicalismo e o mutualismo.' where name = 'Emídio Santana';
---update search_entity set image_url = 'https://toponimialisboa.files.wordpress.com/2016/03/rua-emidio-santana-anos-80.jpg' where name = 'Emídio Santana';
---update search_entity set image_url = 'https://cdn.maxima.pt/images/2020-09/img_1240x2000$2020_09_22_10_49_15_419774.jpg' where name ='Isabel do Carmo';
---update search_entity set image_url = 'https://eumoceano.pt/wp-content/uploads/2022/06/maria-lamas-e-um-oceano-eduardo-gageiro3.jpg' where name = 'Maria Lamas';
---update search_entity set image_url = 'https://comunidadeculturaearte.com/wp-content/uploads/2017/02/Captura-de-ecra-2022-07-23-as-10.29.29-e1658568602379.png' where name = 'Carlos Paredes';
---update search_entity set image_url = 'https://codaxmusic.com/wp-content/uploads/2021/11/Fernando-Lopes-Graca-na-sua-casa-da-Parede-1980-fotografia-de-Augusto-Cabrita-fundo-FLG-MMP-500.jpg' where name = 'Fernando Lopes Graça';
---update search_entity set biography = 'Fernando Lopes-Graça GOSE • GCIH (Tomar, 17 de dezembro de 1906 — Parede, Cascais, 27 de novembro de 1994) foi um compositor, musicólogo, pianista, maestro, professor, investigador, teórico, crítico de arte e militante do Partido Comunista Português.[1] É considerado um dos maiores compositores e musicólogos portugueses do século XX' where name ='Fernando Lopes Graça';
---update search_entity set image_url = 'https://i.discogs.com/PmrbaHF_WP13_VHi9MfkzK7TIxfKM0VsjOdULminR7k/rs:fit/g:sm/q:90/h:351/w:408/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9BLTk4Mzk2/My0xMzAyODgxNTc4/LmpwZWc.jpeg' where name = 'Paulo de Carvalho';
---update search_entity set image_url = 'https://www.portaldaliteratura.com/assets/files_autores/246.webp' where name = 'José Gomes Ferreira';
---update search_entity set image_url = 'https://www.museudoaljube.pt/wp-content/uploads/2019/02/2019_02_19_IAR_SPG_Img-site.jpg' where name ='Soeiro Pereira Gomes';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Antonio_Ferro.jpg/1024px-Antonio_Ferro.jpg' where name = 'António Joaquim Tavares Ferro';
---update search_entity set image_url = 'https://www.escritas.org/autores/alvaro-guerra.webp' where name = 'Álvaro Guerra';
---update search_entity set biography = 'Álvaro Manuel Soares Guerra (Vila Franca de Xira, 19 de outubro de 1936 — Vila Franca de Xira, 18 de abril de 2002) foi um jornalista, diplomata[1] e um importante escritor português do século XX. Formado na Faculdade de Letras da Universidade de Lisboa; foi fundador do jornal "A Luta" e embaixador de Portugal em Estocolmo.' where name = 'Álvaro Guerra';
---update search_entity set image_url = 'https://paigc.gw/wp-content/uploads/2021/04/PAIGC_LOGO.jpg' where name = 'Partido Africano para a Independência da Guiné e Cabo Verde';
---update search_entity set biography = 'O Partido Africano da Independência da Guiné e Cabo Verde, também conhecido pela sigla PAIGC, foi o movimento que organizou a luta pela independência da Guiné Portuguesa (Guiné-Bissau) e de Cabo Verde, que eram colónias de Portugal. Após o fim da guerra de independência, o PAIGC tornou-se um dos grandes partidos políticos da Guiné-Bissau.' where name = 'Partido Africano para a Independência da Guiné e Cabo Verde';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Unitalogo.png' where name = 'União Nacional para a Independência Total de Angola';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Movimento_Democr%C3%A1tico_de_Liberta%C3%A7%C3%A3o_de_Portugal.svg/1280px-Movimento_Democr%C3%A1tico_de_Liberta%C3%A7%C3%A3o_de_Portugal.svg.png' where name = 'Movimento Democrático de Libertação de Portugal';
---update search_entity set biography = 'O Movimento Democrático de Libertação de Portugal (MDLP) foi uma organização terrorista portuguesa ativa durante o período que se seguiu à revolução de 25 de abril de 1974.[1] Entre as ações atribuídas ao MDLP estão uma tentativa de golpe de estado em 11 de março de 1975, uma vaga de atentados à bomba a sedes de partidos de esquerda no início de 1976 e o atentado à bomba que vitimou o candidato a deputado Padre Max e uma estudante que o acompanhava.[1] O MDLP estava ligado ao Movimento Maria da Fonte e ao Exército de Libertação de Portugal, com o qual partilhava fontes, colaboradores e patrocinadores.'  where name = 'Movimento Democrático de Libertação de Portugal';
---update search_entity set biography = 'A Liga Comunista Internacionalista (LCI) foi um partido português fundado em 1973. Considera-se como secção portuguesa da IV Internacional, de cariz trotskista. Foi fundada em dezembro de 1973, tendo como primeiro líder João Cabral Fernandes. Em 1978 fundiu-se com o Partido Revolucionário dos Trabalhadores (PRT), dando origem ao Partido Socialista Revolucionário (PSR), actualmente extinto após integração no Bloco de Esquerda.' where name = 'Liga Comunista Internacionalista';
---update search_entity set biography = 'Os capitães simbolizam todos os militares que participaram nessa mudança de regime e entre eles estavam figuras como Otelo Saraiva de Carvalho ou Salgueiro Maia que tiveram um papel muito importante para que a revolução fosse pacífica e tivesse resultado.' where name = 'Capitães de Abril';
---update search_entity set image_url  = 'https://upload.wikimedia.org/wikipedia/pt/e/ed/V%C3%ADtor_Alves.jpg' where name = 'Vitor Alves';
---update search_entity set biography = 'Alípio Cristiano de Freitas ou Padre Alípio de Freitas (Bragança, 17 de fevereiro de 1929 – Lisboa, 13 de junho de 2017) foi um jornalista e professor universitário português.' where name = 'Alípio de Freitas';
---update search_entity set biography = 'Aurora Rosa Salvador Rodrigues, mais conhecida por Aurora Rodrigues (Minas de São Domingos, 25 de janeiro de 1952), é uma magistrada portuguesa jubilada do Ministério Público. Foi presa política pela PIDE durante o Estado Novo português.' where name = 'Aurora Rodrigues';
---update search_entity set image_url = 'https://www.reporteresemconstrucao.pt/wp-content/uploads/2021/04/foto2.jpg' where name = 'Aurora Rodrigues';
---update search_entity set biography = 'Nuno Teotónio Pereira GCIH • GCL (Lisboa, 30 de janeiro de 1922 – Lisboa, 20 de janeiro de 2016) foi um arquitecto português.' where name = 'Nuno Teotónio Pereira';
---update search_entity set biography = 'Ruy Alberto Vieira Dias Rodrigues Mingas (Luanda, 12 de maio de 1939 – Lisboa, 4 de janeiro de 2024) foi um cantor, compositor, diplomata, empresário e político angolano. Foi deputado no parlamento angolano, secretário com status de Ministro dos Desportos e embaixador de Angola em Portugal. Compôs a música do Hino Nacional de Angola.' where name ='Ruy Mingas';
---update search_entity set image_url = 'https://i0.wp.com/bantumen.com/wp-content/uploads/2024/01/Rui-Mingas-.jpg?resize=1536%2C864&ssl=1' where name = 'Ruy Mingas';
---update search_entity set image_url = 'https://www.cnc.pt/wp-content/uploads/2020/05/maria-velho-da-costa-f-1.jpg' where name = 'Maria Velho da Costa';
---update search_entity set biography = 'Nasceu em 1941 em Mirandela, filho de Francisco Emílio Golias e de Maria Luísa Sales e irmão de José Manuel Sales Golias. Fez o 5.º ano na terra natal, e o 7.º ano (12.º) em Vila Real. Frequentou a Academia Militar e licenciou-se em Eng.ª Electrotécnica no IST. Participou na Guerra colonial na Guiné em 72-74 e no 25 de Abril. Foi Chefe de Gabinete do Encarregado de Governo da Guiné, Assistente dos CTT/TLP e Adjunto do General Chefe de Estado Maior do Exército.' where "name" = 'Jorge Golias';
---update search_entity set image_url = 'https://fotos.web.sapo.io/i/Bab086c55/19536090_zZkNR.png' where "name" = 'Jorge Golias';
---update search_entity set biography = 'Diniz de Almeida, um dos mais destacados operacionais da revolução de Abril, comandou também, no 11 de Março, a resistência do Ralis (Regimento de Artilharia de Lisboa) e foi um dos principais vencedores dessa jornada. O seu testemunho tem uma importância central para entender o 11 de Março.' where "name" = 'Diniz de Almeida';
---update search_entity set image_url = 'https://i0.wp.com/mediotejo.net/wp-content/uploads/2021/04/Matos-Gomes_112.jpg?resize=1320%2C1062&ssl=1' where "name" = 'Carlos Matos Gomes';
---update search_entity set biography = 'Nasceu em Vila Nova da Barquinha e estudou no Colégio Nun’Alvares, em Tomar, onde conheceu Salgueiro Maia, de quem ficou grande amigo. Entrevista com um dos mais conceituados militares e historiadores da guerra colonial, um Capitão de Abril que continua a sonhar com uma sociedade mais justa. ' where "name" = 'Carlos Matos Gomes';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/d/d2/Retrato_do_Cardeal_Dom_Manuel_Gon%C3%A7alves_Cerejeira.jpg' where name ='Cardeal Manuel Gonçalves Cerejeira';
---update search_entity set image_url = 'https://cdn.cmjornal.pt/images/2016-02/img_900x508$2016_02_12_12_46_00_513728.jpg' where name = 'Óscar Aníbal Piçarra de Castro Cardoso';
---update search_entity set biography = 'Óscar Aníbal Piçarra de Castro Cardoso (Lisboa, 10 de Junho de 1935), inspector-adjunto da PIDE/DGS, foi o organizador dos Flechas durante a Guerra Colonial Portuguesa.' where name = 'Óscar Aníbal Piçarra de Castro Cardoso';
---update search_entity set image_url = 'https://upload.wikimedia.org/wikipedia/commons/2/20/Jo%C3%A3o_Abel_Manta%2C_1977.jpg' where name = 'Abel Manta';
---update search_entity set biography = 'João Abel Carneiro de Moura Abrantes Manta ComSE • ComL (Lisboa, 29 de janeiro de 1928) é um arquiteto, pintor, ilustrador e cartoonista português. Autor de uma obra multifacetada, centrada sobretudo na arquitetura, desenho e pintura, João Abel Manta afirmou-se no panorama cultural português a partir do final da década de 1940. Nos anos que se seguiram teve importante atividade no domínio da arquitetura, que abandonaria progressivamente em favor das artes, destacando-se como um dos maiores cartoonistas portugueses das décadas de 1960 e 1970. Nos anos anteriores e posteriores ao 25 de Abril publicou regularmente, em jornais de grande tiragem, trabalhos emblemáticos da situação político-social portuguesa nesse período de transição (queda da ditadura e implantação de um regime democrático). Na década de 1980 redirecionou uma vez mais a sua obra, centrando-se prioritariamente na pintura. ' where name = 'Abel Manta';
