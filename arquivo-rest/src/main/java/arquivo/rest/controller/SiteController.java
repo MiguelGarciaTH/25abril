@@ -2,6 +2,7 @@ package arquivo.rest.controller;
 
 
 import arquivo.model.Site;
+import arquivo.repository.SearchEntityRepository;
 import arquivo.repository.SiteRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,13 +21,8 @@ public class SiteController {
         this.siteRepository = siteRepository;
     }
 
-    @GetMapping("/{siteId}")
-    Site getSite(@PathVariable int siteId) {
-        return siteRepository.findById(siteId).orElse(null);
-    }
-
-    @GetMapping
-    List<Site> getSiteList() {
-        return siteRepository.findAllByOrderByIdDesc();
+    @GetMapping("/stats")
+    public List<SiteRepository.SiteCounter> getSiteCounts(){
+        return siteRepository.getSiteCounts();
     }
 }

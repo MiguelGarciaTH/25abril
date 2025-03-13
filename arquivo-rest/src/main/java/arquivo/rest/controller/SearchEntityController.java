@@ -29,18 +29,13 @@ public class SearchEntityController {
         }
     }
 
+    @GetMapping("/stats")
+    public List<SearchEntityRepository.SearchEntityCounter> getSearchEntityCounts(){
+        return searchEntityRepository.getSearchEntityCounts();
+    }
+
     @GetMapping("/{entityId}")
     SearchEntity getSearchEntity(@PathVariable int entityId) {
         return searchEntityRepository.findById(entityId).orElse(null);
-    }
-
-    @GetMapping("/type/{type}")
-    List<SearchEntity> getSearchEntityList(@PathVariable String type) {
-        return searchEntityRepository.findAllByType(SearchEntity.Type.valueOf(type).name());
-    }
-
-    @GetMapping("/types")
-    List<String> getSearchEntityTypesList() {
-        return searchEntityRepository.findAllTypes();
     }
 }

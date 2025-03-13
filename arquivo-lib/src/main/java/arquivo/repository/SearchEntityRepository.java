@@ -10,27 +10,23 @@ import java.util.List;
 
 public interface SearchEntityRepository extends JpaRepository<SearchEntity, Integer> {
 
-    List<SearchEntity> findAllByOrderByIdDesc();
-
-    @Query(nativeQuery = true, value = """
-            select * from search_entity se
-            where se.type = ?1
-            order by se.name asc
-            """)
-    List<SearchEntity> findAllByType(String type);
-
-    @Query("""
-            select DISTINCT s.type from SearchEntity s
-            order by s.type asc
-            """)
-    List<String> findAllTypes();
-
     @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se WHERE se.names_vector @@ to_tsquery('portuguese', :searchTerm)")
     Page<SearchEntity> findBySearchTerm(String searchTerm, Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se order by se.name asc")
     Page<SearchEntity> findAll(Pageable pageable);
 
+    @Query("""
+            select new arquivo.repository.SearchEntityRepository$SearchEntityCounter(asea.searchEntity.name, asea.searchEntity.imageUrl, count(asea.article.id))
+            from ArticleSearchEntityAssociation asea
+            group by (asea.searchEntity.name, asea.searchEntity.imageUrl)
+            order by asea.searchEntity.name asc
+            """)
+    List<SearchEntityCounter> getSearchEntityCounts();
+
+    record SearchEntityCounter(String name, String image, Long count) {
+
+    }
 }
 
 
