@@ -5,10 +5,13 @@ import arquivo.model.ArticleSearchEntityAssociation;
 import arquivo.model.Site;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.ArticleSearchEntityAssociationRepository;
+import arquivo.repository.SearchEntityRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,11 +20,9 @@ import java.util.stream.Collectors;
 public class ArticleController {
 
     private final ArticleRepository articleRepository;
-    private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
 
     public ArticleController(ArticleRepository articleRepository, ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository) {
         this.articleRepository = articleRepository;
-        this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
     }
 
     @GetMapping("/{articleId}")
@@ -33,6 +34,12 @@ public class ArticleController {
             return new ArticleDTO(articleDetail, searchEntityDetails);
         }
         return null;
+    }
+
+    @GetMapping("/stats")
+    public List<ArticleDTO> getArticleCounts() {
+        final Page<Article> articlePages = articleRepository.getArticleCounts(PageRequest.of(0, 5));
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntitiesAssociations()))).getContent();
     }
 
     @GetMapping("/entity/{entityId}")
@@ -69,12 +76,12 @@ public class ArticleController {
 
     public record SearchEntityDetails(int count, Set<SearchEntityDetail> searchEntityDetail) {
         SearchEntityDetails(Set<ArticleSearchEntityAssociation> searchEntities) {
-            this(searchEntities.size(), searchEntities.stream().map(se -> new SearchEntityDetail(se.getSearchEntity().getId(), se.getSearchEntity().getName(), se.getSearchEntity().getType().name(), se.getEntityScore())).collect(Collectors.toSet()));
+            this(searchEntities.size(), searchEntities.stream().map(se -> new SearchEntityDetail(se.getSearchEntity().getId(), se.getSearchEntity().getName(), se.getSearchEntity().getType().name(), se.getSearchEntity().getImageUrl(), se.getEntityScore())).collect(Collectors.toSet()));
         }
 
     }
 
-    public record SearchEntityDetail(int id, String name, String type, double entityScore) {
+    public record SearchEntityDetail(int id, String name, String type, String imageUrl, double entityScore) {
 
     }
 }

@@ -1,6 +1,7 @@
 package arquivo.repository;
 
 import arquivo.model.Article;
+import arquivo.model.ArticleSearchEntityAssociation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
@@ -77,4 +79,13 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             ORDER BY a.summary_score DESC
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"searchEntitiesAssociations", "site"}, type = EntityGraph.EntityGraphType.FETCH)
+    @Query("""
+        select a
+        from Article a
+        where a.contextualScore > 0
+        order by a.contextualScore desc
+        """)
+    Page<Article> getArticleCounts(Pageable pageable);
 }

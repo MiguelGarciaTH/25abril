@@ -10,9 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NamedEntityGraph(name = "searchEntitiesAssociations",
-        attributeNodes = @NamedAttributeNode("searchEntitiesAssociations")
-)
+@NamedEntityGraph(name = "Article.searchEntitiesAssociations",
+        attributeNodes = @NamedAttributeNode("searchEntitiesAssociations"))
 public class Article {
 
     @Id
@@ -65,8 +64,8 @@ public class Article {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "article_search_entity_association",
-            joinColumns = { @JoinColumn(name = "article_id") },
-            inverseJoinColumns = { @JoinColumn(name = "search_entity_id") }
+            joinColumns = {@JoinColumn(name = "article_id")},
+            inverseJoinColumns = {@JoinColumn(name = "search_entity_id")}
     )
     Set<ArticleSearchEntityAssociation> searchEntitiesAssociations;
 
@@ -80,7 +79,7 @@ public class Article {
         this.date = date;
         this.site = site;
         this.title = title;
-        this.text =text;
+        this.text = text;
         this.summary = null;
         this.contextualScore = contextualScore;
         this.contextualScoreDetails = contextualScoreDetails;

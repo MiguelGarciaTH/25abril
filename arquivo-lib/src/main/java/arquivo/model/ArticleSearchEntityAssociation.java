@@ -21,7 +21,7 @@ public class ArticleSearchEntityAssociation {
     @ManyToOne(fetch = FetchType.LAZY)
     private Article article;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private SearchEntity searchEntity;
 
     private Double entityScore = 0.0;
