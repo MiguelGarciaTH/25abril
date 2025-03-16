@@ -15,7 +15,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
           maxWidth: '300px',
         }}>
-          <p style={{ fontWeight: 'bold' }}>Nome: {name}</p>
+          <p style={{ fontWeight: 'bold' }}>{name}</p>
                  <p>Artigos: {count}</p>
         </div>
       );
