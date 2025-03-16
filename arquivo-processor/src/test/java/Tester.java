@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -170,7 +169,7 @@ public class Tester {
         se = searchEntityRepository.save(se);
 
         Article a = new Article("title", "url", "trimmedUrl", LocalDateTime.now(ZoneOffset.UTC), s, "test", 0, null);
-        a.setSearchEntities(Set.of(se));
+        a.setSearchEntities(List.of(se));
         a = articleRepository.save(a);
 
         Article a2 = articleRepository.findByTitleAndSiteId("trimmedUrl", s.getId()).orElse(null);

@@ -6,8 +6,8 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NamedEntityGraph(name = "Article.searchEntities",
@@ -67,7 +67,7 @@ public class Article {
             joinColumns = {@JoinColumn(name = "article_id")},
             inverseJoinColumns = {@JoinColumn(name = "search_entity_id")}
     )
-    private Set<SearchEntity> searchEntities;
+    private List<SearchEntity> searchEntities;
 
     public Article() {
 
@@ -83,7 +83,7 @@ public class Article {
         this.summary = null;
         this.contextualScore = contextualScore;
         this.contextualScoreDetails = contextualScoreDetails;
-        this.searchEntities = new HashSet<>();
+        this.searchEntities = new ArrayList<>();
         this.hasImage = false;
     }
 
@@ -171,11 +171,11 @@ public class Article {
         this.summaryScoreDetails = summaryScoreDetails;
     }
 
-    public Set<SearchEntity> getSearchEntities() {
+    public List<SearchEntity> getSearchEntities() {
         return searchEntities;
     }
 
-    public void setSearchEntities(Set<SearchEntity> searchEntities) {
+    public void setSearchEntities(List<SearchEntity> searchEntities) {
         this.searchEntities = searchEntities;
     }
 

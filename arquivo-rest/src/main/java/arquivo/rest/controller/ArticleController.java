@@ -9,8 +9,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.Collator;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @RestController
@@ -72,9 +74,14 @@ public class ArticleController {
         }
     }
 
-    public record SearchEntityDetails(int count, Set<SearchEntityDetail> searchEntityDetail) {
-        SearchEntityDetails(Set<SearchEntity> searchEntities) {
-            this(searchEntities.size(), searchEntities.stream().map(se -> new SearchEntityDetail(se.getId(), se.getName(), se.getType().name(), se.getImageUrl())).collect(Collectors.toSet()));
+    public record SearchEntityDetails(int count, List<SearchEntityDetail> searchEntityDetail) {
+        SearchEntityDetails(List<SearchEntity> searchEntities) {
+            this(searchEntities.size(), searchEntities.stream()
+                    .sorted(Comparator.comparing(
+                            SearchEntity::getName,
+                            Collator.getInstance(new Locale("pt", "PT"))::compare
+                    ))
+                    .map(se -> new SearchEntityDetail(se.getId(), se.getName(), se.getType().name(), se.getImageUrl())).collect(Collectors.toList()));
         }
 
     }
