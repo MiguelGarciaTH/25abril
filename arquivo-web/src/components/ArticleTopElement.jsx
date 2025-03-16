@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import "../ArticleTop.css";
 
 const ArticleTopElement = ({ article }) => {
@@ -13,6 +14,17 @@ const ArticleTopElement = ({ article }) => {
 
   return (
     <div className="container2">
+      {/* Always render the bannerLink but toggle its visibility */}
+      <div className={`bannerLink ${showEntities ? "show" : ""}`}>
+        <a href={articleDetail.url} target="_blank" rel="noopener noreferrer">
+          <img
+            src="/premio-arquivo-pt-2025-banner-pt-1.png"
+            alt="Prémio Arquivo.pt 2025"
+            className="bannerImage"
+          />
+        </a>
+      </div>
+
       <div className="contentWrapper">
         {/* Article preview */}
         <div className="articleContainer" onClick={handleArticleClick}>
@@ -37,14 +49,19 @@ const ArticleTopElement = ({ article }) => {
           {showEntities &&
             searchEntityDetails.count > 0 &&
             searchEntityDetails.searchEntityDetail.map((entity, index) => (
-              <div key={entity.id || index} className="entityCircle">
+              <Link
+                to={`/articles/${entity.id}/${entity.name}`}
+                key={entity.id || index}
+                className="entityCircle" // Apply the entityCircle styles to the Link
+              >
                 <img
                   src={entity.imageUrl || "/default-entity-image.png"} // Fallback for missing image
                   alt={entity.name || "Unknown Entity"} // Fallback for missing name
                   className="entityImage"
                 />
                 <div className="entityName">{entity.name || "Unknown Entity"}</div>
-              </div>
+              </Link>
+              
             ))}
         </div>
       </div>
