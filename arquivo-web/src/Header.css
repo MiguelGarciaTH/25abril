@@ -20,7 +20,7 @@
   /* Dark background color */
   color: rgb(0, 0, 0);
   padding: 20px 0;
-  z-index: 1;
+  z-index: 2;
   background-color: white;
   /* Ensure the header stays on top of the content */
   text-align: center;

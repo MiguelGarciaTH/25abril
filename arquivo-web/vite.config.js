@@ -7,4 +7,10 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
   },
+  build: {
+    sourcemap: true, // Enable source maps temporarily for debuggingare disabled for production builds
+  },
+  server: {
+    sourcemap: true, // Enable source maps temporarily for debugging development
+  },
 });

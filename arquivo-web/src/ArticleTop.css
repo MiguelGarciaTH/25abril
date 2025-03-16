@@ -1,0 +1,253 @@
+/* ArticleTop.css */
+
+/* Container for the article and entities */
+.container2 {
+  margin-left: 700px; /* Ensure the container is positioned correctly */
+  position: relative;
+  text-align: left;
+  display: flex; /* Use flexbox for layout */
+  align-items: flex-start; /* Align items at the top */
+  z-index: 1; /* Ensure the container is above other elements */
+  overflow: visible; /* Allow child elements to overflow */
+  justify-content: center;
+  margin-bottom: 100px; /* Reduced margin to minimize vertical spacing */
+}
+
+/* Wrapper for the image and title */
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 300px; /* Adjusted height for the image */
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.articleContainer {
+  flex: 1;
+  cursor: pointer;
+  padding: 25px; /* Slightly increased padding */
+  border-radius: 10px;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: box-shadow 0.3s ease;
+  width: 650px; /* Increased width */
+  height: auto; /* Adjust height to fit content */
+  display: flex;
+  flex-direction: column; /* Stack image and content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+.articleContainer:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.articleImage {
+  width: 100%;
+  height: 280px; /* Increased height for the image */
+  object-fit: cover; /* Ensures the image covers the entire area */
+  object-position: top; /* Aligns the image to show the top */
+  border-radius: 10px 10px 0 0; /* Rounded corners only on the top */
+  transition: transform 0.3s ease-in-out;
+}
+
+.articleContent {
+  padding: 20px;
+  width: 100%;
+  text-align: left;
+}
+
+.articleTitle {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 10px 0;
+  color: #333;
+}
+
+.articleMeta {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  font-size: 1em;
+  color: #666;
+}
+
+.siteName {
+  font-weight: bold;
+}
+
+.score {
+  color: #444;
+}
+
+/* Entity container styles */
+.entityContainer {
+  display: flex; /* Use flexbox for layout */
+  flex-wrap: wrap; /* Allow wrapping to the next row */
+  justify-content: flex-start; /* Align items to the left */
+  align-items: flex-start; /* Align items at the top */
+  gap: 20px; /* Add spacing between entity circles */
+  margin-left: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%; /* Allow the container to take full width */
+  max-width: 650px; /* Limit the width to match the article container */
+  position: relative;
+  z-index: 3;
+  animation: fadeIn 0.3s ease-in-out;
+  visibility: hidden; /* Hide the container initially */
+  opacity: 0; /* Make it invisible */
+  transition: visibility 0s, opacity 0.3s ease-in-out; /* Smooth fade-in effect */
+}
+
+.entityContainer.show {
+  visibility: visible; /* Make it visible */
+  opacity: 1; /* Fully opaque */
+}
+
+.entityCircle {
+  width: calc(20% - 20px); /* Ensure five items per row with spacing */
+  max-width: 120px; /* Limit the size of each circle */
+  height: 120px; /* Fixed height for the circle */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden; /* Ensure the image stays within the circle */
+  margin: 0; /* Remove extra margin */
+  text-align: center;
+  border: 1px solid #ddd;
+  transition: transform 0.3s ease-in-out;
+}
+
+.entityImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image fully fills the circle */
+  filter: grayscale(100%); /* Apply grayscale effect */
+  transition: filter 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.entityCircle:hover .entityImage {
+  filter: grayscale(100%); /* Apply grayscale effect */
+  transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+.entityName {
+  position: absolute;
+  bottom: 10px; /* Position the name near the bottom of the circle */
+  font-size: 0.9rem; /* Slightly larger font size */
+  font-weight: bold;
+  color: white; /* White text color */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7); /* Add shadow for better readability */
+  text-align: center;
+  width: 90%; /* Allow some padding on the sides */
+  word-wrap: break-word; /* Wrap text if it overflows */
+  line-height: 1.2; /* Adjust line height for better readability */
+  pointer-events: none; /* Prevent interaction with the text */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 1800px; /* Fixed width to reserve space for both containers */
+}
+
+.sliderContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px; /* Add spacing between label and slider */
+}
+
+.sliderContainer label {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #444;
+}
+
+.sliderContainer input[type="range"] {
+  -webkit-appearance: none; /* Remove default styling for WebKit browsers */
+  appearance: none; /* Remove default styling for modern browsers */
+  width: 500px;
+  height: 20px;
+  background: linear-gradient(10deg, #333, #333); /* Gradient for the slider track */
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+.sliderContainer input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Remove default styling for WebKit browsers */
+  appearance: none;
+  width: 80px; /* Adjusted size for the image */
+  height: 80px; /* Adjusted size for the image */
+  background: url("./android-chrome-512x512.png") no-repeat center center; /* Use the image */
+  background-size: cover; /* Ensure the image covers the thumb */
+  border: none; /* Remove border */
+  border-radius: 50%; /* Keep it circular */
+  cursor: pointer;
+  transform: rotate(30deg) !important; /* Ensure rotation is applied */
+  transition: transform 0.2s ease-in-out;
+}
+
+.sliderContainer input[type="range"]::-moz-range-thumb {
+  width: 70px; /* Adjusted size for the image */
+  height: 70px; /* Adjusted size for the image */
+  background: url("./android-chrome-512x512.png") no-repeat center center; /* Use the image */
+  background-size: cover; /* Ensure the image covers the thumb */
+  border: none; /* Remove border */
+  border-radius: 50%; /* Keep it circular */
+  cursor: pointer;
+  transform: rotate(30deg) !important; /* Ensure rotation is applied */
+  transition: transform 0.2s ease-in-out;
+}
+
+.sliderContainer input[type="range"]::-ms-thumb {
+  width: 80px; /* Adjusted size for the image */
+  height: 80px; /* Adjusted size for the image */
+  background: url("./android-chrome-512x512.png") no-repeat center center; /* Use the image */
+  background-size: cover; /* Ensure the image covers the thumb */
+  border: none; /* Remove border */
+  border-radius: 50%; /* Keep it circular */
+  cursor: pointer;
+  transform: rotate(30deg) !important; /* Ensure rotation is applied */
+  transition: transform 0.2s ease-in-out;
+}
+
+.sliderContainer input[type="range"]:hover::-webkit-slider-thumb {
+  transform: scale(1.2) rotate(-10deg) !important; /* Enlarge and maintain rotation on hover */
+}
+
+.sliderContainer input[type="range"]:hover::-moz-range-thumb {
+  transform: scale(1.2) rotate(-10deg) !important;
+}
+
+.sliderContainer input[type="range"]:hover::-ms-thumb {
+  transform: scale(1.2) rotate(-10deg) !important;
+}
+
+.articlesWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Add spacing between ArticleTopElement components */
+}
