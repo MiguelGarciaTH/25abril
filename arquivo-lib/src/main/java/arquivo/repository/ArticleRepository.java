@@ -80,7 +80,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"searchEntitiesAssociations", "site"}, type = EntityGraph.EntityGraphType.FETCH)
+    @EntityGraph(attributePaths = {"searchEntities", "site"})
     @Query("""
         select a
         from Article a

@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@NamedEntityGraph(name = "Article.searchEntitiesAssociations",
-        attributeNodes = @NamedAttributeNode("searchEntitiesAssociations"))
+@NamedEntityGraph(name = "Article.searchEntities",
+        attributeNodes = @NamedAttributeNode("searchEntities"))
 public class Article {
 
     @Id
@@ -61,13 +61,13 @@ public class Article {
     @Column(columnDefinition = "jsonb")
     private JsonNode summaryScoreDetails;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "article_search_entity_association",
             joinColumns = {@JoinColumn(name = "article_id")},
             inverseJoinColumns = {@JoinColumn(name = "search_entity_id")}
     )
-    Set<ArticleSearchEntityAssociation> searchEntitiesAssociations;
+    private Set<SearchEntity> searchEntities;
 
     public Article() {
 
@@ -83,7 +83,7 @@ public class Article {
         this.summary = null;
         this.contextualScore = contextualScore;
         this.contextualScoreDetails = contextualScoreDetails;
-        this.searchEntitiesAssociations = new HashSet<>();
+        this.searchEntities = new HashSet<>();
         this.hasImage = false;
     }
 
@@ -171,12 +171,12 @@ public class Article {
         this.summaryScoreDetails = summaryScoreDetails;
     }
 
-    public Set<ArticleSearchEntityAssociation> getSearchEntitiesAssociations() {
-        return searchEntitiesAssociations;
+    public Set<SearchEntity> getSearchEntities() {
+        return searchEntities;
     }
 
-    public void setSearchEntitiesAssociations(Set<ArticleSearchEntityAssociation> searchEntitiesAssociations) {
-        this.searchEntitiesAssociations = searchEntitiesAssociations;
+    public void setSearchEntities(Set<SearchEntity> searchEntities) {
+        this.searchEntities = searchEntities;
     }
 
     public String getText() {

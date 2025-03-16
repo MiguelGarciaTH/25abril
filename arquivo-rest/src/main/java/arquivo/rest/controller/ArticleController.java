@@ -1,13 +1,11 @@
 package arquivo.rest.controller;
 
 import arquivo.model.Article;
-import arquivo.model.ArticleSearchEntityAssociation;
+import arquivo.model.SearchEntity;
 import arquivo.model.Site;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.ArticleSearchEntityAssociationRepository;
-import arquivo.repository.SearchEntityRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,16 +28,16 @@ public class ArticleController {
         final Article article = articleRepository.findByIdWithSummary(articleId).orElse(null);
         if (article != null) {
             final ArticleDetail articleDetail = new ArticleDetail(article);
-            final SearchEntityDetails searchEntityDetails = new SearchEntityDetails(article.getSearchEntitiesAssociations().size(), null);
+            final SearchEntityDetails searchEntityDetails = new SearchEntityDetails(article.getSearchEntities().size(), null);
             return new ArticleDTO(articleDetail, searchEntityDetails);
         }
         return null;
     }
 
     @GetMapping("/stats")
-    public List<ArticleDTO> getArticleCounts() {
-        final Page<Article> articlePages = articleRepository.getArticleCounts(PageRequest.of(0, 5));
-        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntitiesAssociations()))).getContent();
+    public List<ArticleDTO> getArticleCounts(Pageable pageable) {
+        final Page<Article> articlePages = articleRepository.getArticleCounts(pageable);
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities()))).getContent();
     }
 
     @GetMapping("/entity/{entityId}")
@@ -52,12 +50,12 @@ public class ArticleController {
     public Page<ArticleDTO> getArticlesBySearchTerm(@RequestParam("search_term") String searchTerm, Pageable pageable) {
         searchTerm = searchTerm.replaceAll(" ", " & ");
         final Page<Article> articlePages = articleRepository.findBySearchTerm(searchTerm, pageable);
-        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntitiesAssociations())));
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities())));
     }
 
     public record ArticleDTO(ArticleDetail articleDetail, SearchEntityDetails searchEntityDetails) {
         ArticleDTO(Article article) {
-            this(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntitiesAssociations()));
+            this(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities()));
         }
     }
 
@@ -75,13 +73,13 @@ public class ArticleController {
     }
 
     public record SearchEntityDetails(int count, Set<SearchEntityDetail> searchEntityDetail) {
-        SearchEntityDetails(Set<ArticleSearchEntityAssociation> searchEntities) {
-            this(searchEntities.size(), searchEntities.stream().map(se -> new SearchEntityDetail(se.getSearchEntity().getId(), se.getSearchEntity().getName(), se.getSearchEntity().getType().name(), se.getSearchEntity().getImageUrl(), se.getEntityScore())).collect(Collectors.toSet()));
+        SearchEntityDetails(Set<SearchEntity> searchEntities) {
+            this(searchEntities.size(), searchEntities.stream().map(se -> new SearchEntityDetail(se.getId(), se.getName(), se.getType().name(), se.getImageUrl())).collect(Collectors.toSet()));
         }
 
     }
 
-    public record SearchEntityDetail(int id, String name, String type, String imageUrl, double entityScore) {
+    public record SearchEntityDetail(int id, String name, String type, String imageUrl) {
 
     }
 }

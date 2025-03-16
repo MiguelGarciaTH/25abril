@@ -19,9 +19,11 @@ public class ArticleSearchEntityAssociation {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id")
     private Article article;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "search_entity_id")
     private SearchEntity searchEntity;
 
     private Double entityScore = 0.0;
