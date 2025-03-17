@@ -134,6 +134,7 @@ insert into search_entity (name, aliases, type) values
 --('Carlos Fabião', null, 'CAPITAES'),
 --('Otelo Saraiva de Carvalho', 'Otelo', 'CAPITAES'),
 --('Almada Contreiras', null, 'CAPITAES'),
+--('Costa Correia', null, 'CAPITAES'),
 --('José Alves Costa', null, 'CAPITAES'),
 --('Figueiras Soares', null, 'CAPITAES'),
 --('Rosa Coutinho', null , 'CAPITAES'),
@@ -149,6 +150,7 @@ insert into search_entity (name, aliases, type) values
 --('Diniz de Almeida', null, 'CAPITAES'),
 --('Carlos Matos Gomes', null, 'CAPITAES'),
 --('Jorge Golias', null, 'CAPITAES'),
+--('Ricardo Durão', null, 'CAPITAES'),
 --('Manuel Duran Clemente', null, 'CAPITAES');
 
 ----('Bravia Chaimite', null, 'CAPITAES')
