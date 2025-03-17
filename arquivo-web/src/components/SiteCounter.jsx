@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Link } from "react-router-dom";
+import "../ArticleTop.css";
 
 // Custom tooltip component
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const { id, name, count } = payload[0].payload;  // Get the data from the tooltip's payload
+
     return (
       <div style={{
         pointerEvents: "auto", // Ensure the tooltip allows pointer events
@@ -15,7 +17,8 @@ const CustomTooltip = ({ active, payload, label }) => {
         borderRadius: '4px',
         boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
         maxWidth: '300px',
-      }}>
+      }}
+      >
         <Link to={`/articles/${id}/${name}/site`} className="customToolTipLink">
           <p style={{ fontWeight: 'bold' }}>{name}</p>
           <p>Artigos: {count}</p>
@@ -35,7 +38,6 @@ const SiteCounter = () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_REST_URL}/site/stats`);
         const result = await response.json();
-        console.log(result); // Log the response data to verify the structure
         setData(result);  // Assuming result is an array of objects
       } catch (error) {
         console.error("Error fetching data:", error);

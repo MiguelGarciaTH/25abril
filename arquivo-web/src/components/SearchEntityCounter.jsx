@@ -54,7 +54,6 @@ const SearchEntityCounter = () => {
       try {
         const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity/stats`);
         const result = await response.json();
-        console.log(result); // Log the response data to verify the structure
         setData(result); // Assuming result is an array of objects
       } catch (error) {
         console.error("Error fetching data:", error);

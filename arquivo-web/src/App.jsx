@@ -22,12 +22,7 @@ const App = () => {
           <Route path="/data" element={<Data />} />
           <Route path="/entities" element={<Entities />} />
           <Route path="/search-results" element={<SearchResults />} />
-          <Route 
-            path="/articles/:id/:name/:path*" 
-            element={
-              <Articles />
-            } 
-          />
+          <Route path="/articles/:id/:name/:path*" element={<Articles />}/>
         </Routes>
       </div>
     </Router>
