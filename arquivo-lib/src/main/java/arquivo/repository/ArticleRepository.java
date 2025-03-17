@@ -61,6 +61,15 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"site"})
+    @Query(value = """
+            select a
+            from Article a
+            where a.summary is not null
+            and a.site.id = ?1
+            """)
+    Page<Article> findBySearchSiteId(int entityId, Pageable pageable);
+
     @Query(nativeQuery = true, value = """
             SELECT a.*
             FROM article a

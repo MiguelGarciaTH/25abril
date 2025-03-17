@@ -36,16 +36,22 @@ public class ArticleController {
         return null;
     }
 
-    @GetMapping("/stats")
-    public List<ArticleDTO> getArticleCounts(Pageable pageable) {
-        final Page<Article> articlePages = articleRepository.getArticleCounts(pageable);
-        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities()))).getContent();
-    }
-
     @GetMapping("/entity/{entityId}")
     public Page<ArticleDTO> getArticlesByEntityId(@PathVariable int entityId, Pageable pageable) {
         final Page<Article> articlePages = articleRepository.findBySearchEntityId(entityId, pageable);
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
+    }
+
+    @GetMapping("/site/{siteId}")
+    public Page<ArticleDTO> getArticlesBySiteId(@PathVariable int siteId, Pageable pageable) {
+        final Page<Article> articlePages = articleRepository.findBySearchSiteId(siteId, pageable);
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
+    }
+
+    @GetMapping("/stats")
+    public List<ArticleDTO> getArticleCounts(Pageable pageable) {
+        final Page<Article> articlePages = articleRepository.getArticleCounts(pageable);
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities()))).getContent();
     }
 
     @GetMapping
