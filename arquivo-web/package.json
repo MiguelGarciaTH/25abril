@@ -29,8 +29,8 @@
     "@testing-library/react": "^14.1.2",
     "@vitejs/plugin-react": "^4.2.1",
     "jsdom": "^23.0.1",
-    "vite": "^5.0.8",
-    "vitest": "^1.1.1"
+    "vite": "^6.2.2",
+    "vitest": "^3.0.9"
   },
   "description": "<h1 align=\"center\">   Vite Template React </h1>",
   "main": "vite.config.js",
