@@ -17,14 +17,14 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
     Page<SearchEntity> findAll(Pageable pageable);
 
     @Query("""
-            select new arquivo.repository.SearchEntityRepository$SearchEntityCounter(asea.searchEntity.name, asea.searchEntity.imageUrl, count(asea.article.id))
+            select new arquivo.repository.SearchEntityRepository$SearchEntityCounter(asea.searchEntity.id, asea.searchEntity.name, asea.searchEntity.imageUrl, count(asea.article.id))
             from ArticleSearchEntityAssociation asea
-            group by (asea.searchEntity.name, asea.searchEntity.imageUrl)
+            group by (asea.searchEntity.id, asea.searchEntity.name, asea.searchEntity.imageUrl)
             order by asea.searchEntity.name asc
             """)
     List<SearchEntityCounter> getSearchEntityCounts();
 
-    record SearchEntityCounter(String name, String image, Long count) {
+    record SearchEntityCounter(int id, String name, String image, Long count) {
 
     }
 }
