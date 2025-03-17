@@ -281,3 +281,33 @@
 .bannerImage:hover {
   transform: scale(1.05); /* Slight zoom effect on hover */
 }
+
+.customToolTipLink {
+  text-decoration: none; /* Remove underline for the link */
+  color: inherit; /* Inherit text color */
+  display: inline-block; /* Ensure the tooltip behaves like a block element */
+}
+
+.customToolTipLink:hover .customToolTip {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.customToolTip {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.toolTipName {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+}
+
+.toolTipCount {
+  font-size: 0.9rem;
+  color: #666;
+}
