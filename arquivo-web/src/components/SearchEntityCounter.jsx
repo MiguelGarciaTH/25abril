@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload }) => {
           maxWidth: "300px",
         }}
       >
-        <Link to={`/articles/${id}/${name}`} className="customToolTipLink">
+        <Link to={`/articles/${id}/${name}/entity`} className="customToolTipLink">
           <p style={{ fontWeight: "bold", margin: 0 }}>{name}</p>
           {image ? (
             <img

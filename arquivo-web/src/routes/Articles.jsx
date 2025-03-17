@@ -5,7 +5,7 @@ import ArticlePreview from '../components/ArticlePreview';
 import "../index.css";
 
 const Articles = () => {
-    const { entityId, entityName } = useParams();
+    const { id, name, path } = useParams();
     const [articles, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ const Articles = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/articles/entity/${entityId}?page=${pageNumber}`);
+            const response = await fetch(`${import.meta.env.VITE_REST_URL}/articles/${path}/${id}?page=${pageNumber}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -32,14 +32,14 @@ const Articles = () => {
         } finally {
             setLoading(false);
         }
-    }, [entityId]);
+    }, [id]);
 
     // Initial data fetch
     useEffect(() => {
         setPage(1);
         setResults([]);
         fetchData(1);
-    }, [entityId, fetchData]);
+    }, [id, fetchData]);
 
     // Infinite scroll handler
     useEffect(() => {
@@ -66,7 +66,7 @@ const Articles = () => {
             <div className="news-paper-head">
                 <div className="headerobjectswrapper">
                     <br/><br/>
-                    <header className="news-paper-header">{entityName}</header>
+                    <header className="news-paper-header">{name}</header>
                 </div>
                 <div className="subhead"></div>
                 <div className="content">

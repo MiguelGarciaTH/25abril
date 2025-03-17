@@ -7,7 +7,7 @@ function Entity({ entityId, entityName, entityImage, entityBio }) {
 
     return (
         <Link 
-            to={`/articles/${entityId}/${entityName}`}
+            to={`/articles/${entityId}/${entityName}/entity`}
             className="polaroid-wrapper"
             onMouseEnter={() => setShowBio(true)}
             onMouseLeave={() => setShowBio(false)}
