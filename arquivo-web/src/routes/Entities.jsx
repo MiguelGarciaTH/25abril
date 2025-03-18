@@ -4,6 +4,7 @@ import Entity from '../components/Entity';
 import SearchBar from '../components/SearchBar';
 
 import "../index.css";
+import "../styles/SearchForm.css";
 
 const Entities = () => {
     const [entities, setEntities] = useState([]);
@@ -97,7 +98,7 @@ const Entities = () => {
     return (
         <div>
             <Header isHome={false} />
-            <SearchBar
+            <SearchBar  className="search-form"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchInput} // Prevent the find-in-page when typing
