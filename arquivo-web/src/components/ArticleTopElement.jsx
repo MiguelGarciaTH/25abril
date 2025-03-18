@@ -50,7 +50,7 @@ const ArticleTopElement = ({ article }) => {
             searchEntityDetails.count > 0 &&
             searchEntityDetails.searchEntityDetail.map((entity, index) => (
               <Link
-                to={`/articles/${entity.id}/${entity.name}`}
+                to={`/articles/${entity.id}/${entity.name}/entity`}
                 key={entity.id || index}
                 className="entityCircle" // Apply the entityCircle styles to the Link
               >
