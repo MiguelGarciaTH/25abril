@@ -1,8 +1,8 @@
 import React from "react";
 import Header from "../components/Header";
 import SearchEntityCounter from "../components/SearchEntityCounter";
-import "../index.css";
 import SiteCounter from "../components/SiteCounter";
+import "../index.css";
 
 const Stats = () => {
     return (

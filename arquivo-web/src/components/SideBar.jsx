@@ -6,7 +6,7 @@ import { AiOutlineBarChart } from "react-icons/ai";
 import { AiFillFileText } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
 import { AiOutlineDeploymentUnit } from "react-icons/ai";
-import '../SideBar.css';
+import "../styles/SideBar.css";
 
 const Sidebar = () => {
     const [isVisible, setIsVisible] = useState(true);

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import React, { useState } from 'react';
-import "../Article.css";
+import "../styles/Article.css";
 
 function ArticlePreview({ item }) {
     const [isHovered, setIsHovered] = useState(false);

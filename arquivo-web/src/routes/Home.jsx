@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
-import '../index.css';
 import ParentComponent from "../components/ParentComponent";
+import '../index.css';
 
 const Home = () => {
 

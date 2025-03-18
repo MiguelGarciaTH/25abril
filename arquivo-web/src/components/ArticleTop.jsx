@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ArticleTopElement from "./ArticleTopElement";
-import "../ArticleTop.css";
+import "../styles/ArticleTop.css";
 
 const ArticleTop = ({ size }) => {
   const [articles, setArticles] = useState([]);

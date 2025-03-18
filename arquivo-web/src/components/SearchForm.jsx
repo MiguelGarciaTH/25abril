@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
-import "../SearchForm.css"; // Optional for custom styling
+import "../styles/SearchForm.css"; // Optional for custom styling
 
 const SearchForm = () => {
   const [query, setQuery] = useState('');
@@ -26,7 +26,7 @@ const SearchForm = () => {
         className="search-input"
       />
       <button type="submit">
-        <img src="./public/android-chrome-512x512.png" alt="Search" />
+        <img src="./android-chrome-512x512.png" alt="Search" />
       </button>
     </form>
   );

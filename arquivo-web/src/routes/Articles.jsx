@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from "../components/Header";
 import { useParams } from 'react-router-dom';
-import ArticlePreview from '../components/ArticlePreview';
+import ArticlePreview from "../components/ArticlePreview";
 import "../index.css";
 
 const Articles = () => {

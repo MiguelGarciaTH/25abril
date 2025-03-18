@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import "./SearchBar.css";
+import "../styles/SearchBar.css";
 
 const SearchBar = ({ value, onChange }) => {
     const handleKeyDown = (e) => {

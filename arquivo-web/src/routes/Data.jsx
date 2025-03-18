@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ArticleTop from "../components/ArticleTop";
 import Header from "../components/Header";
-import "../ArticleTop.css";
+import "../styles/ArticleTop.css";
 
 const Data = () => {
   const [size, setSize] = useState(5); // Initialize with the default size

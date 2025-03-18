@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router';
 
-import '../Header.css'; // Include the CSS for styling
+import "../styles/Header.css"; // Include the CSS for styling
 
 function Header({ isHome }) {
     if (isHome) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import "../Entity.css";
+import "../styles/Entity.css";
 
 function Entity({ entityId, entityName, entityImage, entityBio }) {
     const [showBio, setShowBio] = useState(false);

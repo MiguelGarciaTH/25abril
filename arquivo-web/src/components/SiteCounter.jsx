@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Link } from "react-router-dom";
-import "../ArticleTop.css";
+import "../styles/ArticleTop.css";
 
 // Custom tooltip component
 const CustomTooltip = ({ active, payload }) => {
@@ -11,12 +11,12 @@ const CustomTooltip = ({ active, payload }) => {
     return (
       <div style={{
         pointerEvents: "auto", // Ensure the tooltip allows pointer events
-        backgroundColor: '#fff',
-        border: '1px solid #ccc',
-        padding: '10px',
-        borderRadius: '4px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        maxWidth: '300px',
+        backgroundColor: "#fff",
+        border: "1px solid #ccc",
+        padding: "10px",
+        borderRadius: "4px",
+        boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+        maxWidth: "300px",
       }}
       >
         <Link to={`/articles/${id}/${name}/site`} className="customToolTipLink">
