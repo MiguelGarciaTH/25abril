@@ -4,7 +4,6 @@ import arquivo.model.Article;
 import arquivo.model.SearchEntity;
 import arquivo.model.Site;
 import arquivo.repository.ArticleRepository;
-import arquivo.repository.ArticleSearchEntityAssociationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ public class ArticleController {
 
     private final ArticleRepository articleRepository;
 
-    public ArticleController(ArticleRepository articleRepository, ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository) {
+    public ArticleController(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
     }
 
@@ -48,9 +47,15 @@ public class ArticleController {
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
     }
 
-    @GetMapping("/stats")
-    public List<ArticleDTO> getArticleCounts(Pageable pageable) {
-        final Page<Article> articlePages = articleRepository.getArticleCounts(pageable);
+    @GetMapping("/stats/top-relevance")
+    public List<ArticleDTO> getArticleCountsByRelevance(Pageable pageable) {
+        final Page<Article> articlePages = articleRepository.getArticleCountsByRelevance(pageable);
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities()))).getContent();
+    }
+
+    @GetMapping("/stats/top-entities")
+    public List<ArticleDTO> getArticleCountsByEntities(Pageable pageable) {
+        final Page<Article> articlePages = articleRepository.getArticleCountsByEntities(pageable);
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities()))).getContent();
     }
 
