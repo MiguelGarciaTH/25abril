@@ -2,27 +2,26 @@ import React, { useState, useEffect } from "react";
 import ArticleTopElement from "./ArticleTopElement";
 import "../styles/ArticleTop.css";
 
-const ArticleTop = ({ size }) => {
+const ArticleTop = ({ size, toggle }) => {
   const [articles, setArticles] = useState([]);
 
-  const fetchArticles = async () => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_REST_URL}/articles/stats?size=${size}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch articles");
-      }
-      const data = await response.json();
-      setArticles(data);
-    } catch (error) {
-      console.error("Error fetching articles:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchArticles(); // Fetch articles whenever size changes
-  }, [size]); // Dependency array ensures this runs when size changes
+    const fetchArticles = async () => {
+      const url =
+        toggle === "Relevância"
+          ? `${import.meta.env.VITE_REST_URL}/articles/stats/top-relevance?size=${size}`
+          : `${import.meta.env.VITE_REST_URL}/articles/stats/top-entities?size=${size}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        setArticles(data);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      }
+    };
+
+    fetchArticles();
+  }, [size, toggle]);
 
   return (
     <div className="articleTopContainer">

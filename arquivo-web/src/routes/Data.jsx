@@ -5,10 +5,15 @@ import "../styles/ArticleTop.css";
 
 const Data = () => {
   const [size, setSize] = useState(5); // Initialize with the default size
+  const [toggle, setToggle] = useState("Relevância"); // Initialize toggle state
 
   const handleSliderChange = (event) => {
     const newSize = parseInt(event.target.value, 10); // Ensure the value is an integer
     setSize(newSize); // Update local state
+  };
+
+  const handleToggleClick = () => {
+    setToggle((prev) => (prev === "Relevância" ? "Entidades" : "Relevância")); // Toggle between the two states
   };
 
   return (
@@ -28,10 +33,20 @@ const Data = () => {
           onChange={handleSliderChange}
         />
       </div>
+      <span style={{ display: "block", height: "20px" }}></span>
+
+      {/* Sliding Toggle Button */}
+      <div className="toggleContainer">
+        <div className="toggleWrapper" onClick={handleToggleClick}>
+          <div className={`toggleSlider ${toggle === "Relevância" ? "left" : "right"}`}></div>
+          <span className="toggleOption">Relevância</span>
+          <span className="toggleOption">Entidades</span>
+        </div>
+      </div>
       <span style={{ display: "block", height: "50px" }}></span>
 
-      {/* Pass size as a prop to ArticleTop */}
-      <ArticleTop size={size} />
+      {/* Pass size and toggle as props to ArticleTop */}
+      <ArticleTop size={size} toggle={toggle} />
     </div>
   );
 };
