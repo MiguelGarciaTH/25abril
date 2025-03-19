@@ -8,8 +8,6 @@ const ArticleTopElement = ({ article }) => {
 
   const handleArticleClick = () => {
     setShowEntities(!showEntities);
-    console.log("Search Entity Count:", searchEntityDetails.count); // Log the count
-    console.log("Search Entity Details:", searchEntityDetails.searchEntityDetail); // Log the array
   };
 
   return (
