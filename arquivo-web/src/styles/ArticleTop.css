@@ -185,7 +185,7 @@
 }
 
 .sliderContainer label {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #444;
 }
@@ -193,8 +193,9 @@
 .sliderContainer input[type="range"] {
   -webkit-appearance: none; /* Remove default styling for WebKit browsers */
   appearance: none; /* Remove default styling for modern browsers */
-  width: 500px;
-  height: 20px;
+  width: 300px;
+  height: 10px;
+  margin-top: 20px;
   background: linear-gradient(10deg, #333, #333); /* Gradient for the slider track */
   border-radius: 5px;
   outline: none;
