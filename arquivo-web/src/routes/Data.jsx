@@ -34,7 +34,9 @@ const Data = () => {
         </div>
         {/* Slider input */}
         <div className="sliderContainer">
-          <label htmlFor="sizeSlider">Top {size} de artigos</label>
+          <label htmlFor="sizeSlider">
+            Top <span style={{ color: "#cc0000" }}>{size}</span> de artigos
+          </label>
           <input
             id="sizeSlider"
             type="range"
