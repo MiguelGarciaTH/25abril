@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ArticleSearchForm from './ArticleSearchForm';
-import SearchResults from './SearchResults';
+import ArticleSearchResults from './ArticleSearchResults';
 
 const ParentComponent = () => {
   const [query, setQuery] = useState('');
@@ -13,7 +13,7 @@ const ParentComponent = () => {
     <div>
       <ArticleSearchForm onSearch={handleSearch} />
       {/* Pass the query to the SearchResults component */}
-      {query && <SearchResults query={query} />}
+      {query && <ArticleSearchResults query={query} />}
     </div>
   );
 };

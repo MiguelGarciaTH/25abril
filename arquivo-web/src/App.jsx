@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Sidebar from './components/SideBar';
 import Home from './routes/Home';
 import About from './routes/About';
-import SearchResults from './components/SearchResults';
+import ArticleSearchResults from './components/ArticleSearchResults';
 import Entities from './routes/Entities';
 import Articles from './routes/Articles';
 import Stats from './routes/Stats';
@@ -21,7 +21,7 @@ const App = () => {
           <Route path="/stats" element={<Stats />} />
           <Route path="/data" element={<Data />} />
           <Route path="/entities" element={<Entities />} />
-          <Route path="/search-results" element={<SearchResults />} />
+          <Route path="/search-results" element={<ArticleSearchResults />} />
           <Route path="/articles/:id/:name/:path*" element={<Articles />}/>
         </Routes>
       </div>
