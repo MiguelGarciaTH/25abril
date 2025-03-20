@@ -13,10 +13,12 @@ const CustomTooltip = ({ active, payload }) => {
           pointerEvents: "auto", // Ensure the tooltip allows pointer events
           backgroundColor: "#fff",
           border: "1px solid #ccc",
-          padding: "10px",
+          padding: "5px",
           borderRadius: "4px",
           boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          maxWidth: "300px",
+          maxWidth: "200px",
+          minWidth: "200px",
+          textAlign: "center", // Center-align content, including the image
         }}
       >
         <Link to={`/articles/${id}/${name}/entity`} className="customToolTipLink">

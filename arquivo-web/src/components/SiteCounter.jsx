@@ -16,7 +16,9 @@ const CustomTooltip = ({ active, payload }) => {
         padding: "10px",
         borderRadius: "4px",
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-        maxWidth: "300px",
+        maxWidth: "200px",
+        minWidth: "200px",
+        textAlign: "center", // Center-align content, including the image
       }}
       >
         <Link to={`/articles/${id}/${name}/site`} className="customToolTipLink">

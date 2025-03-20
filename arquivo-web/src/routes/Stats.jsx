@@ -9,7 +9,7 @@ const Stats = () => {
         <div className="text-container">
             <Header isHome={false} />
             <SearchEntityCounter />
-            <span style={{ display: "block", height: "50px" }}></span>
+            <span style={{ display: "block", height: "90px" }}></span>
             <SiteCounter />
         </div>
     )
