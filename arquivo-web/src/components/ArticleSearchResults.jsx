@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'; // Use location hook to get quer
 import Header from './Header';
 import ArticlePreview from './ArticlePreview';
 
-const SearchResultsPage = () => {
+const ArticleSearchResults = () => {
     const [articles, setResults] = useState([]);
     const [loading, setLoading] = useState(true); // Initially true to show loading state on first load
     const [error, setError] = useState(null);
@@ -86,4 +86,4 @@ const SearchResultsPage = () => {
     );
 };
 
-export default SearchResultsPage;
+export default ArticleSearchResults;

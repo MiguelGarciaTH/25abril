@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from "../components/Header";
 import Entity from '../components/Entity';
-import SearchBar from '../components/SearchBar';
+import EntitySearchForm from '../components/EntitySearchForm';
 
 import "../index.css";
-import "../styles/SearchForm.css";
+import "../styles/ArticleSearchForm.css";
 
 const Entities = () => {
     const [entities, setEntities] = useState([]);
@@ -98,7 +98,7 @@ const Entities = () => {
     return (
         <div>
             <Header isHome={false} />
-            <SearchBar  className="search-form"
+            <EntitySearchForm  className="search-form"
                 value={searchQuery}
                 onChange={handleSearchChange}
                 onKeyDown={handleSearchInput} // Prevent the find-in-page when typing

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import the useNavigate hook
-import "../styles/SearchForm.css"; // Optional for custom styling
+import "../styles/ArticleSearchForm.css"; // Optional for custom styling
 
-const SearchForm = () => {
+const ArticleSearchForm = () => {
   const [query, setQuery] = useState('');
   const navigate = useNavigate(); // Initialize the navigate function
 
@@ -22,7 +22,7 @@ const SearchForm = () => {
         type="text"
         value={query}
         onChange={handleChange}
-        placeholder="Search"
+        placeholder="Procurar..."
         className="search-input"
       />
       <button type="submit">
@@ -32,4 +32,4 @@ const SearchForm = () => {
   );
 };
 
-export default SearchForm;
+export default ArticleSearchForm;

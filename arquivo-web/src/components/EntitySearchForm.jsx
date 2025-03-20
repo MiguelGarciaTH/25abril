@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import "../styles/SearchBar.css";
+import "../styles/EntitySearchForm.css";
 
-const SearchBar = ({ value, onChange }) => {
+const EntitySearchForm = ({ value, onChange }) => {
     const handleKeyDown = (e) => {
         // Prevent browser's find dialog when pressing Ctrl/Cmd + F
         if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
@@ -18,7 +18,7 @@ const SearchBar = ({ value, onChange }) => {
                     value={value}
                     onChange={onChange}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search..."
+                    placeholder="Procurar..."
                     className="search-input"
                 />
             </div>
@@ -26,9 +26,9 @@ const SearchBar = ({ value, onChange }) => {
     );
 };
 
-SearchBar.propTypes = {
+EntitySearchForm.propTypes = {
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired
 };
 
-export default SearchBar;
+export default EntitySearchForm;
