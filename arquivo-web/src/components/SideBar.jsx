@@ -9,7 +9,7 @@ import { AiOutlineDeploymentUnit } from "react-icons/ai";
 import "../styles/SideBar.css";
 
 const Sidebar = () => {
-    const [isVisible, setIsVisible] = useState(true);
+    const [isVisible, setIsVisible] = useState(false);
 
     const toggleSidebar = () => {
         setIsVisible(!isVisible);
