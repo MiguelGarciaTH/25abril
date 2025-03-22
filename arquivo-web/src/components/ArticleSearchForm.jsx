@@ -17,13 +17,13 @@ const ArticleSearchForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="search-form">
+    <form onSubmit={handleSubmit} className="article-search-form">
       <input
         type="text"
         value={query}
         onChange={handleChange}
         placeholder="Procurar..."
-        className="search-input"
+        className="article-search-input"
       />
       <button type="submit">
         <img src="./android-chrome-512x512.png" alt="Search" />

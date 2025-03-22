@@ -1,5 +1,5 @@
 /* Center the search form and apply minimal styles */
-.search-form {
+.article-search-form {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -14,7 +14,7 @@
   transform: translate(-50%, -50%); /* Move the form back by 50% of its own width and height to truly center it */
 }
 
-.search-input {
+.article-search-input {
   width: 80%;
   padding: 18px 24px;
   font-size: 20px;
@@ -31,32 +31,32 @@
 /* Basic Sidebar styles */
 /* For smaller screens, adjust sidebar width */
 @media (max-width: 768px) {
-  .search-input {
-    width: 300px; /* Adjust to smaller size when the screen is smaller */
-    height: 10%; /* Adjust height as percentage */
+  .article-search-input {
+    width: 100px; /* Adjust to smaller size when the screen is smaller */
+  
   }
 }
 
 /* For even smaller screens or mobile devices, further reduce width */
 @media (max-width: 480px) {
-  .search-input {
-    width: 200px; /* Make sidebar even smaller */
-    height: 10%; /* Adjust height as percentage */
+  .article-search-input {
+    width: 100px; /* Make sidebar even smaller */
+    
   }
 }
 
-.search-input::placeholder {
+.article-search-input::placeholder {
   color: #888;
 }
 
-.search-input:focus {
+.article-search-input:focus {
   outline: none;
   border-color: #333;
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.search-input:hover {
+.article-search-input:hover {
   border-color: #333;
 }
 
