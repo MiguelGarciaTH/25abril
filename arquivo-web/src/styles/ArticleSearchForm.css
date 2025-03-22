@@ -32,16 +32,18 @@
 /* For smaller screens, adjust sidebar width */
 @media (max-width: 768px) {
   .article-search-input {
-    width: 100px; /* Adjust to smaller size when the screen is smaller */
-  
+    width: 50%; /* Adjust to smaller size when the screen is smaller */
+    margin-left: 25%; /* Adjust margin to center the form */
+
   }
 }
 
 /* For even smaller screens or mobile devices, further reduce width */
 @media (max-width: 480px) {
   .article-search-input {
-    width: 100px; /* Make sidebar even smaller */
-    
+    width: 50%; /* Make sidebar even smaller */
+    margin-left: 25%; /* Adjust margin to center the form */
+
   }
 }
 
