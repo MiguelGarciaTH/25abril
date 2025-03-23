@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ArticleTop from "../components/ArticleTop";
 import Header from "../components/Header";
 import "../styles/ArticleTop.css";
@@ -6,6 +6,18 @@ import "../styles/ArticleTop.css";
 const Data = () => {
   const [size, setSize] = useState(5); // Initialize with the default size
   const [toggle, setToggle] = useState("Relevância"); // Initialize toggle state
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSliderChange = (event) => {
     const newSize = parseInt(event.target.value, 10); // Ensure the value is an integer
@@ -17,13 +29,21 @@ const Data = () => {
   };
 
   return (
-    <div className="dataContainer">
+    <div className={`dataContainer ${isMobile ? "mobile" : ""}`}>
       <Header isHome={false} />
       <span style={{ display: "block", height: "100px" }}></span>
 
       {/* Flex container for slider and toggle */}
-      <div className="controlsContainer" style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>
-
+      <div
+        className={`controlsContainer ${isMobile ? "mobile" : ""}`}
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "20px",
+        }}
+      >
         {/* Sliding Toggle Button */}
         <div className="toggleContainer">
           <div className="toggleWrapper" onClick={handleToggleClick}>
@@ -50,7 +70,7 @@ const Data = () => {
       <span style={{ display: "block", height: "50px" }}></span>
 
       {/* Pass size and toggle as props to ArticleTop */}
-      <ArticleTop size={size} toggle={toggle} />
+      <ArticleTop size={size} toggle={toggle} isMobile={isMobile} />
     </div>
   );
 };
