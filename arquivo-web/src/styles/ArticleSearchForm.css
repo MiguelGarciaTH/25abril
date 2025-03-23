@@ -33,7 +33,8 @@
 @media (max-width: 768px) {
   .article-search-input {
     width: 50%; /* Adjust to smaller size when the screen is smaller */
-    margin-left: 25%; /* Adjust margin to center the form */
+    margin-left: 28%; /* Adjust margin to center the form */
+    height: 40px; /* Adjust height for smaller screens */
 
   }
 }
@@ -42,8 +43,8 @@
 @media (max-width: 480px) {
   .article-search-input {
     width: 50%; /* Make sidebar even smaller */
-    margin-left: 25%; /* Adjust margin to center the form */
-
+    margin-left: 28%; /* Adjust margin to center the form */
+    height: 40px; /* Adjust height for smaller screens */
   }
 }
 

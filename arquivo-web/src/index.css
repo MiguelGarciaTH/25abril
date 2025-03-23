@@ -29,6 +29,23 @@ code {
   box-sizing: border-box;  /* Includes padding and border in element's total width and height */
 }
 
+.text-container {
+  display: grid;
+  margin-left: 380px;
+  margin-top: 4%;
+  grid-template-columns: 1fr; /* One column layout */
+  gap: 10px; /* Optional space between the divs */
+}
+
+.data-container {
+  display: grid;
+  margin-left: 380px;
+  margin-top: 4%;
+  grid-template-columns: 1fr; /* One column layout */
+  gap: 10px; /* Optional space between the divs */
+}
+
+
 @media (max-width: 768px) {
   .container {
     flex-direction: column; /* Keep the column layout even for small screens */
@@ -37,13 +54,16 @@ code {
   .div1, .div2 {
     width: 100%; /* Ensure full width on mobile */
   }
+
+  .text-container {
+    margin-top: 15%;
+    margin-left: 29%; /* Remove left margin on mobile */
+    max-width: 60%;
+  }
+  .data-container{
+    margin-top: 10%;
+    margin-left: 5%;
+  }
 }
 
 
-.text-container {
-  display: grid;
-  margin-left: 380px;
-  margin-top: 4%;
-  grid-template-columns: 1fr; /* One column layout */
-  gap: 10px; /* Optional space between the divs */
-}

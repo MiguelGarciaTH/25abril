@@ -60,3 +60,34 @@
   font-size: 1.2rem;
 }
 
+@media (max-width: 768px) {
+  .header-page-home {
+    margin-left: 16%;
+    font-size: 8vw;
+    padding: 15px 0;
+  }
+
+  .header-page {
+    margin-left: 10%;
+    padding: 15px 0;
+    font-size: 1.5rem;
+  }
+
+  .header-page h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-page nav ul {
+    flex-direction: column;
+    margin: 5px 0 0;
+  }
+
+  .header-page nav ul li {
+    margin: 10px 0;
+  }
+
+  .header-page nav ul li a {
+    font-size: 1rem;
+  }
+}
+

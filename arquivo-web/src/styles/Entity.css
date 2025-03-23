@@ -86,47 +86,6 @@
     /* Full opacity for better readability */
 }
 
-/* Media queries for responsive design */
-@media screen and (max-width: 1200px) {
-    .polaroid-container {
-        max-width: 50%;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .polaroid-container {
-        max-width: 50%;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .polaroid-container {
-        padding: 0 10px;
-        max-width: 45%;
-        gap: 20px;
-    }
-
-    .polaroid {
-        width: calc(50% - 20px);
-        height: auto;
-        aspect-ratio: 2.7/3.9;
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .polaroid-container {
-        padding: 0 5px;
-        max-width: 45%;
-        gap: 10px;
-    }
-
-    .polaroid {
-        width: calc(100% - 10px);
-        max-width: 2.7in;
-        margin: 0 auto;
-    }
-}
-
 /* Add after your existing code */
 
 /* Base overlay styles */
@@ -209,4 +168,56 @@
     max-height: 300px;
     overflow-y: auto;
     white-space: pre-wrap;
+}
+
+/* Media queries for responsive design */
+@media screen and (max-width: 1200px) {
+    .polaroid-container {
+        max-width: 50%;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .polaroid-container {
+        max-width: 50%;
+        margin-left: 35%;
+        gap: 50px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .polaroid-container {
+        max-width: 50%;
+        margin-left: 35%;
+        gap: 10px; /* Ensure reduced gap between components */
+    }
+
+    .polaroid {
+        width: calc(50% - 20px);
+        height: auto;
+        aspect-ratio: 2.7/3.9;
+    }
+
+    .polaroid-wrapper {
+        margin-bottom: 10px; /* Explicitly reduce the gap */
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .polaroid-container {
+        padding: 0 5px;
+        max-width: 45%;
+        gap: 5px; /* Further reduce the gap for smaller screens */
+        margin-left: 35%;
+    }
+
+    .polaroid {
+        width: calc(100% - 10px);
+        max-width: 2.7in;
+        margin: 0 auto;
+    }
+
+    .polaroid-wrapper {
+        margin-bottom: 5px; /* Further reduce the gap */
+    }
 }

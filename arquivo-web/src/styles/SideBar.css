@@ -107,8 +107,17 @@
 }
 
 @media (max-width: 768px) {
+    .hamburger-menu {
+        left: 10px;
+
+    }
+
     .sidebar {
         width: 200px;
+    }
+    .sidebar.hide {
+        width: 40px;  /* Width when collapsed */
+        padding: 20px 10px;
     }
 }
 

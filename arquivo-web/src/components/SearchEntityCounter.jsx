@@ -49,6 +49,17 @@ const CustomTooltip = ({ active, payload }) => {
 
 const SearchEntityCounter = () => {
   const [data, setData] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect screen size for mobile responsiveness
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Fetch data from the API
   useEffect(() => {
@@ -65,27 +76,44 @@ const SearchEntityCounter = () => {
   }, []);
 
   return (
-    <div style={{ width: "90%", height: 400 }}>
-      <h3 style={{ textAlign: "center", marginBottom: "20px" }}>Artigos por entidade</h3>
+    <div
+      style={{
+        width: "90%",
+        height: "90%",
+        margin: "0 auto",
+        padding: "10px",
+      }}
+    >
+      <h3
+        style={{
+          textAlign: "center",
+          marginBottom: "20px",
+          fontSize: "1.5rem",
+        }}
+      >
+        Artigos por entidade
+      </h3>
       <ResponsiveContainer>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={0} // Keep the labels horizontal
-            textAnchor="middle" // Center the text horizontally
+            angle={isMobile ? 45 : 0} // Adjust angle for mobile
+            textAnchor={isMobile ? "left" : "middle"} // Adjust text alignment for angled labels
             tick={{
               fontSize: 16,
-              textAnchor: "middle",
-              dominantBaseline: "middle",
-            }} // Adjust label positioning
-            interval={0} // Ensure all labels are rendered
-            height={100} // Set height to accommodate wrapped text
+              textAlign: isMobile ? "left" : "center",
+              textAnchor: isMobile ? "end" : "middle",
+            }}
+            dy={isMobile ? 120 : 10} // Add vertical offset to position labels below the axis
+            dx={isMobile ? 115 : 10} // Add vertical offset to position labels below the axis
+            interval={0}
+            height={isMobile ? 140 : 100} // Adjust height for angled labels
             style={{
               wordWrap: "break-word",
               whiteSpace: "normal",
               overflow: "hidden",
-              maxWidth: "100px", // Add maximum width for wrapping
+              maxWidth: "100px",
             }}
           />
           <YAxis />
@@ -97,6 +125,23 @@ const SearchEntityCounter = () => {
           <Bar dataKey="count" fill="#333" />
         </BarChart>
       </ResponsiveContainer>
+      <style>
+        {`
+          @media (max-width: 768px) {
+            div {
+              width: 100%;
+              height: auto;
+            }
+            h3 {
+              font-size: 1.2rem;
+            }
+            .recharts-wrapper {
+              width: 100% !important;
+              height: 300px !important;
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };

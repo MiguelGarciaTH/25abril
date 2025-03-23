@@ -6,7 +6,7 @@ import "../index.css";
 
 const Stats = () => {
     return (
-        <div className="text-container">
+        <div className="data-container">
             <Header isHome={false} />
             <SearchEntityCounter />
             <span style={{ display: "block", height: "90px" }}></span>
