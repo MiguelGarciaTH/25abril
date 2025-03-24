@@ -14,9 +14,7 @@ function ArticlePreview({ item }) {
                 style={{ position: 'relative' }}
             >
                 <span class="headline hl3">
-                    <Link class="headline hl3"
-                        to={item.articleDetail.url}
-                    >{item.articleDetail.title}</Link>
+                    <Link class="headline hl3" to={item.articleDetail.url}>{item.articleDetail.title}</Link>
                     {isHovered && (
                         <div class="article-preview">
                             <img src={`${item.articleDetail.imagePath}`} alt={item.articleDetail.title} class="article-preview-popup" />
@@ -25,7 +23,7 @@ function ArticlePreview({ item }) {
                 </span>
                 <p>
                     <span class="headline hl4">{item.articleDetail.site.name}</span>
-                    Relevância: {item.articleDetail.summaryScore}
+                    <span class="score">Relevância: {item.articleDetail.summaryScore}</span>
                 </p>
             </div>
             <p className="article-summary">
