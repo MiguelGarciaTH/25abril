@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import "../styles/ArticleTop.css";
 
-const ArticleTopElement = ({ article }) => {
+const ArticleTopElement = ({ article, isMobile }) => {
   const [showEntities, setShowEntities] = useState(false);
   const { articleDetail, searchEntityDetails } = article;
 
@@ -11,7 +11,7 @@ const ArticleTopElement = ({ article }) => {
   };
 
   return (
-    <div className="container2">
+    <div className={`container2 ${isMobile ? "mobile" : ""}`}>
       {/* Always render the bannerLink but toggle its visibility */}
       <div className={`bannerLink ${showEntities ? "show" : ""}`}>
         <a href={articleDetail.url} target="_blank" rel="noopener noreferrer">
@@ -23,26 +23,32 @@ const ArticleTopElement = ({ article }) => {
         </a>
       </div>
 
-      <div className="contentWrapper">
+      <div className={`contentWrapper ${isMobile ? "mobile" : ""}`}>
         {/* Article preview */}
-        <div className="articleContainer" onClick={handleArticleClick}>
-          <img
-            src={articleDetail.imagePath}
-            alt={articleDetail.title}
-            className="articleImage"
-          />
+        <div className={`articleContainer ${isMobile ? "mobile" : ""}`} onClick={handleArticleClick}>
+          <div className="imageWrapper">
+            <img
+              src={articleDetail.imagePath}
+              alt={articleDetail.title}
+              className={`articleImage ${isMobile ? "mobile" : ""}`}
+            />
+          </div>
           <div className="articleContent">
-            <h3 className="articleTitle">{articleDetail.title}</h3>
-            <div className="articleMeta">
+            <h3 className={`articleTitle ${isMobile ? "mobile" : ""}`}>{articleDetail.title}</h3>
+            <div className={`articleMeta ${isMobile ? "mobile" : ""}`}>
               <span className="siteName">{articleDetail.site.name}</span>
               <span className="score">Score: {articleDetail.contextualScore}</span>
             </div>
           </div>
         </div>
 
-        {/* Show search entities on the right */}
-        <div
-          className={`entityContainer ${showEntities && searchEntityDetails.count > 0 ? "show" : ""}`}
+        {isMobile ? null : <div className="contentSpacer" />}
+
+        {/* Entity container below the articleContainer */}
+        <div 
+          className={`entityContainer ${
+            showEntities && searchEntityDetails.count > 0 ? "show" : ""
+          } ${isMobile ? "mobile" : ""}`}
         >
           {showEntities &&
             searchEntityDetails.count > 0 &&

@@ -27,7 +27,7 @@ const ArticleTop = ({ size, toggle, isMobile }) => {
     <div className={`articleTopContainer ${isMobile ? "mobile" : ""}`}>
       <div className={`articlesWrapper ${isMobile ? "mobile" : ""}`}>
         {articles.map((article, index) => (
-          <ArticleTopElement key={article.id || index} article={article} />
+          <ArticleTopElement key={article.id || index} article={article} isMobile={isMobile} />
         ))}
       </div>
     </div>
