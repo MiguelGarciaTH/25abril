@@ -84,6 +84,13 @@ const Entities = () => {
         setSearchTimer(timer);
     };
 
+    const clearSearch = () => {
+        setSearchQuery("");
+        setEntities([]);
+        setPage(0);
+        setLastFetchedQuery(""); // Reset the last fetched query
+    };
+
     if (loading && page === 0) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
@@ -94,6 +101,7 @@ const Entities = () => {
                 className="search-form"
                 value={searchQuery}
                 onChange={handleSearchChange}
+                clearSearch={clearSearch} // Pass clearSearch as a prop
             />
             <div className="polaroid-container">
                 {entities.map((entity) => (

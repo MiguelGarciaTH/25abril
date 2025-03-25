@@ -13,15 +13,37 @@
     gap: 8px;
 }
 
-.search-input {
+.input-wrapper {
+    position: relative;
     width: 300px;
+}
+
+.search-input {
+    width: 100%;
     padding: 8px 12px;
+    padding-right: 30px; /* Add space for the clear button */
     font-size: 1em;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
 }
 
+.clear-button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #888;
+    padding: 0;
+}
+
+.clear-button:hover {
+    color: #000;
+}
 
 @media (max-width: 600px) {
     .search-container {
@@ -36,11 +58,11 @@
         flex-direction: column;
     }
 
-    .search-input {
+    .input-wrapper {
         width: 100%;
     }
 
-    .search-button {
+    .search-input {
         width: 100%;
     }
 }

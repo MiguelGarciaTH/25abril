@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import "../styles/EntitySearchForm.css";
 
-const EntitySearchForm = ({ value, onChange }) => {
+const EntitySearchForm = ({ value, onChange, clearSearch }) => {
     const inputRef = useRef(null);
 
     const handleKeyDown = (e) => {
@@ -16,18 +16,40 @@ const EntitySearchForm = ({ value, onChange }) => {
         }
     };
 
+    const handleClear = () => {
+        if (inputRef.current) {
+            inputRef.current.value = ""; // Clear the input field
+            onChange({ target: { value: "" } }); // Trigger the onChange handler with an empty value
+        }
+        if (clearSearch) {
+            clearSearch(); // Call the clearSearch function if provided
+        }
+    };
+
     return (
         <div className="search-container">
             <div className="search-bar">
-                <input
-                    ref={inputRef}
-                    type="search"
-                    value={value}
-                    onChange={onChange}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Procurar..."
-                    className="search-input"
-                />
+                <div className="input-wrapper">
+                    <input
+                        ref={inputRef}
+                        type="search"
+                        value={value}
+                        onChange={onChange}
+                        onKeyDown={handleKeyDown}
+                        placeholder="Procurar..."
+                        className="search-input"
+                    />
+                    {value && (
+                        <button
+                            type="button"
+                            className="clear-button"
+                            onClick={handleClear}
+                            aria-label="Clear search"
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -35,7 +57,8 @@ const EntitySearchForm = ({ value, onChange }) => {
 
 EntitySearchForm.propTypes = {
     value: PropTypes.string.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    clearSearch: PropTypes.func, // Add clearSearch as an optional prop
 };
 
 export default EntitySearchForm;
