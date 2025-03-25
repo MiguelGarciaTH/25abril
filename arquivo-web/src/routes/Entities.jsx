@@ -19,7 +19,7 @@ const Entities = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=10?&search_term=${query}`);
+            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=10&search_term=${query}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -84,24 +84,16 @@ const Entities = () => {
         setSearchTimer(timer);
     };
 
-    // Handle search input focus and keydown events
-    const handleSearchInput = (e) => {
-        // Prevent the browser find-in-page functionality for "Ctrl+F" and "Cmd+F"
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-            e.preventDefault(); // Prevent the default find action
-        }
-    };
-
     if (loading && page === 0) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
         <div>
             <Header isHome={false} />
-            <EntitySearchForm  className="search-form"
+            <EntitySearchForm
+                className="search-form"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                onKeyDown={handleSearchInput} // Prevent the find-in-page when typing
             />
             <div className="polaroid-container">
                 {entities.map((entity) => (

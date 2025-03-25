@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import "../styles/EntitySearchForm.css";
 
 const EntitySearchForm = ({ value, onChange }) => {
+    const inputRef = useRef(null);
+
     const handleKeyDown = (e) => {
-        // Prevent browser's find dialog when pressing Ctrl/Cmd + F
-        if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        // Prevent browser's find dialog only when pressing Ctrl/Cmd + F
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
             e.preventDefault();
+            // Ensure the input retains focus
+            if (inputRef.current) {
+                inputRef.current.focus();
+            }
         }
     };
 
@@ -14,6 +20,7 @@ const EntitySearchForm = ({ value, onChange }) => {
         <div className="search-container">
             <div className="search-bar">
                 <input
+                    ref={inputRef}
                     type="search"
                     value={value}
                     onChange={onChange}
