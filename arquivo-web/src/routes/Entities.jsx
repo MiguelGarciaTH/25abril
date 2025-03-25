@@ -13,8 +13,11 @@ const Entities = () => {
     const [page, setPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchTimer, setSearchTimer] = useState(null);
+    const [hasMoreData, setHasMoreData] = useState(true); // Track if more data is available
 
     const fetchData = useCallback(async (pageNumber, query = "") => {
+        if (!hasMoreData) return; // Stop fetching if no more data is available
+
         setLoading(true);
         setError(null);
 
@@ -32,12 +35,17 @@ const Entities = () => {
                 }
                 return [...prevEntities, ...entityData];
             });
+
+            // Update hasMoreData based on whether new data was returned
+            if (entityData.length === 0) {
+                setHasMoreData(false);
+            }
         } catch (error) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [hasMoreData]);
 
     useEffect(() => {
         fetchData(page, searchQuery);
@@ -46,7 +54,7 @@ const Entities = () => {
     useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting && !loading) {
+                if (entries[0].isIntersecting && !loading && hasMoreData) {
                     setPage((prevPage) => prevPage + 1);
                 }
             },
@@ -65,7 +73,7 @@ const Entities = () => {
                 observer.unobserve(sentinel);
             }
         };
-    }, [loading]);
+    }, [loading, hasMoreData]);
 
     const handleSearchChange = (e) => {
         const newQuery = e.target.value;
@@ -78,6 +86,7 @@ const Entities = () => {
         const timer = setTimeout(() => {
             setEntities([]);
             setPage(0);
+            setHasMoreData(true); // Reset hasMoreData for new search
             fetchData(0, newQuery);
         }, 500);
 
@@ -88,7 +97,7 @@ const Entities = () => {
         setSearchQuery("");
         setEntities([]);
         setPage(0);
-        setLastFetchedQuery(""); // Reset the last fetched query
+        setHasMoreData(true); // Reset hasMoreData for cleared search
     };
 
     if (loading && page === 0) return <div>Loading...</div>;
