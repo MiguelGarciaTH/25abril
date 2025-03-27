@@ -183,7 +183,7 @@ public class ArquivoTextListener {
 
                 // keep retrying : 3x
                 while (summary == null && retry < 3) {
-                    LOG.error("Error parsing json (on retry {}): {} summary: {}", retry, event.articleId(), summary);
+                    LOG.error("Error parsing json (on retry {}): {}", retry, event.articleId());
                     Thread.sleep(500L);
                     summaryResponse = summarize(article.getText());
                     summary = getSummary(summaryResponse);
@@ -192,7 +192,7 @@ public class ArquivoTextListener {
 
                 // give up on summary
                 if (summary == null) {
-                    LOG.error("Give up on parsing json (after retry {}): {} summary: {}", retry, event.articleId(), summary);
+                    LOG.error("Give up on parsing json (after retry {}): {}", retry, event.articleId());
                     integrationLogRepository.save(new IntegrationLog("", LocalDateTime.now(ZoneOffset.UTC), "text", IntegrationLog.Status.TR, summaryResponse, null));
                     ack.acknowledge();
                     retry = 0;

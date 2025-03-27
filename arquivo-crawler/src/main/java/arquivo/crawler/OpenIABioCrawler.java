@@ -84,13 +84,15 @@ public class OpenIABioCrawler {
             try {
                 Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    JSONObject jsonResponse = new JSONObject(responseBody);
-                    LOG.info("Bio fetched successfully for {}", name);
-                    return jsonResponse.getJSONArray("choices")
-                            .getJSONObject(0)
-                            .getJSONObject("message")
-                            .getString("content");
+                    if (response.body() != null) {
+                        final String responseBody = response.body().string();
+                        final JSONObject jsonResponse = new JSONObject(responseBody);
+                        LOG.info("Bio fetched successfully for {}", name);
+                        return jsonResponse.getJSONArray("choices")
+                                .getJSONObject(0)
+                                .getJSONObject("message")
+                                .getString("content");
+                    }
                 } else if (response.code() == 429) {
                     // If 429 is returned, sleep for some time before retrying
                     retryCount++;

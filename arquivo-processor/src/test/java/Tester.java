@@ -84,26 +84,6 @@ public class Tester {
         System.out.println(splitted[2]);
     }
 
-    private List<String> getRelevantSentences(String text, String name, String aliases) {
-        final Pattern pattern;
-        if (aliases == null) {
-            pattern = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + name + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
-        } else {
-            final String[] namesArrays = aliases.split(",");
-            String patternStr = name + "|";
-            for (String n : namesArrays) {
-                patternStr += n + "|";
-            }
-            pattern = Pattern.compile("([A-Z][^.?!]*?)?(?<!\\w)(?i)(" + patternStr + ")(?!\\w)[^.?!]*?[.?!]{1,2}\"?");
-        }
-
-        final Matcher match = pattern.matcher(text);
-        final List<String> sentences = new ArrayList<>();
-        while (match.find()) {
-            sentences.add(match.group(0));
-        }
-        return sentences;
-    }
 
     private String trimUrl(String originalUrl) {
         originalUrl = originalUrl.split("//")[2];
@@ -162,30 +142,15 @@ public class Tester {
     }
 
     @Test
-    void testEntityGraph() {
-        Site s = new Site("name", "url");
-        s = siteRepository.save(s);
-        SearchEntity se = new SearchEntity("name" , "alias", SearchEntity.Type.CAPITAES);
-        se = searchEntityRepository.save(se);
-
-        Article a = new Article("title", "url", "trimmedUrl", LocalDateTime.now(ZoneOffset.UTC), s, "test", 0, null);
-        a.setSearchEntities(List.of(se));
-        a = articleRepository.save(a);
-
-        Article a2 = articleRepository.findByTitleAndSiteId("trimmedUrl", s.getId()).orElse(null);
-        a2.getSearchEntities();
-    }
-
-    @Test
     void cropImage(){
         String imageUrl ="https://arquivo.pt/screenshot?url=https%3A%2F%2Farquivo.pt%2FnoFrame%2Freplay%2F20120121220334%2Fhttp%3A%2F%2Fpublico.pt%2FCultura%2Fmorreu-jose-niza-compositor-de-e-depois-do-adeus-1513320";
-        URL url = null;
+        URL url;
         try {
             url = new URL("https://s-media-cache-ak0.pinimg.com/236x/ac/bb/d4/acbbd49b22b8c556979418f6618a35fd.jpg");
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
-        BufferedImage image = null;
+        BufferedImage image;
         try {
             image = ImageIO.read(url);
         } catch (IOException e) {
