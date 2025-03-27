@@ -1,9 +1,10 @@
 package arquivo.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 public class ArticleSearchEntityAssociation {
@@ -28,7 +29,7 @@ public class ArticleSearchEntityAssociation {
 
     private Double entityScore = 0.0;
 
-    @org.hibernate.annotations.Type(type = "io.hypersistence.utils.hibernate.type.json.JsonBinaryType")
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
     private JsonNode entityScoreDetails;
 

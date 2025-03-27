@@ -1,10 +1,10 @@
 package arquivo.model;
 
-import com.sun.istack.NotNull;
+import jakarta.persistence.*;
+import org.codehaus.commons.nullanalysis.NotNull;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

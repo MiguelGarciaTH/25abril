@@ -64,7 +64,7 @@ public class ArquivoImageListener {
     }
 
     @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
-    public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
+    public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.PARTITION) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
         receivedCounter++;
