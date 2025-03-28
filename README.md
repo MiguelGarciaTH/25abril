@@ -1,5 +1,14 @@
 # Arquivo 25 de Abril
 
+## 📌 Table of Contents
+- [Motivação](#motivação)
+- [Considerações pessoais](#considerações-pessoais)
+- [Agradecimentos](#agradecimentos)
+- [Referências](#referências)
+    - [Livros](#livros)
+    - [Podcasts](#podcasts)
+    - [Documentários](#documentários)
+
 ## Motivação
 
 **O 25 de Abril de 1974 encerrou um período de 48 anos em que Portugal viveu em ditadura (7 anos de Ditadura Militar seguidos de 41 anos de Estado Novo), dando lugar ao regime democrático que prevalece até aos nossos dias.**  
