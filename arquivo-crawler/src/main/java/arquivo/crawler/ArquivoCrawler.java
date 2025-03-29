@@ -1,6 +1,6 @@
 package arquivo.crawler;
 
-import arquivo.model.CrawlerRecord;
+import arquivo.model.records.CrawlerRecord;
 import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
 import arquivo.model.Site;

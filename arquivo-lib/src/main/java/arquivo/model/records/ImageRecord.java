@@ -1,4 +1,4 @@
-package arquivo.model;
+package arquivo.model.records;
 
 public record ImageRecord(int articleId, String imageUrl) {
 }

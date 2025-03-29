@@ -2,9 +2,7 @@ package arquivo.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
@@ -17,13 +15,7 @@ import java.util.List;
 public class Article {
 
     @Id
-    @GenericGenerator(
-            name = "sequence-per-table",
-            strategy = "enhanced-sequence",
-            parameters = {
-                    @Parameter(name = "prefer_sequence_per_entity", value = "true")
-            })
-    @GeneratedValue(generator = "sequence-per-table")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private LocalDateTime date;

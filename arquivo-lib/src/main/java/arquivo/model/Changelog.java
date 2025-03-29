@@ -2,21 +2,13 @@ package arquivo.model;
 
 import jakarta.persistence.*;
 import org.codehaus.commons.nullanalysis.NotNull;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 
 import java.time.LocalDateTime;
 
 @Entity
 public class Changelog {
     @Id
-    @GenericGenerator(
-            name = "sequence-per-table",
-            strategy = "enhanced-sequence",
-            parameters = {
-                    @Parameter(name = "prefer_sequence_per_entity", value = "true")
-            })
-    @GeneratedValue(generator = "sequence-per-table")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotNull

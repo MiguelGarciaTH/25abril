@@ -1,9 +1,6 @@
 package arquivo.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
@@ -12,13 +9,7 @@ import org.hibernate.annotations.Parameter;
 public class RateLimiter {
 
     @Id
-    @GenericGenerator(
-            name = "sequence-per-table",
-            strategy = "enhanced-sequence",
-            parameters = {
-                    @Parameter(name = "prefer_sequence_per_entity", value = "true")
-            })
-    @GeneratedValue(generator = "sequence-per-table")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(columnDefinition = "text")

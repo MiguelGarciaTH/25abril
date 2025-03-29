@@ -1,6 +1,9 @@
 package arquivo.processor;
 
 import arquivo.model.*;
+import arquivo.model.records.CrawlerRecord;
+import arquivo.model.records.ImageRecord;
+import arquivo.model.records.TextRecord;
 import arquivo.repository.*;
 import arquivo.services.TextScoreService;
 import arquivo.services.MetricService;

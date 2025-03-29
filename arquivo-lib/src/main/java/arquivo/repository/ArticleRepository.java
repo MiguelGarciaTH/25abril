@@ -27,7 +27,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Optional<Article> findById(int id);
 
-    @EntityGraph(attributePaths = {"searchEntitiesAssociations"})
     @Query(value = """
             select a
             from Article a

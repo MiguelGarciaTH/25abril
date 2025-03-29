@@ -7,13 +7,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class ArticleKeyword {
 
     @Id
-    @GenericGenerator(
-            name = "sequence-per-table",
-            strategy = "enhanced-sequence",
-            parameters = {
-                    @org.hibernate.annotations.Parameter(name = "prefer_sequence_per_entity", value = "true")
-            })
-    @GeneratedValue(generator = "sequence-per-table")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)

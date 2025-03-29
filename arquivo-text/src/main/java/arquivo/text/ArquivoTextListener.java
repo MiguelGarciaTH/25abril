@@ -1,6 +1,7 @@
 package arquivo.text;
 
 import arquivo.model.*;
+import arquivo.model.records.TextRecord;
 import arquivo.repository.*;
 import arquivo.services.TextScoreService;
 import arquivo.services.MetricService;
@@ -129,8 +130,32 @@ public class ArquivoTextListener {
         summaryNullCounter = metricService.loadValue("text_total_articles_error_null_summary");
     }
 
-    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "1")
-    public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.PARTITION) int partition) {
+    private String getSummary(String summaryResponse) {
+        final JsonNode responseJson;
+        try {
+            responseJson = objectMapper.readTree(summaryResponse);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+        if (responseJson.has("summary")) {
+            return responseJson.get("summary").asText();
+        } else if (responseJson.has("resumo")) {
+            return responseJson.get("resumo").asText();
+        } else if (responseJson.has("sumario")) {
+            return responseJson.get("sumario").asText();
+        } else if (responseJson.has("Resumo")) {
+            return responseJson.get("Resumo").asText();
+        } else if (responseJson.has("sumário")) {
+            return responseJson.get("sumário").asText();
+        } else if (responseJson.has("summaries")) {
+            return responseJson.get("summaries").get(0).asText();//return first
+        } else {
+            return null;
+        }
+    }
+
+    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
+    public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
         receivedCounter++;
@@ -259,30 +284,6 @@ public class ArquivoTextListener {
         ack.acknowledge();
         logStats();
         storeStats();
-    }
-
-    private String getSummary(String summaryResponse) {
-        final JsonNode responseJson;
-        try {
-            responseJson = objectMapper.readTree(summaryResponse);
-        } catch (JsonProcessingException e) {
-            return null;
-        }
-        if (responseJson.has("summary")) {
-            return responseJson.get("summary").asText();
-        } else if (responseJson.has("resumo")) {
-            return responseJson.get("resumo").asText();
-        } else if (responseJson.has("sumario")) {
-            return responseJson.get("sumario").asText();
-        } else if (responseJson.has("Resumo")) {
-            return responseJson.get("Resumo").asText();
-        } else if (responseJson.has("sumário")) {
-            return responseJson.get("sumário").asText();
-        } else if (responseJson.has("summaries")) {
-            return responseJson.get("summaries").get(0).asText();//return first
-        } else {
-            return null;
-        }
     }
 
     private void logStats() {
