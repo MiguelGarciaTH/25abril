@@ -4,6 +4,7 @@
 - [Motivação](#motivação)
 - [Considerações pessoais](#considerações-pessoais)
 - [Agradecimentos](#agradecimentos)
+- [Arquitectura](#arquitectura)
 - [Referências](#referências)
     - [Livros](#livros)
     - [Podcasts](#podcasts)
@@ -43,6 +44,9 @@ No entanto, queria sugerir a visita ao site do Museu do Aljube onde podem encont
 ## Agradecimentos
 
 Quero agradecer ao historiador **Jorge Martins** e ao meu mestre **José Oliveira**, duas pessoas que viveram o 25 de Abril durante a juventude e dispensaram o seu tempo para sugerir nomes e melhorias.
+
+## Arquitectura 
+![25 de Abril](./arquivo-web/public/arquitectura.png)
 
 ## Referências
 
