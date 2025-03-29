@@ -154,7 +154,7 @@ public class ArquivoTextListener {
         }
     }
 
-    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
+    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "2")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
