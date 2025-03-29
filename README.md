@@ -1,4 +1,4 @@
-# Arquivo 25 de Abril
+# ![25 de Abril](./arquivo-web/public/favicon-32x32.png)Arquivo 25 de Abril
 
 ## 📌 Table of Contents
 - [Motivação](#motivação)
