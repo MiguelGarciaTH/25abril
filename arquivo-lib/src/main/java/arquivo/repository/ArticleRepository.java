@@ -55,17 +55,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             select a
             from Article a
             where a.summary is not null
+            and a.summaryScore > 0
+            order by a.summaryScore desc
             """)
     Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
-
-    @EntityGraph(attributePaths = {"site"})
-    @Query(value = """
-            select a
-            from Article a
-            where a.summary is not null
-            and a.site.id = ?1
-            """)
-    Page<Article> findBySearchSiteId(int entityId, Pageable pageable);
 
     @Query(nativeQuery = true, value = """
             SELECT a.*

@@ -43,7 +43,7 @@ public class ArticleController {
 
     @GetMapping("/site/{siteId}")
     public Page<ArticleDTO> getArticlesBySiteId(@PathVariable int siteId, Pageable pageable) {
-        final Page<Article> articlePages = articleRepository.findBySearchSiteId(siteId, pageable);
+        final Page<Article> articlePages = articleRepository.findBySearchEntityId(siteId, pageable);
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
     }
 
