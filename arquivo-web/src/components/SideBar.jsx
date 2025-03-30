@@ -6,6 +6,7 @@ import { AiOutlineBarChart } from "react-icons/ai";
 import { AiFillFileText } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
 import { AiOutlineDeploymentUnit } from "react-icons/ai";
+import { SiMaterialdesignicons } from "react-icons/si";
 import "../styles/SideBar.css";
 
 const Sidebar = () => {
@@ -45,6 +46,10 @@ const Sidebar = () => {
                         <Link to="/about" className="icon-link">
                             <AiFillFileText className="sidebar-icon" />
                             <span className="link-text">Sobre</span>
+                        </Link>
+                        <Link to="/architecture" className="icon-link">
+                            <SiMaterialdesignicons className="sidebar-icon" />
+                            <span className="link-text">Arquitectura</span>
                         </Link>
                         <Link to="https://github.com/MiguelGarciaTH/25abril" className="icon-link">
                             <AiOutlineGithub className="sidebar-icon" />

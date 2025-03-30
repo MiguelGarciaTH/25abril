@@ -8,6 +8,7 @@ import Entities from './routes/Entities';
 import Articles from './routes/Articles';
 import Stats from './routes/Stats';
 import Data from './routes/Data';
+import Architecture from './routes/Architecture';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/about" element={<About />} />
+          <Route path="/architecture" element={<Architecture />} />
           <Route path="/home" element={<Home />} />
           <Route path="/stats" element={<Stats />} />
           <Route path="/data" element={<Data />} />
