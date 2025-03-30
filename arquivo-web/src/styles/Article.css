@@ -185,6 +185,7 @@
 
 .article-preview-popup {
     max-width: 600px;
+    min-width: 500px;
 }
 
 .article-summary {

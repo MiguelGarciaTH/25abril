@@ -17,7 +17,7 @@ function ArticlePreview({ item }) {
                     <Link className="headline hl3" to={item.articleDetail.url}>{item.articleDetail.title}</Link>
                     {isHovered && (
                         <div className="article-preview">
-                            <img src={`${item.articleDetail.imagePath}`} alt={item.articleDetail.title} className="article-preview-popup" />
+                            <img src={`/${item.articleDetail.imagePath}`} alt={item.articleDetail.title} className="article-preview-popup" />
                         </div>
                     )}
                 </span>
