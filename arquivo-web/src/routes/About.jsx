@@ -56,6 +56,9 @@ const About = () => {
 
 
                 <h2>Referências</h2>
+
+                Tenho um outro projecto, dentro deste tema, onde reúno referências de livros, podcasts, documentários e filmes sobre o 25 de Abril: <Link to="https://referencias25abril.wordpress.com/">Referências 25 de Abril</Link> (<Link to="https://www.instagram.com/referencias.25deabril/">Instagram</Link>)
+
                 <h3>Livros</h3>
                 <ul>
                     <li>25 de Abril: Documento (2ª Edição, revista e aumentada). Afonso Praça, Albertino Antunes, António Amori, Cesário Borga, Fernando Cascais</li>
