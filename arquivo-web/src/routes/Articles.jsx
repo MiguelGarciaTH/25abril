@@ -16,15 +16,16 @@ const Articles = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/articles/${path}/${id}?page=${pageNumber}`);
+            const url = `${import.meta.env.VITE_REST_URL}/articles/${path}/${id}?page=${pageNumber}`;
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
             const articlesData = data.content || [];
-            
 
-            setResults(prevArticles => 
+
+            setResults(prevArticles =>
                 pageNumber === 1 ? articlesData : [...prevArticles, ...articlesData]
             );
         } catch (error) {
@@ -65,22 +66,22 @@ const Articles = () => {
             <Header isHome={false} />
             <div className="news-paper-head">
                 <div className="headerobjectswrapper">
-                    <br/><br/>
+                    <br /><br />
                     <header className="news-paper-header">{name}</header>
                 </div>
-                <div className="subhead"></div>
+                <div className="subhead"> </div>
                 <div className="content">
                     <div className="collumns">
                         {articles.map((article) => (
-                            <ArticlePreview 
-                                key={article.articleDetail.id} 
-                                item={article} 
+                            <ArticlePreview
+                                key={article.articleDetail.id}
+                                item={article}
                             />
                         ))}
                     </div>
                 </div>
             </div>
-            {loading && page > 1 && <div>Loading more...</div>}
+            {loading && page > 1 && <div>Loading more...</div>} {/* Optional: show loader for subsequent pages */}
         </div>
     );
 };

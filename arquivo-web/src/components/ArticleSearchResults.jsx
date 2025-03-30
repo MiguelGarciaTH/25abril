@@ -69,14 +69,17 @@ const ArticleSearchResults = () => {
             <Header isHome={false} />
             <div className="news-paper-head">
                 <div className="headerobjectswrapper">
-                    <br/><br/>
+                    <br /><br />
                     <header className="news-paper-header">{query}</header>
                 </div>
                 <div className="subhead"> </div>
                 <div className="content">
                     <div className="collumns">
-                        {articles.map((post) => (
-                            <ArticlePreview key={post.articleDetail.id} item={post} />
+                        {articles.map((article) => (
+                            <ArticlePreview
+                                key={article.articleDetail.id}
+                                item={article}
+                            />
                         ))}
                     </div>
                 </div>

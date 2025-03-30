@@ -299,25 +299,6 @@
   transition: transform 0.2s ease-in-out;
 }
 
-.sliderContainer input[type="range"]::-ms-thumb {
-  width: 80px;
-  /* Adjusted size for the image */
-  height: 80px;
-  /* Adjusted size for the image */
-  background: url("./android-chrome-512x512.png") no-repeat center center;
-  /* Use the image */
-  background-size: cover;
-  /* Ensure the image covers the thumb */
-  border: none;
-  /* Remove border */
-  border-radius: 50%;
-  /* Keep it circular */
-  cursor: pointer;
-  transform: rotate(30deg) !important;
-  /* Ensure rotation is applied */
-  transition: transform 0.2s ease-in-out;
-}
-
 .articlesWrapper {
   display: flex;
   flex-direction: column;
@@ -560,13 +541,6 @@
   }
 
   .sliderContainer input[type="range"]::-moz-range-thumb {
-    width: 40px;
-    /* Adjusted size for the image */
-    height: 40px;
-    /* Adjusted size for the image */
-  }
-
-  .sliderContainer input[type="range"]::ms-thumb {
     width: 40px;
     /* Adjusted size for the image */
     height: 40px;

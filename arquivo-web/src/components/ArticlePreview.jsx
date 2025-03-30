@@ -6,24 +6,24 @@ function ArticlePreview({ item }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-        <div class="collumn">
+        <div className="collumn">
             <div
                 className="head"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 style={{ position: 'relative' }}
             >
-                <span class="headline hl3">
-                    <Link class="headline hl3" to={item.articleDetail.url}>{item.articleDetail.title}</Link>
+                <span className="headline hl3">
+                    <Link className="headline hl3" to={item.articleDetail.url}>{item.articleDetail.title}</Link>
                     {isHovered && (
-                        <div class="article-preview">
-                            <img src={`${item.articleDetail.imagePath}`} alt={item.articleDetail.title} class="article-preview-popup" />
+                        <div className="article-preview">
+                            <img src={`${item.articleDetail.imagePath}`} alt={item.articleDetail.title} className="article-preview-popup" />
                         </div>
                     )}
                 </span>
                 <p>
-                    <span class="headline hl4">{item.articleDetail.site.name}</span>
-                    <span class="score">Relevância: {item.articleDetail.summaryScore}</span>
+                    <span className="headline hl4">{item.articleDetail.site.name}</span>
+                    <span className="score">Relevância: {item.articleDetail.summaryScore}</span>
                 </p>
             </div>
             <p className="article-summary">
