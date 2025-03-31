@@ -2,6 +2,7 @@ package arquivo.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -55,12 +56,13 @@ public class Article {
     @Column(columnDefinition = "jsonb")
     private JsonNode summaryScoreDetails;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "article_search_entity_association",
             joinColumns = {@JoinColumn(name = "article_id")},
             inverseJoinColumns = {@JoinColumn(name = "search_entity_id")}
     )
+    @BatchSize(size = 50)  // ✅ Hibernate will fetch 10 at a time
     private List<SearchEntity> searchEntities;
 
     public Article() {
