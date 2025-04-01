@@ -9,6 +9,7 @@ import Articles from './routes/Articles';
 import Stats from './routes/Stats';
 import Data from './routes/Data';
 import Architecture from './routes/Architecture';
+import Error404 from './routes/Error404';
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/entities" element={<Entities />} />
           <Route path="/search-results" element={<ArticleSearchResults />} />
           <Route path="/articles/:id/:name/:path/*" element={<Articles />}/>
+          <Route path="*" element={<Error404 />} />
         </Routes>
       </div>
     </Router>
