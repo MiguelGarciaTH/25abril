@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ArticleTopElement from "./ArticleTopElement";
+import EmptyResults from "./EmptyResults";
 import "../styles/ArticleTop.css";
 
 const ArticleTop = ({ size, toggle, isMobile }) => {
@@ -26,9 +27,13 @@ const ArticleTop = ({ size, toggle, isMobile }) => {
   return (
     <div className={`articleTopContainer ${isMobile ? "mobile" : ""}`}>
       <div className={`articlesWrapper ${isMobile ? "mobile" : ""}`}>
-        {articles.map((article, index) => (
-          <ArticleTopElement key={article.id || index} article={article} isMobile={isMobile} />
-        ))}
+        {articles.length > 0 ? (
+          articles.map((article, index) => (
+            <ArticleTopElement key={article.id || index} article={article} isMobile={isMobile} />
+          ))
+        ) : (
+          <EmptyResults />
+        )}
       </div>
     </div>
   );

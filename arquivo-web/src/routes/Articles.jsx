@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from "../components/Header";
 import { useParams } from 'react-router-dom';
 import ArticlePreview from "../components/ArticlePreview";
+import EmptyResults from "../components/EmptyResults";
 import "../index.css";
 
 const Articles = () => {
@@ -71,17 +72,21 @@ const Articles = () => {
                 </div>
                 <div className="subhead"> </div>
                 <div className="content">
-                    <div className="collumns">
-                        {articles.map((article) => (
-                            <ArticlePreview
-                                key={article.articleDetail.id}
-                                item={article}
-                            />
-                        ))}
-                    </div>
+                    {articles.length === 0 ? (
+                        <EmptyResults />
+                    ) : (
+                        <div className="collumns">
+                            {articles.map((article) => (
+                                <ArticlePreview
+                                    key={article.articleDetail.id}
+                                    item={article}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
-            {loading && page > 1 && <div>Loading more...</div>} {/* Optional: show loader for subsequent pages */}
+            {loading && page > 1 && <div>Loading more...</div>}
         </div>
     );
 };

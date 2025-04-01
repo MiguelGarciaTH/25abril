@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from "../components/Header";
 import Entity from '../components/Entity';
 import EntitySearchForm from '../components/EntitySearchForm';
+import EmptyResults from '../components/EmptyResults';
 
 import "../index.css";
 import "../styles/ArticleSearchForm.css";
@@ -24,6 +25,7 @@ const Entities = () => {
         try {
             const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=10&search_term=${query}`);
             if (!response.ok) {
+                <EmptyResults />
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
@@ -101,7 +103,8 @@ const Entities = () => {
     };
 
     if (loading && page === 0) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    if (error) return <div>Error: {error}                 <EmptyResults />
+    </div>;
 
     return (
         <div>
@@ -110,19 +113,23 @@ const Entities = () => {
                 className="search-form"
                 value={searchQuery}
                 onChange={handleSearchChange}
-                clearSearch={clearSearch} // Pass clearSearch as a prop
+                clearSearch={clearSearch}
             />
-            <div className="polaroid-container">
-                {entities.map((entity) => (
-                    <Entity
-                        key={entity.id}
-                        entityId={entity.id}
-                        entityName={entity.name}
-                        entityBio={entity.biography}
-                        entityImage={entity.imageUrl}
-                    />
-                ))}
-            </div>
+            {!loading && entities.length === 0 ? (
+                <EmptyResults />
+            ) : (
+                <div className="polaroid-container">
+                    {entities.map((entity) => (
+                        <Entity
+                            key={entity.id}
+                            entityId={entity.id}
+                            entityName={entity.name}
+                            entityBio={entity.biography}
+                            entityImage={entity.imageUrl}
+                        />
+                    ))}
+                </div>
+            )}
             <div id="sentinel" style={{ height: '1px', background: 'transparent' }} />
             {loading && page > 0 && <div>Loading more...</div>}
         </div>

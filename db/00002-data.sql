@@ -1,9 +1,9 @@
---insert into quote(author, "text") values
---    ('Francisco Sousa Tavares', 'Povo português, vivemos um momento histórico, como talvez desde 1640 não se vive. É a libertação da Pátria. Fomos libertados'),
---    ('Jorge Sampaio', '25 de Abril sempre'),
---    ('Manuel Alegre', 'Foram dias foram anos a esperar por um só dia.<br/>Alegrias. Desenganos.<br/>Foi o tempo que doía com seus riscos e seus danos.<br/>Foi a noite e foi o dia na esperança de um só dia.'),
---    ('Sophia De Mello Breyner','Esta é a madrugada que eu esperava<br/>O dia inicial inteiro e limpo<br/>Onde emergimos da noite e do silêncio<br/>E livres habitamos a substância do tempo.<br/>'),
---    ('Salgueiro Maia','Meus senhores, como todos sabem, há diversas modalidades de Estado. Os estados socialistas, os estados capitalistas e o estado a que chegámos. Ora, nesta noite solene, vamos acabar com o estado a que chegámos');
+insert into quote(author, "text") values
+    ('Francisco Sousa Tavares', 'Povo português, vivemos um momento histórico, como talvez desde 1640 não se vive. É a libertação da Pátria. Fomos libertados'),
+    ('Jorge Sampaio', '25 de Abril sempre'),
+    ('Manuel Alegre', 'Foram dias foram anos a esperar por um só dia.<br/>Alegrias. Desenganos.<br/>Foi o tempo que doía com seus riscos e seus danos.<br/>Foi a noite e foi o dia na esperança de um só dia.'),
+    ('Sophia De Mello Breyner','Esta é a madrugada que eu esperava<br/>O dia inicial inteiro e limpo<br/>Onde emergimos da noite e do silêncio<br/>E livres habitamos a substância do tempo.<br/>'),
+    ('Salgueiro Maia','Meus senhores, como todos sabem, há diversas modalidades de Estado. Os estados socialistas, os estados capitalistas e o estado a que chegámos. Ora, nesta noite solene, vamos acabar com o estado a que chegámos');
 
 insert into rate_limiter(description, counter, counter_limit, sleep_time, locked) values
     ('arquivo.pt', 0, 245, 60000, false),
