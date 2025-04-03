@@ -189,7 +189,7 @@ public class ArquivoCrawler {
         final List<UrlRecord> urls = new ArrayList<>();
         final LocalDateTime startDate = LocalDateTime.parse("19960101000000", arquivoFormatter);
         final LocalDateTime endDate = LocalDateTime.now(ZoneOffset.UTC);
-        final String baseUrl = "https://arquivo.pt/textsearch?q=\"%s\"&prettyPrint=false&siteSearch=%s&from=%s&to=%s&maxItems=500&type=html&dedupValue=1&dedupField=title";
+        final String baseUrl = "https://arquivo.pt/textsearch?q=\"%s\"&prettyPrint=false&siteSearch=%s&from=%s&to=%s&maxItems=500&type=html&dedupValue=1&dedupField=title&fields=title,linkToArchive,linkToExtractedText,linkToScreenshot";
         String url = String.format(baseUrl, entity.getName(), site.getUrl(), startDate.format(arquivoFormatter), endDate.format(arquivoFormatter));
         urls.add(new UrlRecord(entity, entity.getName(), site, startDate, endDate, url));
         if (entity.getAliases() != null) {
