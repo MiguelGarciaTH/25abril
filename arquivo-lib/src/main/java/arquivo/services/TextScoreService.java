@@ -86,17 +86,17 @@ public class TextScoreService {
             // the article is not about the search entity
             return new Score(0, keywordTextCounter);
         }
-        score += countNamesKeywords;
+        score += countNamesKeywords*100;
 
         final Matcher urlMatcher = pattern.matcher(url);
         final long countNamesUrl = urlMatcher.results().count();
         keywordTextCounter.put("countNamesUrl", countNamesUrl);
-        score *= Math.max(1, countNamesUrl * 10);
+        score *= Math.max(1, countNamesUrl * 20);
 
         final Matcher titleMatcher = pattern.matcher(title);
         final long countNamesTitle = titleMatcher.results().count();
         keywordTextCounter.put("countNamesTitle", countNamesTitle);
-        score *= Math.max(1, countNamesTitle * 10);
+        score *= Math.max(1, countNamesTitle * 20);
         if (textScaling) {
             return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue() / text.length(), keywordTextCounter);
         }
@@ -116,7 +116,7 @@ public class TextScoreService {
             return new Score(0, keywordTextCounter);
         }
 
-        return new Score(BigDecimal.valueOf(countNamesKeywords).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
+        return new Score(BigDecimal.valueOf(countNamesKeywords*100).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
     }
 
     private Pattern getNamePattern(SearchEntity searchEntity) {
