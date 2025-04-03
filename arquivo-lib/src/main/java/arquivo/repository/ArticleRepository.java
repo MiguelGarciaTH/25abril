@@ -11,15 +11,6 @@ import java.util.Optional;
 
 public interface ArticleRepository extends JpaRepository<Article, Integer> {
 
-    @EntityGraph(attributePaths = {"searchEntityAssociations", "site"})
-    @Query(value = """
-            select a
-            from Article a
-            where a.id = ?1
-            and a.summary is not null
-            """)
-    Optional<Article> findByIdWithSummary(int id);
-
     @Query(value = """
             select a
             from Article a
@@ -50,13 +41,15 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
 
-    @EntityGraph(attributePaths = {"site"})
     @Query(value = """
             select a
             from Article a
-            where a.summary is not null
-            and a.summaryScore > 0
-            order by a.summaryScore desc
+            join ArticleSearchEntityAssociation assoc on assoc.article.id = a.id
+            join Site s on s.id = a.site.id
+            where assoc.searchEntity.id = ?1
+            and a.summary is not null
+            and assoc.entityScore > 0.0
+            ORDER BY assoc.entityScore desc
             """)
     Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
 
@@ -79,10 +72,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"site"})
     @Query("""
             select a
             from Article a
+            join Site s on s.id = a.site.id
             where a.contextualScore > 0
             order by a.contextualScore desc
             """)

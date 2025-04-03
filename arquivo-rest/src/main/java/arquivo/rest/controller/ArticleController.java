@@ -24,17 +24,6 @@ public class ArticleController {
         this.articleRepository = articleRepository;
     }
 
-    @GetMapping("/{articleId}")
-    public ArticleDTO getArticle(@PathVariable int articleId) {
-        final Article article = articleRepository.findByIdWithSummary(articleId).orElse(null);
-        if (article != null) {
-            final ArticleDetail articleDetail = new ArticleDetail(article);
-            final SearchEntityDetails searchEntityDetails = new SearchEntityDetails(article.getSearchEntities().size(), null);
-            return new ArticleDTO(articleDetail, searchEntityDetails);
-        }
-        return null;
-    }
-
     @GetMapping("/entity/{entityId}")
     public Page<ArticleDTO> getArticlesByEntityId(@PathVariable int entityId, Pageable pageable) {
         final Page<Article> articlePages = articleRepository.findBySearchEntityId(entityId, pageable);
