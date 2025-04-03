@@ -61,6 +61,8 @@ public class ArquivoRecordListener {
     private long totalTextEventSentCounter;
     private long totalImageEventSentCounter;
     private long discardedCounter;
+    private long errorCounter;
+
 
     private final HashMap<Integer, Site> siteCache = new HashMap<>();
     private final HashMap<Integer, SearchEntity> entityCache = new HashMap<>();
@@ -93,6 +95,7 @@ public class ArquivoRecordListener {
         duplicatesCounter = metricService.loadValue("processor_total_articles_duplicated");
         emptyTextCounter = metricService.loadValue("processor_total_articles_empty_text");
         discardedCounter = metricService.loadValue("processor_total_articles_score_discarded");
+        errorCounter = metricService.loadValue("processor_total_articles_error");
     }
 
     @KafkaListener(topics = {"${processor.topic}"}, containerFactory = "kafkaListenerContainerFactory")
@@ -107,6 +110,7 @@ public class ArquivoRecordListener {
         } catch (JsonProcessingException e) {
             LOG.error("Error parsing json record: {}", record.value());
             ack.acknowledge();
+            errorCounter++;
             return;
         }
 
@@ -182,6 +186,7 @@ public class ArquivoRecordListener {
                 return get(urlInput);
             } catch (IOException ex) {
                 LOG.error("Error fetching text", ex.getCause());
+                errorCounter++;
             }
         }
         return null;
@@ -204,11 +209,12 @@ public class ArquivoRecordListener {
             LOG.debug("Sent to topic {} and partition {} value={}", textSummaryTopic, roundRobinIndex, textRecord);
             totalTextEventSentCounter++;
             roundRobinIndex++;
-            if (roundRobinIndex == 6) {
+            if (roundRobinIndex == 5) {
                 roundRobinIndex = 0;
             }
         } catch (JsonProcessingException e) {
             LOG.warn("Error processing article {} for summary processing", textRecord.articleId());
+            errorCounter++;
         }
     }
 
@@ -220,11 +226,12 @@ public class ArquivoRecordListener {
             LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
             totalImageEventSentCounter++;
             roundRobinIndex2++;
-            if (roundRobinIndex2 == 10) {
+            if (roundRobinIndex2 == 5) {
                 roundRobinIndex2 = 0;
             }
         } catch (JsonProcessingException e) {
             LOG.warn("Error processing article {} for summary processing", imageRecord.articleId());
+            errorCounter++;
         }
     }
 
@@ -240,6 +247,9 @@ public class ArquivoRecordListener {
         LOG.info("Articles sent to summary: {}/{}", totalTextEventSentCounter, receivedCounter);
         LOG.info("Articles sent to image: {}/{}", totalImageEventSentCounter, receivedCounter);
 
+        if(errorCounter > 0){
+            LOG.info("Articles error discarded: {}/{}", errorCounter, receivedCounter);
+        }
         if (duplicatesCounter > 0) {
             LOG.warn("Articles repeated warn: {}/{}", duplicatesCounter, receivedCounter);
         }
@@ -253,6 +263,7 @@ public class ArquivoRecordListener {
 
     private void storeStats() {
         metricService.setValue("processor_total_articles_received", receivedCounter);
+        metricService.setValue("processor_total_articles_error", errorCounter);
         metricService.setValue("processor_total_articles_created", newCounter);
         metricService.setValue("processor_total_articles_reused", reusedCounter);
         metricService.setValue("processor_total_articles_sent_to_text", totalTextEventSentCounter);

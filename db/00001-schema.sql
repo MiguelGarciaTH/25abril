@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS article (
     summary_vector tsvector GENERATED ALWAYS AS (to_tsvector('portuguese', COALESCE("summary"))) STORED,
 
     CONSTRAINT article_pk PRIMARY KEY (id),
-    CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id)
+    CONSTRAINT article_fk_site_id FOREIGN KEY (site_id) REFERENCES site(id),
+    CONSTRAINT article_uq_constraint UNIQUE(title, site_id)
 );
 CREATE INDEX title_idx ON article USING GIN (title_vector);
 CREATE INDEX summary_idx ON article USING GIN (summary_vector);

@@ -22,7 +22,7 @@ public class MetricService {
 
     @Transactional
     public void setValue(String key, long value) {
-        Metric metric = metricRepository.findByKey(key);
+        final Metric metric = metricRepository.findByKey(key);
         if (metric == null) {
             metricRepository.save(new Metric(key, value));
         } else {
