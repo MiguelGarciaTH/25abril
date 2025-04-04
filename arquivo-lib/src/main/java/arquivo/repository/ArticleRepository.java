@@ -53,6 +53,16 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
 
+    @Query(value = """
+            select a
+            from Article a
+            join Site s on s.id = a.site.id and s.id = ?1
+            and a.summary is not null
+            and a.summaryScore > 0.0
+            ORDER BY a.summaryScore desc
+            """)
+    Page<Article> findBySiteId(int siteId, Pageable pageable);
+
     @Query(nativeQuery = true, value = """
             SELECT a.*
             FROM article a
@@ -76,8 +86,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             select a
             from Article a
             join Site s on s.id = a.site.id
-            where a.contextualScore > 0
-            order by a.contextualScore desc
+            where a.summaryScore > 0
+            order by a.summaryScore desc
             """)
     Page<Article> getArticleCountsByRelevance(Pageable pageable);
 
@@ -85,9 +95,9 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
                 select a.*
                 from article a
                 left join article_search_entity_association asea on a.id = asea.article_id
-                where a.contextual_score > 0
+                where a.summary_score > 0
                 group by a.id
-                order by count(asea.search_entity_id) desc, a.contextual_score desc
+                order by count(asea.search_entity_id) desc, a.summary_score desc
             """)
     Page<Article> getArticleCountsByEntities(Pageable pageable);
 }
