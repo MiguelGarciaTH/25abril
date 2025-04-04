@@ -54,7 +54,7 @@ public class OpenIABioCrawler {
         // Create JSON payload for a chat-based request
         JSONObject json = new JSONObject();
         json.put("model", "gpt-3.5-turbo"); // Free-tier GPT-3.5 model
-        json.put("max_tokens", 100);
+        json.put("max_tokens", 200);
         json.put("temperature", 0.7); // Optional: Adjust temperature for randomness in output
 
         // Messages for the chat-based model
@@ -63,8 +63,7 @@ public class OpenIABioCrawler {
                 .put("role", "user")
                 .put("content", "Write a short biography of " + name + ". Write the text in Portuguese from Portugal " +
                         "(PT-pt) and don't forget that " + name + " was some how related with '25 de Abril' or 'Estado Novo', " +
-                        "therefore, if the bio does not refer these events, probably your are fetching the wrong name. " +
-                        "Bio text suggestions: Start with the name, then the birth and death year between (), keep the bio between 100 and 150 words, but ensure the last sentence is complete, don't crop the text to fit!"));
+                        "Suggestions: Start with the name; then the year of birth and death in (); use between 50 and 100 words but ensure you don't crop the text to fit!"));
         json.put("messages", messages);
 
         // Create RequestBody with the JSON content
