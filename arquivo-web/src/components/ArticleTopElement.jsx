@@ -37,7 +37,7 @@ const ArticleTopElement = ({ article, isMobile }) => {
             <h3 className={`articleTitle ${isMobile ? "mobile" : ""}`}>{articleDetail.title}</h3>
             <div className={`articleMeta ${isMobile ? "mobile" : ""}`}>
               <span className="siteName">{articleDetail.site.name}</span>
-              <span className="score">Score: {articleDetail.contextualScore}</span>
+              <span className="score">Score: {articleDetail.summaryScore}</span>
             </div>
           </div>
         </div>
