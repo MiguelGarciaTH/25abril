@@ -27,36 +27,34 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     Optional<Article> findByTitleAndSiteId(String title, int siteId);
 
     @Query(nativeQuery = true, value = """
-            select exists(
-                select 1
-                from article a
-                where a.title = ?1
-                and a.site_id = ?2
-                and a.id in (
-                    select aes.article_id
-                    from article_search_entity_association aes
-                    where aes.search_entity_id = ?3
-                )
+            SELECT EXISTS (
+                SELECT 1
+                FROM article a
+                JOIN article_search_entity_association aes ON aes.article_id = a.id
+                WHERE a.title = ?1
+                  AND a.site_id = ?2
+                  AND aes.search_entity_id = ?3
             )
             """)
     boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
 
     @Query(value = """
-            select a
-            from Article a
-            join ArticleSearchEntityAssociation assoc on assoc.article.id = a.id
-            join Site s on s.id = a.site.id
-            where assoc.searchEntity.id = ?1
-            and a.summary is not null
-            and assoc.entityScore > 0.0
-            ORDER BY assoc.entityScore desc
+            SELECT a
+            FROM Article a
+            JOIN a.site s
+            JOIN ArticleSearchEntityAssociation assoc ON assoc.article.id = a.id
+            WHERE assoc.searchEntity.id = :searchEntityId
+              AND a.summary IS NOT NULL
+              AND assoc.entityScore > 0.0
+            ORDER BY assoc.entityScore DESC
             """)
-    Page<Article> findBySearchEntityId(int entityId, Pageable pageable);
+    Page<Article> findBySearchEntityId(int searchEntityId, Pageable pageable);
 
     @Query(value = """
             select a
             from Article a
-            join Site s on s.id = a.site.id and s.id = ?1
+            join a.site s
+            where s.id = ?1
             and a.summary is not null
             and a.summaryScore > 0.0
             ORDER BY a.summaryScore desc
@@ -67,17 +65,17 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             SELECT a.*
             FROM article a
             WHERE a.summary IS NOT NULL
-            AND (
+              AND a.summary_score > 0
+              AND (
                 a.summary_vector @@ to_tsquery('portuguese', ?1)
-                or
-                a.id in (
-                    select distinct(aes.article_id)
-                    from article_search_entity_association aes
-                    inner join search_entity se on se.id = aes.search_entity_id
-                    where se.names_vector @@ to_tsquery('portuguese', ?1)
+                OR EXISTS (
+                  SELECT 1
+                  FROM article_search_entity_association aes
+                  JOIN search_entity se ON se.id = aes.search_entity_id
+                  WHERE aes.article_id = a.id
+                    AND se.names_vector @@ to_tsquery('portuguese', ?1)
                 )
-            )
-            and a.summary_score > 0
+              )
             ORDER BY a.summary_score DESC
             """)
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
@@ -85,19 +83,19 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query("""
             select a
             from Article a
-            join Site s on s.id = a.site.id
+            join a.site s
             where a.summaryScore > 0
             order by a.summaryScore desc
             """)
     Page<Article> getArticleCountsByRelevance(Pageable pageable);
 
     @Query(nativeQuery = true, value = """
-                select a.*
-                from article a
-                left join article_search_entity_association asea on a.id = asea.article_id
-                where a.summary_score > 0
-                group by a.id
-                order by count(asea.search_entity_id) desc, a.summary_score desc
+            SELECT a.*
+            FROM article a
+            LEFT JOIN article_search_entity_association asea ON a.id = asea.article_id
+            WHERE a.summary_score > 0
+            GROUP BY a.id
+            ORDER BY COUNT(asea.search_entity_id) DESC, a.summary_score DESC
             """)
     Page<Article> getArticleCountsByEntities(Pageable pageable);
 }

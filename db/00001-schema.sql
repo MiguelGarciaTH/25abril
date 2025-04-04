@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS article_search_entity_association (
     CONSTRAINT article_entity_association_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
     CONSTRAINT article_entity_association_fk_search_entity_id FOREIGN KEY (search_entity_id) REFERENCES search_entity(id)
 );
+CREATE INDEX idx_asea_article_id ON article_search_entity_association (article_id);
 
 CREATE SEQUENCE IF NOT EXISTS keyword_seq START WITH 1 INCREMENT BY 1;
 
