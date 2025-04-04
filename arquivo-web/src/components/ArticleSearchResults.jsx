@@ -7,7 +7,7 @@ const ArticleSearchResults = () => {
     const [articles, setResults] = useState([]);
     const [loading, setLoading] = useState(true); // Initially true to show loading state on first load
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(1); // Page state for pagination
+    const [page, setPage] = useState(0); // Page state for pagination
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const query = queryParams.get('query');
@@ -27,7 +27,7 @@ const ArticleSearchResults = () => {
             const articlesData = data.content || [];
 
             // If it's the first page, replace the articles, else append
-            setResults((prevArticles) => (pageNumber === 1 ? articlesData : [...prevArticles, ...articlesData]));
+            setResults((prevArticles) => (pageNumber === 0 ? articlesData : [...prevArticles, ...articlesData]));
 
         } catch (error) {
             setError(error.message);
@@ -39,8 +39,8 @@ const ArticleSearchResults = () => {
     // Load data on query change
     useEffect(() => {
         if (query) {
-            setPage(1); // Reset to the first page whenever the query changes
-            fetchData(1); // Fetch the first page of results
+            setPage(0); // Reset to the first page whenever the query changes
+            fetchData(0); // Fetch the first page of results
         }
     }, [query, fetchData]);
 

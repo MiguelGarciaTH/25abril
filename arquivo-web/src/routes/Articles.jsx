@@ -10,7 +10,7 @@ const Articles = () => {
     const [articles, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
 
     const fetchData = useCallback(async (pageNumber) => {
         setLoading(true);
@@ -25,22 +25,23 @@ const Articles = () => {
             const data = await response.json();
             const articlesData = data.content || [];
 
-
-            setResults(prevArticles =>
-                pageNumber === 1 ? articlesData : [...prevArticles, ...articlesData]
-            );
+            if (articlesData.length > 0 || pageNumber === 0) {
+                setResults(prevArticles =>
+                    pageNumber === 0 ? articlesData : [...prevArticles, ...articlesData]
+                );
+            }
         } catch (error) {
             setError(error.message);
         } finally {
             setLoading(false);
         }
-    }, [id]);
+    }, [id, path]);
 
     // Initial data fetch
     useEffect(() => {
-        setPage(1);
+        setPage(0);
         setResults([]);
-        fetchData(1);
+        fetchData(0);
     }, [id, fetchData]);
 
     // Infinite scroll handler
@@ -59,7 +60,7 @@ const Articles = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, [loading, fetchData]);
 
-    if (loading && page === 1) return <div>Loading...</div>;
+    if (loading && page === 0) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
@@ -72,7 +73,7 @@ const Articles = () => {
                 </div>
                 <div className="subhead"> </div>
                 <div className="content">
-                    {articles.length === 0 ? (
+                    {articles.length === 0 && page === 0 ? (
                         <EmptyResults />
                     ) : (
                         <div className="collumns">
@@ -86,7 +87,7 @@ const Articles = () => {
                     )}
                 </div>
             </div>
-            {loading && page > 1 && <div>Loading more...</div>}
+            {loading && page > 0 && <div>Loading more...</div>}
         </div>
     );
 };
