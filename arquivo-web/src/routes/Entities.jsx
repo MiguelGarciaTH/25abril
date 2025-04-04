@@ -23,7 +23,7 @@ const Entities = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=10&search_term=${query}`);
+            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=12&search_term=${query}`);
             if (!response.ok) {
                 <EmptyResults />
                 throw new Error('Failed to fetch data');
