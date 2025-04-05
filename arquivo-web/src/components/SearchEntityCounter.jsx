@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "../styles/ArticleTop.css";
 
 // Custom Tooltip component
-const CustomTooltip = ({ active, payload }) => {
+const CustomTooltip = ({ active, payload, coordinate }) => {
   if (active && payload && payload.length) {
     const { id, name, count, image } = payload[0].payload; // Extract data from the payload
     return (
@@ -19,6 +19,10 @@ const CustomTooltip = ({ active, payload }) => {
           maxWidth: "200px",
           minWidth: "200px",
           textAlign: "center", // Center-align content, including the image
+          position: "absolute",
+          left: `${coordinate.x - 100}px`, // Center horizontally (200px width / 2)
+          top: `${coordinate.y - 200}px`, // Position above the bar
+          transform: "translateX(0)",
         }}
       >
         <Link to={`/articles/${id}/${name}/entity`} className="customToolTipLink">
@@ -37,7 +41,18 @@ const CustomTooltip = ({ active, payload }) => {
               }}
             />
           ) : (
-            <p>No image available</p> // Fallback if no image is available
+            <div style={{
+              width: "100%",
+              height: "150px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#f5f5f5",
+              borderRadius: "5px",
+              marginBottom: "10px",
+            }}>
+              <p>Sem imagem disponível</p>
+            </div>
           )}
           <p>Artigos: {count}</p>
         </Link>
@@ -50,6 +65,7 @@ const CustomTooltip = ({ active, payload }) => {
 const SearchEntityCounter = () => {
   const [data, setData] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
+  const [tooltipTimeout, setTooltipTimeout] = useState(null);
 
   // Detect screen size for mobile responsiveness
   useEffect(() => {
@@ -94,35 +110,52 @@ const SearchEntityCounter = () => {
         Artigos por entidade
       </h3>
       <ResponsiveContainer>
-        <BarChart data={data}>
+        <BarChart 
+          data={data}
+          onMouseLeave={() => {
+            const timeout = setTimeout(() => {
+              const tooltipNode = document.querySelector('.recharts-tooltip-wrapper');
+              if (tooltipNode) {
+                tooltipNode.style.visibility = 'hidden';
+              }
+            }, 1000);
+            setTooltipTimeout(timeout);
+          }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={isMobile ? 45 : 0} // Adjust angle for mobile
-            textAnchor={isMobile ? "left" : "middle"} // Adjust text alignment for angled labels
-            tick={{
-              fontSize: 16,
-              textAlign: isMobile ? "left" : "center",
-              textAnchor: isMobile ? "end" : "middle",
-            }}
-            dy={isMobile ? 120 : 10} // Add vertical offset to position labels below the axis
-            dx={isMobile ? 115 : 10} // Add vertical offset to position labels below the axis
+            angle={-45}
+            textAnchor="end"
+            height={120}
             interval={0}
-            height={isMobile ? 140 : 100} // Adjust height for angled labels
-            style={{
-              wordWrap: "break-word",
-              whiteSpace: "normal",
-              overflow: "hidden",
-              maxWidth: "100px",
+            tick={{
+              fontSize: 12,
             }}
           />
           <YAxis />
           <Tooltip
             content={<CustomTooltip />}
-            wrapperStyle={{ pointerEvents: "none" }} // Prevent Tooltip from blocking interactions
+            position={{ x: 0, y: 0 }}
+            wrapperStyle={{ 
+              visibility: 'visible',
+              pointerEvents: 'auto',
+              zIndex: 1000,
+              position: 'absolute',
+              transform: 'none'
+            }}
+            onMouseEnter={() => {
+              if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+              }
+            }}
           />
           <Legend />
-          <Bar dataKey="count" fill="#333" />
+          <Bar 
+            dataKey="count" 
+            fill="#333"
+            activeBar={{ fill: '#666' }}
+          />
         </BarChart>
       </ResponsiveContainer>
       <style>
