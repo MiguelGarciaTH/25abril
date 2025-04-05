@@ -6,11 +6,11 @@ import "../styles/ArticleTop.css";
 // Custom tooltip component
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
-    const { id, name, count } = payload[0].payload;  // Get the data from the tooltip's payload
+    const { id, name, count } = payload[0].payload;
 
     return (
       <div style={{
-        pointerEvents: "auto", // Ensure the tooltip allows pointer events
+        pointerEvents: "auto",
         backgroundColor: "#fff",
         border: "1px solid #ccc",
         padding: "10px",
@@ -18,7 +18,9 @@ const CustomTooltip = ({ active, payload }) => {
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
         maxWidth: "200px",
         minWidth: "200px",
-        textAlign: "center", // Center-align content, including the image
+        textAlign: "center",
+        transform: "translateX(-50%)",
+        marginTop: "-50px"
       }}
       >
         <Link to={`/articles/${id}/${name}/site`} className="customToolTipLink">
@@ -74,7 +76,12 @@ const SiteCounter = () => {
             }}
           />
           <YAxis />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip 
+            content={<CustomTooltip />}
+            cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
+            offset={0}
+            allowEscapeViewBox={{ x: true, y: true }}
+          />
           <Legend />
           <Bar dataKey="count" fill="#333" />
         </BarChart>
