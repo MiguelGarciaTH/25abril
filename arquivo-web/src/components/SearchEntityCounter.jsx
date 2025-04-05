@@ -98,6 +98,7 @@ const SearchEntityCounter = () => {
         height: "90%",
         margin: "0 auto",
         padding: "10px",
+        marginLeft: isMobile ? "0" : "0px",
       }}
     >
       <h3
