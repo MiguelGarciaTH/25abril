@@ -7,6 +7,7 @@ insert into quote(author, "text") values
 
 insert into rate_limiter(description, counter, counter_limit, sleep_time, locked) values
     ('arquivo.pt', 0, 245, 60000, false),
+    ('arquivo-image.pt', 0, 390, 60000, false),
     ('dbpedia', 0, 95, 60000, false),
     ('google-api', 0, 1200, 60000, false);
 

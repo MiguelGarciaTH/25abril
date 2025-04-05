@@ -34,7 +34,7 @@ public class ArquivoImageCrawler {
     private final IntegrationLogRepository integrationLogRepository;
     private final SearchEntityRepository searchEntityRepository;
 
-    private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=\"%s\"&offset=0&maxItems=100&prettyPrint=true&type=jpg,png&siteSearch=*.publico.pt,*.expresso.pt,*.tsf.pt,*.dn.pt,*.jn.pt,*.observador.pt";
+    private static final String ARQUIVO_IMAGE_API_BASE_URL = "https://arquivo.pt/imagesearch?q=\"%s\"&offset=0&maxItems=100&size=lg&prettyPrint=true&type=jpg,png&siteSearch=*.publico.pt,*.expresso.pt,*.tsf.pt,*.dn.pt,*.jn.pt,*.observador.pt";
     private static final TextScoreService textScore = TextScoreService.getInstance();
 
     private final WebClientService webClientService;
@@ -64,7 +64,7 @@ public class ArquivoImageCrawler {
                     List<ImageScore> images = new ArrayList<>();
                     JsonNode response;
                     do {
-                        response = webClientService.get(url, "arquivo.pt");
+                        response = webClientService.get(url, "arquivo-image.pt");
                         if (response != null) {
                             images.addAll(scoreImages(entity, response.get("responseItems")));
                             numerberOfImages += response.get("responseItems").size();
