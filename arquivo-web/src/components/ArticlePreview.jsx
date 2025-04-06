@@ -20,7 +20,8 @@ function ArticlePreview({ item }) {
                             <img 
                                 src={item.articleDetail.imagePath ? `/${item.articleDetail.imagePath}` : '/fallback-image.png'} 
                                 alt={item.articleDetail.title} 
-                                className="article-preview-popup" 
+                                className="article-preview-popup"
+                                style={!item.articleDetail.imagePath ? { filter: 'grayscale(90%)' } : {}}
                             />
                         </div>
                     )}
