@@ -19,6 +19,7 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
     @Query("""
             select new arquivo.repository.SearchEntityRepository$SearchEntityCounter(asea.searchEntity.id, asea.searchEntity.name, asea.searchEntity.imageUrl, count(asea.article.id))
             from ArticleSearchEntityAssociation asea
+            where asea.entityScore > 0
             group by (asea.searchEntity.id, asea.searchEntity.name, asea.searchEntity.imageUrl)
             order by asea.searchEntity.name asc
             """)
