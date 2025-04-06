@@ -8,8 +8,11 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  background-color: #d6d6d6;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9em;
 }
 
 a {
@@ -39,10 +42,14 @@ a:visited {
 .text-container {
   margin-left: 30%;
   display: grid;
-  margin-right: 20%;
+  margin-right: 30%;
   margin-top: 4%;
   grid-template-columns: 1fr; /* One column layout */
   gap: 10px; /* Optional space between the divs */
+  text-align: justify;
+  margin-bottom: 5%;
+  max-width: 100%;
+  word-wrap: break-word;
 }
 
 .data-container {
@@ -53,6 +60,10 @@ a:visited {
   gap: 10px; /* Optional space between the divs */
 }
 
+.architecture-image {
+  max-width: 100%;
+  height: auto;
+}
 
 @media (max-width: 768px) {
   .container {
@@ -64,13 +75,24 @@ a:visited {
   }
 
   .text-container {
+    font-size: 1em;
+    margin: 15px;
+    margin-left: 20%;
     margin-top: 15%;
-    margin-left: 29%; /* Remove left margin on mobile */
-    max-width: 60%;
+    max-width: 750px;
+    padding: 0 15px;
+    box-sizing: border-box;
   }
+
   .data-container{
     margin-top: 10%;
     margin-left: 5%;
+  }
+
+  .architecture-image {
+    max-width: 90%;
+    margin: 0 auto;
+    display: block;
   }
 }
 
