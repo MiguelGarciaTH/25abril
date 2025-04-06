@@ -43,27 +43,33 @@ public class OpenIABioCrawler {
         final List<SearchEntity> entities = searchEntityRepository.findAll();
         for (SearchEntity entity : entities) {
             if (entity.getBiography() == null) {
-                final String bio = getBio(entity.getName());
+                final String bio = getBio(entity.getName(), entity.getAliases());
                 entity.setBiography(bio);
                 searchEntityRepository.save(entity);
             }
         }
     }
 
-    private String getBio(String name) {
+    private String getBio(String name, String aliases) {
         // Create JSON payload for a chat-based request
         JSONObject json = new JSONObject();
-        json.put("model", "gpt-3.5-turbo"); // Free-tier GPT-3.5 model
+        json.put("model", "gpt-4-turbo"); // Free-tier GPT-3.5 model
         json.put("max_tokens", 200);
-        json.put("temperature", 0.7); // Optional: Adjust temperature for randomness in output
+        json.put("temperature", 0.0); // Optional: Adjust temperature for randomness in output
+
+        String aliasesString = aliases != null ? " (também conhecido por: " + aliases + " )" : "";
 
         // Messages for the chat-based model
         JSONArray messages = new JSONArray();
         messages.put(new JSONObject()
                 .put("role", "user")
-                .put("content", "Write a short biography of " + name + ". Write the text in Portuguese from Portugal " +
-                        "(PT-pt) and don't forget that " + name + " was some how related with '25 de Abril' or 'Estado Novo', " +
-                        "Suggestions: Start with the name; then the year of birth and death in (); use between 50 and 100 words but ensure you don't crop the text to fit!"));
+                .put("content", "És um historiador do Estado Novo e do 25 de Abril. " +
+                        "Dá-me uma biografia curta (50 a 100 palavras) em português de Portugal sobre " + name + aliasesString + " ." +
+                        "Considera o contexto do Estado Novo e do 25 de Abril. " +
+                        "A biografia deve começar com o nome  seguido do ano de nascimento e de morte (se aplicável, pode não ser uma pessoa), " +
+                        "e deve resumir o papel ou relevância histórica da pessoa nesse contexto político. " +
+                        "Usa apenas informações verificadas de fontes fiáveis (como arquivos históricos, fontes académicas ou imprensa de referência) e evita especulação. " +
+                        "Garante que os dados são factualmente corretos (datas, posições, papéis políticos). Se não souberes, não inventes, diz só 'Não disponível'."));
         json.put("messages", messages);
 
         // Create RequestBody with the JSON content
