@@ -39,11 +39,12 @@ const EmptyResults = () => {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100%',
-            textAlign: 'center',
+            textAlign: 'left',
             marginTop: '5%',
             fontSize: '1vw',
             fontWeight: '500',
-            fontFamily: 'Mona Sans Condensed, sans-serif'
+            fontFamily: 'Mona Sans Condensed, sans-serif',
+            width: '100%',
 
         }}>
             <h1>Sem resultados</h1>
@@ -51,7 +52,7 @@ const EmptyResults = () => {
                 <blockquote style={{
                     margin: '2em 0',
                     padding: '1em',
-                    maxWidth: '80%',
+                    maxWidth: '100%',
                     lineHeight: '1.6'
                 }}>
                     <p style={{ 
