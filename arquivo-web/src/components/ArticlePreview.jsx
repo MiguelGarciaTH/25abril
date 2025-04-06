@@ -28,7 +28,7 @@ function ArticlePreview({ item }) {
                 </span>
                 <p>
                     <span className="headline hl4">{item.articleDetail.site.name}</span>
-                    <span className="score">Relevância: {item.articleDetail.summaryScore}</span>
+                    {/*<span className="score">Relevância: {item.articleDetail.summaryScore}</span>*/}
                 </p>
             </div>
             <p className="article-summary">
