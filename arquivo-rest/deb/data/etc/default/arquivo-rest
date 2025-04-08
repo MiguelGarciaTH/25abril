@@ -5,9 +5,6 @@ DB_URL="jdbc:postgresql://example.com:5432/postgres?ssl=true&sslfactory=org.post
 DB_USER="example-user"
 DB_PASSWORD="example-password"
 
-KAFKA_BOOTSTRAP_SERVERS=example.com:9093
-# Uncomment following options for SSL connections:
-
 LOGGING_CONFIG=/etc/25abril/logs/arquivo-rest.xml
 
 # set JVM options here

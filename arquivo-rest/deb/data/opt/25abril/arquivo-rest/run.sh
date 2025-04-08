@@ -13,6 +13,5 @@ exec java \
      -Dspring.datasource.url="$DB_URL" \
      -Dspring.datasource.username="$DB_USER" \
      -Dspring.datasource.password="$DB_PASSWORD" \
-     -Dspring.kafka.bootstrap-servers="$KAFKA_BOOTSTRAP_SERVERS" \
      ${LOGGING_CONFIG:+-Dlogging.config="$LOGGING_CONFIG"} \
      -jar ./arquivo-rest-*.jar
