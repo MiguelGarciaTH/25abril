@@ -2,4 +2,4 @@
 
 set -e 
 
- npm run build --prefix arquivo-web/
+npm run build:prod --prefix arquivo-web/

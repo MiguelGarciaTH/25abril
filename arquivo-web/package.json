@@ -6,6 +6,7 @@
     "start": "vite --port 3000 --open",
     "dev": "vite --port 3000 --open",
     "build": "vite build",
+    "build:prod": "vite build --mode production",
     "serve": "vite preview --open",
     "test": "vitest"
   },
