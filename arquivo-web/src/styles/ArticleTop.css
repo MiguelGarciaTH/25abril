@@ -266,7 +266,7 @@
   /* Adjusted size for the image */
   height: 80px;
   /* Adjusted size for the image */
-  background: url("./android-chrome-512x512.png") no-repeat center center;
+  background: url("/android-chrome-512x512.png") no-repeat center center;
   /* Use the image */
   background-size: cover;
   /* Ensure the image covers the thumb */
@@ -285,7 +285,7 @@
   /* Adjusted size for the image */
   height: 70px;
   /* Adjusted size for the image */
-  background: url("./android-chrome-512x512.png") no-repeat center center;
+  background: url("/android-chrome-512x512.png") no-repeat center center;
   /* Use the image */
   background-size: cover;
   /* Ensure the image covers the thumb */

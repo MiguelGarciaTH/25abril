@@ -26,7 +26,7 @@ const ArticleSearchForm = () => {
         className="article-search-input"
       />
       <button type="submit">
-        <img src="./android-chrome-512x512.png" alt="Search" />
+        <img src="/android-chrome-512x512.png" alt="Search" />
       </button>
     </form>
   );

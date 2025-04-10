@@ -19,7 +19,7 @@ const Error404 = () => {
 
             }}>
                 <img
-                    src="./android-chrome-512x512.png"
+                    src="/android-chrome-512x512.png"
                     alt="Search"
                     style={{ width: '200px', height: '200px' }}
                 />
