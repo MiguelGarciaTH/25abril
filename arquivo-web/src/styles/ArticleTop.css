@@ -501,10 +501,6 @@
     margin-bottom: 10px;
   }
 
-  .articleTopContainer h1 {
-    font-size: 0.5rem;
-  }
-
   .toggleOption {
     font-size: 10px;
     /* Reduced font size to fit text */
@@ -547,13 +543,10 @@
     /* Adjusted size for the image */
   }
 
-  .articleTopContainer {
-    padding: 10px;
-  }
-
   .articlesWrapper {
     flex-direction: column;
     gap: 15px;
+    padding: 10px;
   }
 
   .container2 {

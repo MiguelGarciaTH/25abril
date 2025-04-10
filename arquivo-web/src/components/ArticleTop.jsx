@@ -25,7 +25,6 @@ const ArticleTop = ({ size, toggle, isMobile }) => {
   }, [size, toggle]);
 
   return (
-    <div className={`articleTopContainer ${isMobile ? "mobile" : ""}`}>
       <div className={`articlesWrapper ${isMobile ? "mobile" : ""}`}>
         {articles.length > 0 ? (
           articles.map((article, index) => (
@@ -34,7 +33,6 @@ const ArticleTop = ({ size, toggle, isMobile }) => {
         ) : (
           <EmptyResults />
         )}
-      </div>
     </div>
   );
 };
