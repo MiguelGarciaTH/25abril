@@ -22,7 +22,7 @@
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
     "jsdom": "^23.0.1",
-    "vite": "^6.2.5",
+    "vite": "^6.2.6",
     "vitest": "^3.0.9"
   },
   "description": "<h1 align=\"center\">   Vite Template React </h1>",
