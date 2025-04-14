@@ -35,17 +35,14 @@
 
 .polaroid img {
     width: 100%;
-    height: calc(100% - 40px);
-    /* Adjust height to leave space for the label */
-    object-fit: contain;
-    /* Crop and center the image */
-    filter: grayscale(100%);
-    /* Make the image black and white */
+    aspect-ratio: 3 / 4; /* Maintain a 3:4 aspect ratio */
+    object-fit: contain; /* Ensure the image fits within the container */
+    filter: grayscale(100%); /* Make the image black and white */
 }
 
 .polaroid .placeholder {
     width: 100%;
-    height: calc(100% - 40px);
+    aspect-ratio: 3 / 4; /* Maintain the same aspect ratio as the image */
     background-color: #f0f0f0;
     display: flex;
     align-items: center;
@@ -56,12 +53,8 @@
 }
 
 .polaroid .label {
-    bottom: 0;
-    left: 0;
-    right: 0;
     height: 40px;
     padding-top: 10px;
-    /* Add padding to move text down */
     background: white;
     font-family: 'Courier New', Courier, monospace;
     font-size: 1em;
@@ -168,56 +161,4 @@
     max-height: 320px;
     overflow-y: auto;
     white-space: pre-wrap;
-}
-
-/* Media queries for responsive design */
-@media screen and (max-width: 1200px) {
-    .polaroid-container {
-        max-width: 50%;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .polaroid-container {
-        max-width: 50%;
-        margin-left: 35%;
-        gap: 50px;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .polaroid-container {
-        max-width: 50%;
-        margin-left: 35%;
-        gap: 10px; /* Ensure reduced gap between components */
-    }
-
-    .polaroid {
-        width: calc(50% - 20px);
-        height: auto;
-        aspect-ratio: 2.7/3.9;
-    }
-
-    .polaroid-wrapper {
-        margin-bottom: 10px; /* Explicitly reduce the gap */
-    }
-}
-
-@media screen and (max-width: 480px) {
-    .polaroid-container {
-        padding: 0 5px;
-        max-width: 45%;
-        gap: 5px; /* Further reduce the gap for smaller screens */
-        margin-left: 35%;
-    }
-
-    .polaroid {
-        width: calc(100% - 10px);
-        max-width: 2.7in;
-        margin: 0 auto;
-    }
-
-    .polaroid-wrapper {
-        margin-bottom: 5px; /* Further reduce the gap */
-    }
 }
