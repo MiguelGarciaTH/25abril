@@ -85,30 +85,6 @@ CREATE TABLE IF NOT EXISTS article_search_entity_association (
 );
 CREATE INDEX idx_asea_article_id ON article_search_entity_association (article_id);
 
-CREATE SEQUENCE IF NOT EXISTS keyword_seq START WITH 1 INCREMENT BY 1;
-
-CREATE TABLE IF NOT EXISTS keyword (
-    id integer NOT NULL DEFAULT nextval('keyword_seq'),
-    keyword varchar(80),
-
-    CONSTRAINT keyword_pk PRIMARY KEY (id),
-    CONSTRAINT keyword_uq_keyword UNIQUE(keyword)
-);
-
-CREATE SEQUENCE IF NOT EXISTS article_keyword_seq START WITH 1 INCREMENT BY 1;
-
-
-CREATE TABLE IF NOT EXISTS article_keyword (
-    id integer NOT NULL DEFAULT nextval('article_keyword_seq'),
-    article_id integer not null,
-    keyword_id integer not null,
-    score numeric(10,2),
-
-    CONSTRAINT article_keyword_pk PRIMARY KEY (id),
-    CONSTRAINT article_keyword_uq_article_id_keyword_id UNIQUE(article_id, keyword_id),
-    CONSTRAINT article_keyword_fk_article_id FOREIGN KEY (article_id) REFERENCES article(id),
-    CONSTRAINT article_keyword_fk_keyword_id FOREIGN KEY (keyword_id) REFERENCES keyword(id)
-);
 
 CREATE SEQUENCE IF NOT EXISTS quote_seq START WITH 1 INCREMENT BY 1;
 

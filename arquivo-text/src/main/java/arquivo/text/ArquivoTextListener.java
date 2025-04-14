@@ -41,8 +41,6 @@ public class ArquivoTextListener {
     private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
     private final TextScoreService textScoreService = TextScoreService.getInstance();
     private final SearchEntityRepository searchEntityRepository;
-    private final KeywordRepository keywordRepository;
-    private final ArticleKeywordRepository articleKeywordRepository;
     private final WebClientService webClientService;
     private final MetricService metricService;
     private final IntegrationLogRepository integrationLogRepository;
@@ -67,15 +65,13 @@ public class ArquivoTextListener {
     ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository,
                         ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
                         SearchEntityRepository searchEntityRepository,
-                        KeywordRepository keywordRepository, MetricService metricService, ArticleKeywordRepository articleKeywordRepository,
+                        MetricService metricService,
                         IntegrationLogRepository integrationLogRepository) {
         this.objectMapper = objectMapper;
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         this.articleRepository = articleRepository;
         this.articleSearchEntityAssociationRepository = articleSearchEntityAssociationRepository;
         this.searchEntityRepository = searchEntityRepository;
-        this.keywordRepository = keywordRepository;
-        this.articleKeywordRepository = articleKeywordRepository;
         this.integrationLogRepository = integrationLogRepository;
         this.metricService = metricService;
         this.webClientService = new WebClientService();
@@ -260,18 +256,6 @@ public class ArquivoTextListener {
             article = articleRepository.save(article);
             newSummaryCounter++;
 
-            // keywords by yake
-            final List<KeywordScore> keywordList = getKeywords(summary);
-            for (var ks : keywordList) {
-                if (ks.score() > 0.0) {
-                    Keyword keyword = keywordRepository.findByKeyword(ks.keyword());
-                    if (keyword == null) {
-                        keyword = keywordRepository.save(new Keyword(ks.keyword()));
-                    }
-                    articleKeywordRepository.save(new ArticleKeyword(article, keyword, ks.score()));
-                }
-            }
-
         } else {
             summaryAlreadySetCounter++;
         }
@@ -317,20 +301,6 @@ public class ArquivoTextListener {
         metricService.setValue("text_total_articles_error_vertex_ai", vertexApiErrorCounter);
         metricService.setValue("text_total_articles_error_json_parsing", jsonErrors);
         metricService.setValue("text_total_articles_error_null_summary", summaryNullCounter);
-    }
-
-    private List<KeywordScore> getKeywords(String text) {
-        input.put("text", text);
-        final JsonNode keywords = webClientService.post("http://localhost:5000/yake/", objectMapper.convertValue(input, JsonNode.class));
-        final List<KeywordScore> keywordList = new ArrayList<>(keywords.size());
-        for (var keyword : keywords) {
-            keywordList.add(new KeywordScore(keyword.get("ngram").asText(), keyword.get("score").asDouble()));
-        }
-        return keywordList;
-    }
-
-    private record KeywordScore(String keyword, Double score) {
-
     }
 
     private String summarize(String text) throws IOException {

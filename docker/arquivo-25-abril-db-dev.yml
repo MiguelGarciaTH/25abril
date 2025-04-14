@@ -19,12 +19,6 @@ services:
     volumes:
       - ../db:/docker-entrypoint-initdb.d
 
-  yake:
-    image: liaad/yake-server:latest
-    restart: always
-    ports:
-      - "5000:5000"
-
   kafka:
     image: bitnami/kafka:4.0.0
     container_name: kafka
