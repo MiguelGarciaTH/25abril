@@ -1,7 +1,7 @@
 /* ArticleTop.css */
 
 /* Container for the article and entities */
-.container2 {
+.articleTopElementContainer {
   margin-left: 1000px;
   /* Ensure the container is positioned correctly */
   position: relative;
@@ -549,7 +549,7 @@
     padding: 10px;
   }
 
-  .container2 {
+  .articleTopElementContainer {
     margin-left: 10%;
     flex-direction: column;
     align-items: flex-start;
@@ -626,7 +626,7 @@
     font-size: 0.8rem;
   }
 
-  .container2 {
+  .articleTopElementContainer {
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: 20px;
@@ -682,7 +682,7 @@
     font-size: 0.8rem;
   }
 
-  .container2 {
+  .articleTopElementContainer {
     flex-direction: column; /* Stack children vertically */
     align-items: stretch; /* Ensure full width alignment */
     margin-bottom: 20px;
@@ -765,7 +765,7 @@
     font-size: 0.7rem; /* Adjust font size for mobile */
   }
 
-  .container2 {
+  .articleTopElementContainer {
     display: flex;
     flex-direction: column; /* Stack children vertically */
     align-items: flex-start; /* Align items to the left */
@@ -830,7 +830,7 @@
     padding: 10px;
   }
 
-  .container2.mobile {
+  .articleTopElementContainer.mobile {
     margin: 0;
     width: 100%;
     align-items: center;

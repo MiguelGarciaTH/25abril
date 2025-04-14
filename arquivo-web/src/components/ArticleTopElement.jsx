@@ -11,7 +11,7 @@ const ArticleTopElement = ({ article, isMobile }) => {
   };
 
   return (
-    <div className={`container2 ${isMobile ? "mobile" : ""}`}>
+    <div className={`articleTopElementContainer ${isMobile ? "mobile" : ""}`}>
       {/* Always render the bannerLink but toggle its visibility */}
       <div className={`bannerLink ${showEntities ? "show" : ""}`}>
         <a href={articleDetail.url} target="_blank" rel="noopener noreferrer">

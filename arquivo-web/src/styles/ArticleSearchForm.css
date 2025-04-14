@@ -28,26 +28,6 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Basic Sidebar styles */
-/* For smaller screens, adjust sidebar width */
-@media (max-width: 768px) {
-  .article-search-input {
-    width: 50%; /* Adjust to smaller size when the screen is smaller */
-    margin-left: 28%; /* Adjust margin to center the form */
-    height: 40px; /* Adjust height for smaller screens */
-
-  }
-}
-
-/* For even smaller screens or mobile devices, further reduce width */
-@media (max-width: 480px) {
-  .article-search-input {
-    width: 50%; /* Make sidebar even smaller */
-    margin-left: 28%; /* Adjust margin to center the form */
-    height: 40px; /* Adjust height for smaller screens */
-  }
-}
-
 .article-search-input::placeholder {
   color: #888;
 }
@@ -79,4 +59,24 @@ button img {
 /* Optional: Add hover effect to the image button */
 button:hover img {
   opacity: 0.8;
+}
+
+/* Basic Sidebar styles */
+/* For smaller screens, adjust sidebar width */
+@media (max-width: 768px) {
+  .article-search-input {
+    width: 50%; /* Adjust to smaller size when the screen is smaller */
+    margin-left: 28%; /* Adjust margin to center the form */
+    height: 40px; /* Adjust height for smaller screens */
+
+  }
+}
+
+/* For even smaller screens or mobile devices, further reduce width */
+@media (max-width: 480px) {
+  .article-search-input {
+    width: 50%; /* Make sidebar even smaller */
+    margin-left: 28%; /* Adjust margin to center the form */
+    height: 40px; /* Adjust height for smaller screens */
+  }
 }
