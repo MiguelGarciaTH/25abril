@@ -118,8 +118,6 @@
 
 .polaroid-wrapper {
     position: relative;
-    width: 2.7in;
-    height: 3.9in;
     cursor: pointer;
     text-decoration: none;
     color: inherit;
@@ -161,4 +159,19 @@
     max-height: 320px;
     overflow-y: auto;
     white-space: pre-wrap;
+}
+
+@media screen and (max-width: 768px) {
+    .polaroid {
+        width: 2in; /* Adjust width for mobile */
+        height: 3in; /* Adjust height for mobile */
+    }
+
+    .polaroid .label {
+        font-size: 0.8em; /* Reduce font size */
+    }
+
+    .bio-content {
+        font-size: 0.75em; /* Reduce font size for bio content */
+    }
 }
