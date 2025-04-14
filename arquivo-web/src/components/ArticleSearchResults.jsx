@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom'; // Use location hook to get query params
 import Header from './Header';
 import ArticlePreview from './ArticlePreview';
+import '../styles/Article.css'; // Import styles
 
 const ArticleSearchResults = () => {
     const [articles, setResults] = useState([]);

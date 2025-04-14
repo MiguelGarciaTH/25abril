@@ -17,10 +17,9 @@ function ArticlePreview({ item }) {
                     <Link className="headline hl3" to={item.articleDetail.url}>{item.articleDetail.title}</Link>
                     {isHovered && (
                         <div className="article-preview">
-                            <img 
+                            <img className="article-preview-popup"
                                 src={item.articleDetail.imagePath ? `/${item.articleDetail.imagePath}` : '/fallback-image.png'} 
                                 alt={item.articleDetail.title} 
-                                className="article-preview-popup"
                                 style={!item.articleDetail.imagePath ? { filter: 'grayscale(90%)' } : {}}
                             />
                         </div>
