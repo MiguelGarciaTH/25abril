@@ -14,16 +14,21 @@ const Architecture = () => {
                 A arquitectura do projecto é composta por várias componentes especializadas, divididas em duas partes principais: 
                 backend (Java) e frontend (React). Os dados são persistidos numa base de dados PostgreSQL e a comunicação 
                 entre componentes é feita através do Apache Kafka.
+                
+                <img
+                    src="arquitectura.png"
+                    alt="Architecture"
+                    className="architecture-image"
+                />
 
                 <br />
-                <img src="arquitectura.png" alt="Architecture" className="architecture-image" />
-
+  
                 <h3>(1) arquivo-crawler</h3>
                 Este componente é responsável pela recolha de dados de várias fontes externas. O projecto assenta em dois conceitos principais:
                 entidades de pesquisa (pessoas, eventos, locais) e artigos noticiosos. Para cada entidade de pesquisa, recolhemos uma biografia, 
                 uma fotografia e artigos noticiosos relacionados. Isto é feito através de três crawlers especializados.
 
-                <div style={{ marginLeft: '20px', marginRight: '50px' }}>
+                <div style={{ marginLeft: '20px' }}>
                     <h4>arquivo-bio-crawler</h4>
                     Cada entidade de pesquisa tem uma biografia associada. Esta biografia permite ao utilizador do site saber quem é a entidade de pesquisa.
                     Este crawler utiliza a API da OpenAI para obter uma biografia tendo em conta o contexto Histórico do Estado Novo
@@ -43,7 +48,7 @@ const Architecture = () => {
                     Portanto, foram adicionadas manualmente para garantir que a informação está correcta.
                 </div>
 
-                <div style={{ marginLeft: '20px', marginRight: '50px' }}>
+                <div style={{ marginLeft: '20px' }}>
                     <h4>arquivo-crawler</h4>
                     Este componente recolhe os dados do Arquivo.pt através da <Link to="https://github.com/arquivo/pwa-technologies/wiki/APIs">API</Link>.
                     Para cada uma das entidades de pesquisa e para cada site é criado um URL para fazer a recolha de artigos:
@@ -54,7 +59,7 @@ const Architecture = () => {
                     Este componente não faz nenhum tipo de processamento, apenas faz o crawling e envia os dados para o <code>arquivo-processor</code>.
                 </div>
 
-                <div style={{ marginLeft: '20px', marginRight: '50px' }}>
+                <div style={{ marginLeft: '20px' }}>
                     <h4>arquivo-image-crawler</h4>
                     Este componente recolhe fotografias para as entidades de pesquisa. 
                     A fonte de dados é o Arquivo.pt através da API de imagens. 
