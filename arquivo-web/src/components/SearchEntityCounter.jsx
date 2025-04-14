@@ -65,7 +65,6 @@ const CustomTooltip = ({ active, payload, coordinate }) => {
 const SearchEntityCounter = () => {
   const [data, setData] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
-  const [tooltipTimeout, setTooltipTimeout] = useState(null);
 
   // Detect screen size for mobile responsiveness
   useEffect(() => {
@@ -113,15 +112,6 @@ const SearchEntityCounter = () => {
       <ResponsiveContainer>
         <BarChart 
           data={data}
-          onMouseLeave={() => {
-            const timeout = setTimeout(() => {
-              const tooltipNode = document.querySelector('.recharts-tooltip-wrapper');
-              if (tooltipNode) {
-                tooltipNode.style.visibility = 'hidden';
-              }
-            }, 1000);
-            setTooltipTimeout(timeout);
-          }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
@@ -137,18 +127,9 @@ const SearchEntityCounter = () => {
           <YAxis />
           <Tooltip
             content={<CustomTooltip />}
-            position={{ x: 0, y: 0 }}
             wrapperStyle={{ 
-              visibility: 'visible',
-              pointerEvents: 'auto',
+              pointerEvents: 'auto', // Ensure tooltip remains interactive
               zIndex: 1000,
-              position: 'absolute',
-              transform: 'none'
-            }}
-            onMouseEnter={() => {
-              if (tooltipTimeout) {
-                clearTimeout(tooltipTimeout);
-              }
             }}
           />
           <Legend />
