@@ -67,6 +67,7 @@
   /* Aligns the image to show the top */
   border-radius: 10px 10px 0 0;
   /* Rounded corners only on the top */
+  filter: grayscale(70%);
   transition: transform 0.3s ease-in-out;
 }
 
@@ -600,6 +601,7 @@
     height: 50px;
     width: 100%;
     object-fit: fill;
+    filter: grayscale(100%);
     /* Ensures the image covers the entire area */
   }
 
