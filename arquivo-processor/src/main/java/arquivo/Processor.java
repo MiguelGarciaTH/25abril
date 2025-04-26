@@ -39,16 +39,6 @@ class TopicConfig {
                 .partitions(6)
                 .build();
     }
-
-    @Value("${image-crop.topic}")
-    private String topic2;
-
-    @Bean
-    public NewTopic createTopic2() {
-        return TopicBuilder.name(topic2)
-                .partitions(10)
-                .build();
-    }
 }
 
 /**

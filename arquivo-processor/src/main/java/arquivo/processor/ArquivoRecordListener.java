@@ -1,13 +1,15 @@
 package arquivo.processor;
 
-import arquivo.model.*;
+import arquivo.model.Article;
+import arquivo.model.IntegrationLog;
+import arquivo.model.SearchEntity;
+import arquivo.model.Site;
 import arquivo.model.records.CrawlerRecord;
-import arquivo.model.records.ImageRecord;
 import arquivo.model.records.TextRecord;
 import arquivo.repository.*;
-import arquivo.services.TextScoreService;
 import arquivo.services.MetricService;
 import arquivo.services.RateLimiterService;
+import arquivo.services.TextScoreService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,9 +43,6 @@ public class ArquivoRecordListener {
     @Value("${text-summary.topic}")
     private String textSummaryTopic;
 
-    @Value("${image-crop.topic}")
-    private String imageCropTopic;
-
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
     private final SiteRepository siteRepository;
@@ -59,7 +58,6 @@ public class ArquivoRecordListener {
     private long emptyTextCounter;
     private long retryCounter;
     private long totalTextEventSentCounter;
-    private long totalImageEventSentCounter;
     private long discardedCounter;
     private long errorCounter;
 
@@ -91,7 +89,6 @@ public class ArquivoRecordListener {
         newCounter = metricService.loadValue("processor_total_articles_created");
         reusedCounter = metricService.loadValue("processor_total_articles_reused");
         totalTextEventSentCounter = metricService.loadValue("processor_total_articles_sent_to_text");
-        totalImageEventSentCounter = metricService.loadValue("processor_total_articles_sent_to_image");
         duplicatesCounter = metricService.loadValue("processor_total_articles_duplicated");
         emptyTextCounter = metricService.loadValue("processor_total_articles_empty_text");
         discardedCounter = metricService.loadValue("processor_total_articles_score_discarded");
@@ -123,7 +120,7 @@ public class ArquivoRecordListener {
 
         Article article = articleRepository.findByTitleAndSiteId(event.title(), event.siteId()).orElse(null);
         if (article != null) {
-            publish(new TextRecord(article.getId(), event.searchEntityId()));
+            publish(new TextRecord(article.getId(), event.searchEntityId(), event.imageUrl()));
             LOG.debug("New article association articleId={} title={} url={} for entity={}", article.getId(), event.title(), event.url(), event.searchEntityId());
             reusedCounter++;
         } else { //new article
@@ -138,13 +135,12 @@ public class ArquivoRecordListener {
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
             final TextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text, false);
-            if (score.total() > 10) {
+            if (score.total() > 2) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = articleRepository.save(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, text, score.total(), scoreJson));
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
                 newCounter++;
-                publish(new TextRecord(article.getId(), searchEntity.getId()));
-                publish(new ImageRecord(article.getId(), event.imageUrl()));
+                publish(new TextRecord(article.getId(), searchEntity.getId(), event.imageUrl()));
             } else {
                 discardedCounter++;
             }
@@ -218,22 +214,6 @@ public class ArquivoRecordListener {
         }
     }
 
-    int roundRobinIndex2 = 0;
-
-    private void publish(ImageRecord imageRecord) {
-        try {
-            kafkaTemplate.send(imageCropTopic, roundRobinIndex2, "" + roundRobinIndex2, objectMapper.writeValueAsString(imageRecord));
-            LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
-            totalImageEventSentCounter++;
-            roundRobinIndex2++;
-            if (roundRobinIndex2 == 5) {
-                roundRobinIndex2 = 0;
-            }
-        } catch (JsonProcessingException e) {
-            LOG.warn("Error processing article {} for summary processing", imageRecord.articleId());
-            errorCounter++;
-        }
-    }
 
     private String trimUrl(String url) {
         return url.split("\\/\\/")[2];
@@ -245,7 +225,6 @@ public class ArquivoRecordListener {
         LOG.info("Articles new: {}/{}", newCounter, receivedCounter);
         LOG.info("Articles re-used: {}/{}", reusedCounter, receivedCounter);
         LOG.info("Articles sent to summary: {}/{}", totalTextEventSentCounter, receivedCounter);
-        LOG.info("Articles sent to image: {}/{}", totalImageEventSentCounter, receivedCounter);
 
         if(errorCounter > 0){
             LOG.info("Articles error discarded: {}/{}", errorCounter, receivedCounter);
@@ -267,7 +246,6 @@ public class ArquivoRecordListener {
         metricService.setValue("processor_total_articles_created", newCounter);
         metricService.setValue("processor_total_articles_reused", reusedCounter);
         metricService.setValue("processor_total_articles_sent_to_text", totalTextEventSentCounter);
-        metricService.setValue("processor_total_articles_sent_to_image", totalImageEventSentCounter);
         metricService.setValue("processor_total_articles_duplicated", duplicatesCounter);
         metricService.setValue("processor_total_articles_empty_text", emptyTextCounter);
         metricService.setValue("processor_total_articles_score_discarded", discardedCounter);

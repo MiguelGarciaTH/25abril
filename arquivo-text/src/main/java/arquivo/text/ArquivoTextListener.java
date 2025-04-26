@@ -1,11 +1,17 @@
 package arquivo.text;
 
-import arquivo.model.*;
+import arquivo.model.Article;
+import arquivo.model.ArticleSearchEntityAssociation;
+import arquivo.model.IntegrationLog;
+import arquivo.model.SearchEntity;
+import arquivo.model.records.ImageRecord;
 import arquivo.model.records.TextRecord;
-import arquivo.repository.*;
-import arquivo.services.TextScoreService;
+import arquivo.repository.ArticleRepository;
+import arquivo.repository.ArticleSearchEntityAssociationRepository;
+import arquivo.repository.IntegrationLogRepository;
+import arquivo.repository.SearchEntityRepository;
 import arquivo.services.MetricService;
-import arquivo.services.WebClientService;
+import arquivo.services.TextScoreService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,8 +23,10 @@ import com.google.cloud.vertexai.generativeai.GenerativeModel;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -28,7 +36,10 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @EnableKafka
@@ -36,14 +47,18 @@ public class ArquivoTextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArquivoTextListener.class);
 
+    @Value("${image-crop.topic}")
+    private String imageCropTopic;
+
     private final ObjectMapper objectMapper;
     private final ArticleRepository articleRepository;
     private final ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository;
     private final TextScoreService textScoreService = TextScoreService.getInstance();
     private final SearchEntityRepository searchEntityRepository;
-    private final WebClientService webClientService;
     private final MetricService metricService;
     private final IntegrationLogRepository integrationLogRepository;
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     private long receivedCounter;
     private long summaryNullCounter;
@@ -54,6 +69,7 @@ public class ArquivoTextListener {
     private long duplicatedArticleEntity;
     private long jsonErrors;
     private long discardedSummaryCounter;
+    private long totalImageEventSentCounter;
 
     final DecimalFormat decimalFormat = new DecimalFormat("#.###########");
 
@@ -66,7 +82,7 @@ public class ArquivoTextListener {
                         ArticleSearchEntityAssociationRepository articleSearchEntityAssociationRepository,
                         SearchEntityRepository searchEntityRepository,
                         MetricService metricService,
-                        IntegrationLogRepository integrationLogRepository) {
+                        IntegrationLogRepository integrationLogRepository, KafkaTemplate<String, String> kafkaTemplate) {
         this.objectMapper = objectMapper;
         objectMapper.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
         this.articleRepository = articleRepository;
@@ -74,7 +90,7 @@ public class ArquivoTextListener {
         this.searchEntityRepository = searchEntityRepository;
         this.integrationLogRepository = integrationLogRepository;
         this.metricService = metricService;
-        this.webClientService = new WebClientService();
+        this.kafkaTemplate = kafkaTemplate;
 
         GenerationConfig generationConfig = GenerationConfig.newBuilder()
                 .setMaxOutputTokens(1024)
@@ -124,6 +140,7 @@ public class ArquivoTextListener {
         vertexApiErrorCounter = metricService.loadValue("text_total_articles_error_vertex_ai");
         jsonErrors = metricService.loadValue("text_total_articles_error_json_parsing");
         summaryNullCounter = metricService.loadValue("text_total_articles_error_null_summary");
+        totalImageEventSentCounter = metricService.loadValue("text_total_articles_sent_to_image");
     }
 
     private String getSummary(String summaryResponse) {
@@ -256,6 +273,9 @@ public class ArquivoTextListener {
             article = articleRepository.save(article);
             newSummaryCounter++;
 
+            // sends to Image listener to fetch image crop
+            publish(new ImageRecord(article.getId(), event.imageUrl()));
+
         } else {
             summaryAlreadySetCounter++;
         }
@@ -270,6 +290,23 @@ public class ArquivoTextListener {
         storeStats();
     }
 
+    int roundRobinIndex = 0;
+
+    private void publish(ImageRecord imageRecord) {
+        try {
+            kafkaTemplate.send(imageCropTopic, roundRobinIndex, "" + roundRobinIndex, objectMapper.writeValueAsString(imageRecord));
+            LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
+            totalImageEventSentCounter++;
+            roundRobinIndex++;
+            if (roundRobinIndex == 5) {
+                roundRobinIndex = 0;
+            }
+        } catch (JsonProcessingException e) {
+            LOG.warn("Error processing article {} for summary processing", imageRecord.articleId());
+            jsonErrors++;
+        }
+    }
+
     private void logStats() {
         LOG.info("Stats:");
         LOG.info("Texts received: {}", receivedCounter);
@@ -277,6 +314,7 @@ public class ArquivoTextListener {
         LOG.info("Texts discarded summary : {}/{}", discardedSummaryCounter, receivedCounter);
         LOG.info("Texts new association : {}/{}", newAssociationCounter, receivedCounter);
         LOG.info("Texts repeated association : {}/{}", duplicatedArticleEntity, receivedCounter);
+        LOG.info("Articles sent to image: {}/{}", totalImageEventSentCounter, receivedCounter);
 
         if (summaryAlreadySetCounter > 0) {
             LOG.warn("Texts already set summary : {}/{}", summaryAlreadySetCounter, receivedCounter);
@@ -301,6 +339,8 @@ public class ArquivoTextListener {
         metricService.setValue("text_total_articles_error_vertex_ai", vertexApiErrorCounter);
         metricService.setValue("text_total_articles_error_json_parsing", jsonErrors);
         metricService.setValue("text_total_articles_error_null_summary", summaryNullCounter);
+        metricService.setValue("text_total_articles_sent_to_image", totalImageEventSentCounter);
+
     }
 
     private String summarize(String text) throws IOException {
