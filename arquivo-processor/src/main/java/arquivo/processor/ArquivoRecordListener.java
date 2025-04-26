@@ -205,7 +205,7 @@ public class ArquivoRecordListener {
             LOG.debug("Sent to topic {} and partition {} value={}", textSummaryTopic, roundRobinIndex, textRecord);
             totalTextEventSentCounter++;
             roundRobinIndex++;
-            if (roundRobinIndex == 5) {
+            if (roundRobinIndex == 10) {
                 roundRobinIndex = 0;
             }
         } catch (JsonProcessingException e) {

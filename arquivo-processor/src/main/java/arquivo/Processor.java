@@ -36,7 +36,7 @@ class TopicConfig {
     @Bean
     public NewTopic createTopic() {
         return TopicBuilder.name(topic)
-                .partitions(6)
+                .partitions(10)
                 .build();
     }
 }

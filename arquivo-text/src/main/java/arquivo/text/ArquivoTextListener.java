@@ -167,7 +167,7 @@ public class ArquivoTextListener {
         }
     }
 
-    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "5")
+    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
@@ -298,7 +298,7 @@ public class ArquivoTextListener {
             LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
             totalImageEventSentCounter++;
             roundRobinIndex++;
-            if (roundRobinIndex == 5) {
+            if (roundRobinIndex == 10) {
                 roundRobinIndex = 0;
             }
         } catch (JsonProcessingException e) {

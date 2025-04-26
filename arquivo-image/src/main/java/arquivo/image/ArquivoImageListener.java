@@ -1,8 +1,8 @@
 package arquivo.image;
 
 import arquivo.model.Article;
-import arquivo.model.records.ImageRecord;
 import arquivo.model.IntegrationLog;
+import arquivo.model.records.ImageRecord;
 import arquivo.repository.ArticleRepository;
 import arquivo.repository.IntegrationLogRepository;
 import arquivo.services.MetricService;
@@ -63,7 +63,7 @@ public class ArquivoImageListener {
         imageNullCounter = metricService.loadValue("image_total_articles_error_null_image");
     }
 
-    @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "5")
+    @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION) String partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
