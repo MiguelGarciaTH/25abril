@@ -35,13 +35,13 @@ public class TextScoreService {
 
     public TextScoreService() {
         StringBuilder regexp = new StringBuilder();
-        regexp.append("(");
+        regexp.append("\\b("); // opening word boundary and group
         for (String word : Keywords.contextualKeywords) {
-            regexp.append(word).append("|");
+            regexp.append(Pattern.quote(word)).append("|"); // quote each word to escape special characters
         }
-        regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
-        regexp.append(")");
-        keywordPattern = Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE);
+        regexp.setLength(regexp.length() - 1); // remove the last '|'
+        regexp.append(")\\b"); // closing group and word boundary
+        keywordPattern = Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
         namesPattern = new HashMap<>();
     }
 
