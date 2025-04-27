@@ -15,6 +15,7 @@ const Entities = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [searchTimer, setSearchTimer] = useState(null);
     const [hasMoreData, setHasMoreData] = useState(true); // Track if more data is available
+    const [typing, setTyping] = useState(false); // Track if the user is typing
 
     const fetchData = useCallback(async (pageNumber, query = "") => {
         if (!hasMoreData) return; // Stop fetching if no more data is available
@@ -80,12 +81,14 @@ const Entities = () => {
     const handleSearchChange = (e) => {
         const newQuery = e.target.value;
         setSearchQuery(newQuery);
+        setTyping(true); // Set typing to true when the user starts typing
 
         if (searchTimer) {
             clearTimeout(searchTimer);
         }
 
         const timer = setTimeout(() => {
+            setTyping(false); // Set typing to false after the delay
             setEntities([]);
             setPage(0);
             setHasMoreData(true); // Reset hasMoreData for new search
@@ -115,7 +118,7 @@ const Entities = () => {
                 onChange={handleSearchChange}
                 clearSearch={clearSearch}
             />
-            {!loading && entities.length === 0 ? (
+            {!loading && !typing && entities.length === 0 ? ( // Show EmptyResults only if not typing
                 <EmptyResults />
             ) : (
                 <div className="polaroid-container">
