@@ -3,7 +3,6 @@ package arquivo.repository;
 import arquivo.model.Article;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -45,8 +44,8 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             JOIN ArticleSearchEntityAssociation assoc ON assoc.article.id = a.id
             WHERE assoc.searchEntity.id = :searchEntityId
               AND a.summary IS NOT NULL
-              AND assoc.entityScore > 0.0
-            ORDER BY assoc.entityScore DESC
+              AND a.summaryScore > 0.0
+            ORDER BY assoc.entityScore, a.summaryScore DESC
             """)
     Page<Article> findBySearchEntityId(int searchEntityId, Pageable pageable);
 
