@@ -5,8 +5,8 @@ import { BsPeople } from 'react-icons/bs';
 import { AiOutlineBarChart } from "react-icons/ai";
 import { AiFillFileText } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
-import { AiOutlineDeploymentUnit } from "react-icons/ai";
 import { SiMaterialdesignicons } from "react-icons/si";
+import { GiPodium } from "react-icons/gi";
 import "../styles/SideBar.css";
 
 const Sidebar = () => {
@@ -40,8 +40,8 @@ const Sidebar = () => {
                             <span className="link-text">Estatisticas</span>
                         </Link>
                         <Link to="/data" className="icon-link">
-                            <AiOutlineDeploymentUnit className="sidebar-icon" />
-                            <span className="link-text">Dados</span>
+                            <GiPodium className="sidebar-icon" />
+                            <span className="link-text">Top</span>
                         </Link>
                         <Link to="/about" className="icon-link">
                             <AiFillFileText className="sidebar-icon" />
