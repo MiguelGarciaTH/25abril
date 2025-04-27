@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.gax.rpc.ResourceExhaustedException;
 import com.google.cloud.vertexai.VertexAI;
 import com.google.cloud.vertexai.api.*;
 import com.google.cloud.vertexai.generativeai.ContentMaker;
@@ -167,7 +168,7 @@ public class ArquivoTextListener {
         }
     }
 
-    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
+    @KafkaListener(topics = {"${text.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "8")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());
@@ -343,8 +344,26 @@ public class ArquivoTextListener {
 
     }
 
+    private long retries = 0;
+
     private String summarize(String text) throws IOException {
-        var content = ContentMaker.fromMultiModalData(text);
+        Content content = ContentMaker.fromMultiModalData(text);
+        try {
+            return getVertexIASummary(content);
+        } catch (ResourceExhaustedException ex) {
+            try {
+                Thread.sleep(10_000L * (retries + 1));
+                retries++;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            String result = getVertexIASummary(content);
+            retries = 0;
+            return result;
+        }
+    }
+
+    private String getVertexIASummary(Content content) throws IOException {
         GenerateContentResponse generatedContentResponse = model.generateContent(content);
         if (generatedContentResponse.getCandidatesCount() == 0) {
             return null;
