@@ -38,9 +38,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @EnableKafka
@@ -76,7 +74,6 @@ public class ArquivoTextListener {
 
     private final GenerativeModel model;
 
-    private final Map<String, Object> input;
     private int retry = 0;
 
     ArquivoTextListener(ObjectMapper objectMapper, ArticleRepository articleRepository,
@@ -127,11 +124,6 @@ public class ArquivoTextListener {
                 .setSafetySettings(safetySettings)
                 .setSystemInstruction(systemInstruction)
                 .build();
-
-        input = new HashMap<>();
-        input.put("language", "pt");
-        input.put("max_ngram_size", 3);
-        input.put("number_of_keywords", 5);
 
         receivedCounter = metricService.loadValue("text_total_articles_received");
         newSummaryCounter = metricService.loadValue("text_total_articles_new_summary");
@@ -252,7 +244,7 @@ public class ArquivoTextListener {
             }
 
             // score for article summary
-            final TextScoreService.Score contextualScore = textScoreService.contextualScore(article.getTitle(), article.getUrl(), summary, true);
+            final TextScoreService.Score contextualScore = textScoreService.textScore(article.getTitle(), article.getUrl(), summary, TextScoreService.getInstance().getKeywordPattern(), true, "keyword", 100);
             if (contextualScore.total() == 0) {
                 // the previous score (greater than zero) was due to some side-text-artifacts on the article (e.g., headlines on side columns)
                 LOG.info("Article {} is not about 25 de Abril (summary scoring) previous score: {}", event.articleId(), decimalFormat.format(article.getContextualScore()));
@@ -281,7 +273,7 @@ public class ArquivoTextListener {
             summaryAlreadySetCounter++;
         }
 
-        final TextScoreService.Score entityScore = textScoreService.searchEntityscore(article.getTitle(), article.getUrl(), summary, searchEntity, true);
+        final TextScoreService.Score entityScore = textScoreService.textScore(article.getTitle(), article.getUrl(), summary, TextScoreService.getInstance().getNamePattern(searchEntity), true, "entity", 100);
         final JsonNode entityScoreJson = objectMapper.convertValue(entityScore.keywordCounter(), JsonNode.class);
         articleSearchEntityAssociationRepository.save(new ArticleSearchEntityAssociation(article, searchEntity, entityScore.total(), entityScoreJson));
         newAssociationCounter++;

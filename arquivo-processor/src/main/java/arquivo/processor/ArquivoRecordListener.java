@@ -134,8 +134,8 @@ public class ArquivoRecordListener {
             }
 
             final SearchEntity searchEntity = getSearchEntity(event.searchEntityId());
-            final TextScoreService.Score score = scoreService.contextualScore(event.title(), event.textUrl(), text, false);
-            if (score.total() > 5) {
+            final TextScoreService.Score score = scoreService.textScore(event.title(), event.textUrl(), text, TextScoreService.getInstance().getKeywordPattern(), false, "keyword", 10);
+            if (score.total() > 10) {
                 final JsonNode scoreJson = objectMapper.convertValue(score.keywordCounter(), JsonNode.class);
                 article = articleRepository.save(new Article(event.title(), event.url(), trimUrl(event.url()), LocalDateTime.now(ZoneOffset.UTC), site, text, score.total(), scoreJson));
                 LOG.debug("New article articleId={} title={} url={} with score={}", article.getId(), event.title(), event.url(), score);
@@ -214,7 +214,6 @@ public class ArquivoRecordListener {
         }
     }
 
-
     private String trimUrl(String url) {
         return url.split("\\/\\/")[2];
     }
@@ -226,7 +225,7 @@ public class ArquivoRecordListener {
         LOG.info("Articles re-used: {}/{}", reusedCounter, receivedCounter);
         LOG.info("Articles sent to summary: {}/{}", totalTextEventSentCounter, receivedCounter);
 
-        if(errorCounter > 0){
+        if (errorCounter > 0) {
             LOG.info("Articles error discarded: {}/{}", errorCounter, receivedCounter);
         }
         if (duplicatesCounter > 0) {

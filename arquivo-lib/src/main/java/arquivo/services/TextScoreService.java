@@ -22,7 +22,6 @@ public class TextScoreService {
 
     private static Pattern keywordPattern;
 
-
     private final Map<Integer, Pattern> namesPattern;
 
     public static TextScoreService getInstance() {
@@ -45,62 +44,50 @@ public class TextScoreService {
         namesPattern = new HashMap<>();
     }
 
-    public Score contextualScore(String title, String url, String text, boolean textScaling) {
+    public Score textScore(String title, String url, String text, Pattern pattern, boolean scoreTextScaling, String counterPrefix, int counterScoreWeight) {
         long score = 0;
-        final Map<String, Long> keywordTextCounter = new HashMap<>();
+        final Map<String, Long> counterMap = new HashMap<>();
 
-        final Matcher keywordMatcher = keywordPattern.matcher(text);
-        final long countContextualKeyword = keywordMatcher.results().count();
-        keywordTextCounter.put("countContextualKeyword", countContextualKeyword);
-        if (countContextualKeyword == 0) {
-            // the article is not about 25 de abril
-            return new Score(0, keywordTextCounter);
+        final Matcher keywordMatcher = pattern.matcher(text);
+        final long textCount = keywordMatcher.results().count();
+        counterMap.put(counterPrefix + "TextCount", textCount);
+        if (textCount == 0) {
+            // the article is not about 25 de abril or search entity
+            return new Score(0, counterMap);
         }
-        score += countContextualKeyword;
 
-        final Matcher urlMatcher = keywordPattern.matcher(url);
-        final long countNamesUrl = urlMatcher.results().count();
-        keywordTextCounter.put("countContextualUrl", countNamesUrl);
-        score *= Math.max(1, countNamesUrl * 10);
-
-        final Matcher titleMatcher = keywordPattern.matcher(title);
-        final long countNamesTitle = titleMatcher.results().count();
-        keywordTextCounter.put("countContextualTitle", countNamesTitle);
-        score *= Math.max(1, countNamesTitle * 10);
-        if (textScaling) {
-            return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue() / text.length(), keywordTextCounter);
-        }
-        return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
-    }
-
-    public Score searchEntityscore(String title, String url, String text, SearchEntity searchEntity, boolean textScaling) {
-        long score = 0;
-        final Map<String, Long> keywordTextCounter = new HashMap<>();
-
-        final Pattern pattern = getNamePattern(searchEntity);
-
-        final Matcher namesMatcher = pattern.matcher(text);
-        final long countNamesKeywords = namesMatcher.results().count();
-        keywordTextCounter.put("countNamesKeywords", countNamesKeywords);
-        if (countNamesKeywords == 0) {
-            // the article is not about the search entity
-            return new Score(0, keywordTextCounter);
-        }
-        score += countNamesKeywords*100;
+        score += scoreTextScaling ? textCount / text.length() : textCount;
 
         final Matcher urlMatcher = pattern.matcher(url);
-        final long countNamesUrl = urlMatcher.results().count();
-        keywordTextCounter.put("countNamesUrl", countNamesUrl);
-        score *= Math.max(1, countNamesUrl * 20);
+        final long urlCount = urlMatcher.results().count();
+        counterMap.put(counterPrefix + "UrlCount", urlCount);
+        score += Math.max(1, urlCount * counterScoreWeight);
 
         final Matcher titleMatcher = pattern.matcher(title);
-        final long countNamesTitle = titleMatcher.results().count();
-        keywordTextCounter.put("countNamesTitle", countNamesTitle);
-        score *= Math.max(1, countNamesTitle * 20);
-        if (textScaling) {
-            return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue() / text.length(), keywordTextCounter);
+        final long textCounter = titleMatcher.results().count();
+        counterMap.put(counterPrefix + "TitleCount", textCounter);
+        score += Math.max(1, textCounter * counterScoreWeight);
+
+        return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue(), counterMap);
+    }
+
+    public Pattern getKeywordPattern() {
+        return keywordPattern;
+    }
+
+    public Pattern getNamePattern(SearchEntity searchEntity) {
+        if (!namesPattern.containsKey(searchEntity.getId())) {
+            final List<String> names = mergeNamesToList(searchEntity);
+            StringBuilder regexp = new StringBuilder();
+            regexp.append("(");
+            for (String name : names) {
+                regexp.append(name).append("|");
+            }
+            regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
+            regexp.append(")");
+            namesPattern.put(searchEntity.getId(), Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE));
         }
-        return new Score(BigDecimal.valueOf(score).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
+        return namesPattern.get(searchEntity.getId());
     }
 
     public Score searchEntityscore(String text, SearchEntity searchEntity) {
@@ -116,22 +103,7 @@ public class TextScoreService {
             return new Score(0, keywordTextCounter);
         }
 
-        return new Score(BigDecimal.valueOf(countNamesKeywords*100).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
-    }
-
-    private Pattern getNamePattern(SearchEntity searchEntity) {
-        if (!namesPattern.containsKey(searchEntity.getId())) {
-            final List<String> names = mergeNamesToList(searchEntity);
-            StringBuilder regexp = new StringBuilder();
-            regexp.append("(");
-            for (String name : names) {
-                regexp.append(name).append("|");
-            }
-            regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
-            regexp.append(")");
-            namesPattern.put(searchEntity.getId(), Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE));
-        }
-        return namesPattern.get(searchEntity.getId());
+        return new Score(BigDecimal.valueOf(countNamesKeywords * 100).setScale(2, RoundingMode.CEILING).doubleValue(), keywordTextCounter);
     }
 
     private List<String> mergeNamesToList(SearchEntity searchEntity) {
