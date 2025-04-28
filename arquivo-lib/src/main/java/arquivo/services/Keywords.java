@@ -33,7 +33,6 @@ public class Keywords {
             "nova constituição de 1976",
             "ocupações de terras",
             "oposição democrática",
-            "pcp",
             "pide",
             "pide-dgs",
             "portugal 1974",
