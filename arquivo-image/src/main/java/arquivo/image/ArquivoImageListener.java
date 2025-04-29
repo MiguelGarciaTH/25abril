@@ -63,7 +63,7 @@ public class ArquivoImageListener {
         imageNullCounter = metricService.loadValue("image_total_articles_error_null_image");
     }
 
-    @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "10")
+    @KafkaListener(topics = {"${image-crop.topic}"}, containerFactory = "kafkaListenerContainerFactory", concurrency = "15")
     public void listener(ConsumerRecord<String, String> record, Acknowledgment ack, @Header(KafkaHeaders.RECEIVED_PARTITION) String partition) {
 
         LOG.info("Received on topic {} on partition {} record {}", record.topic(), partition, record.value());

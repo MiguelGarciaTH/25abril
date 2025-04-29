@@ -291,7 +291,7 @@ public class ArquivoTextListener {
             LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
             totalImageEventSentCounter++;
             roundRobinIndex++;
-            if (roundRobinIndex == 10) {
+            if (roundRobinIndex == 15) {
                 roundRobinIndex = 0;
             }
         } catch (JsonProcessingException e) {
