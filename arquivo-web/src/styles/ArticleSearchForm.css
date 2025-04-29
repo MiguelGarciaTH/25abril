@@ -80,3 +80,35 @@ button:hover img {
     height: 40px; /* Adjust height for smaller screens */
   }
 }
+
+.chip-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 5%; /* Ensure spacing above the chips */
+    justify-content: center; /* Center the chips horizontally */
+    z-index: 1; /* Ensure chips are above other elements */
+}
+
+/* Ensure chips are styled properly */
+.chip {
+    padding: 4px 8px; /* Smaller padding for compact size */
+    font-size: 14px; /* Reduce font size */
+    border-radius: 12px; /* Smaller border radius */
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    color: #000;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.chip:hover {
+    background-color: #e0e0e0;
+}
+
+.chip-selected {
+    background-color: #d32f2f; /* Replace with the red color from favicon */
+    color: #fff;
+    border-color: #d32f2f; /* Match the border color with the background */
+}

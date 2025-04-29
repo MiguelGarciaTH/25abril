@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface SearchEntityRepository extends JpaRepository<SearchEntity, Integer> {
 
-    @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se WHERE se.names_vector @@ to_tsquery('portuguese', :searchTerm)")
-    Page<SearchEntity> findBySearchTerm(String searchTerm, Pageable pageable);
+    @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se WHERE se.names_vector @@ to_tsquery('portuguese', :searchTerm) and se.type = :type")
+    Page<SearchEntity> findBySearchTermAbdType(String searchTerm, String type, Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se order by se.name asc")
     Page<SearchEntity> findAll(Pageable pageable);
@@ -24,6 +24,15 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
             order by asea.searchEntity.name asc
             """)
     List<SearchEntityCounter> getSearchEntityCounts();
+
+    @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se where se.type = ?1 order by se.name asc")
+    Page<SearchEntity> findAllByType(String type, Pageable pageable);
+
+    @Query(nativeQuery = true, value = """
+            select distinct(se.type)
+            from search_entity se
+            """)
+    List<String> getSearchEntityTypes();
 
     record SearchEntityCounter(int id, String name, String image, Long count) {
 

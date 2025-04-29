@@ -19,13 +19,17 @@ public class SearchEntityController {
     }
 
     @GetMapping
-    public Page<SearchEntity> getSearchEntityBySearchTerm(@RequestParam(required = false, value = "search_term") String searchTerm, Pageable pageable) {
+    public Page<SearchEntity> getSearchEntityBySearchTerm(@RequestParam(required = false, value = "search_term") String searchTerm,
+                                                          @RequestParam(required = false, value = "type") String type,
+                                                          Pageable pageable) {
         // If searchTerm is empty or null, set it to an empty string for wildcard search
-        if (searchTerm == null || searchTerm.isEmpty()) {
+        if ((searchTerm == null || searchTerm.isEmpty()) && (type == null || type.isEmpty()) ) {
             return searchEntityRepository.findAll(pageable);
+        } else if((searchTerm == null || searchTerm.isEmpty()) && (type != null || !type.isEmpty())){
+            return searchEntityRepository.findAllByType(type, pageable);
         } else {
             // If there is a search term, prepare it for the full-text search (replace spaces with ' & ' for PostgreSQL)
-            return searchEntityRepository.findBySearchTerm(searchTerm.replaceAll(" ", " & "), pageable);
+            return searchEntityRepository.findBySearchTermAbdType(searchTerm.replaceAll(" ", " & "), type.toUpperCase(), pageable);
         }
     }
 
@@ -37,5 +41,10 @@ public class SearchEntityController {
     @GetMapping("/{entityId}")
     SearchEntity getSearchEntity(@PathVariable int entityId) {
         return searchEntityRepository.findById(entityId).orElse(null);
+    }
+
+    @GetMapping("/types")
+    List<String> getSearchEntityTypes() {
+        return searchEntityRepository.getSearchEntityTypes();
     }
 }

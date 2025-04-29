@@ -3,7 +3,6 @@ import Header from "../components/Header";
 import Entity from '../components/Entity';
 import EntitySearchForm from '../components/EntitySearchForm';
 import EmptyResults from '../components/EmptyResults';
-
 import "../index.css";
 import "../styles/ArticleSearchForm.css";
 
@@ -14,19 +13,35 @@ const Entities = () => {
     const [page, setPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchTimer, setSearchTimer] = useState(null);
-    const [hasMoreData, setHasMoreData] = useState(true); // Track if more data is available
-    const [typing, setTyping] = useState(false); // Track if the user is typing
+    const [hasMoreData, setHasMoreData] = useState(true);
+    const [typing, setTyping] = useState(false);
+    const [entityTypes, setEntityTypes] = useState([]); // Store entity types for chips
+    const [selectedType, setSelectedType] = useState(""); // Track selected chip filter
 
-    const fetchData = useCallback(async (pageNumber, query = "") => {
-        if (!hasMoreData) return; // Stop fetching if no more data is available
+    // Fetch entity types for chips
+    useEffect(() => {
+        const fetchEntityTypes = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity/types`);
+                const types = await response.json();
+                console.log("Fetched entity types:", types); // Debug log for fetched types
+                setEntityTypes(types);
+            } catch (error) {
+                console.error("Error fetching entity types:", error);
+            }
+        };
+        fetchEntityTypes();
+    }, []);
+
+    const fetchData = useCallback(async (pageNumber, query = "", type = "") => {
+        if (!hasMoreData) return;
 
         setLoading(true);
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=12&search_term=${query}`);
+            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=12&search_term=${query}&type=${type}`);
             if (!response.ok) {
-                <EmptyResults />
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
@@ -39,7 +54,6 @@ const Entities = () => {
                 return [...prevEntities, ...entityData];
             });
 
-            // Update hasMoreData based on whether new data was returned
             if (entityData.length === 0) {
                 setHasMoreData(false);
             }
@@ -51,8 +65,8 @@ const Entities = () => {
     }, [hasMoreData]);
 
     useEffect(() => {
-        fetchData(page, searchQuery);
-    }, [fetchData, page, searchQuery]);
+        fetchData(page, searchQuery, selectedType);
+    }, [fetchData, page, searchQuery, selectedType]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -81,18 +95,18 @@ const Entities = () => {
     const handleSearchChange = (e) => {
         const newQuery = e.target.value;
         setSearchQuery(newQuery);
-        setTyping(true); // Set typing to true when the user starts typing
+        setTyping(true);
 
         if (searchTimer) {
             clearTimeout(searchTimer);
         }
 
         const timer = setTimeout(() => {
-            setTyping(false); // Set typing to false after the delay
+            setTyping(false);
             setEntities([]);
             setPage(0);
-            setHasMoreData(true); // Reset hasMoreData for new search
-            fetchData(0, newQuery);
+            setHasMoreData(true);
+            fetchData(0, newQuery, selectedType);
         }, 500);
 
         setSearchTimer(timer);
@@ -102,12 +116,18 @@ const Entities = () => {
         setSearchQuery("");
         setEntities([]);
         setPage(0);
-        setHasMoreData(true); // Reset hasMoreData for cleared search
+        setHasMoreData(true);
+    };
+
+    const handleChipClick = (type) => {
+        setSelectedType(type === selectedType ? "" : type); // Toggle chip selection
+        setEntities([]);
+        setPage(0);
+        setHasMoreData(true);
     };
 
     if (loading && page === 0) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}                 <EmptyResults />
-    </div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div>
@@ -118,7 +138,18 @@ const Entities = () => {
                 onChange={handleSearchChange}
                 clearSearch={clearSearch}
             />
-            {!loading && !typing && entities.length === 0 ? ( // Show EmptyResults only if not typing
+            <div className="chip-container">
+                {entityTypes.map((type) => (
+                    <div
+                        key={type}
+                        className={`chip ${selectedType === type ? "chip-selected" : ""}`}
+                        onClick={() => handleChipClick(type)}
+                    >
+                        {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()} {/* Capitalize first letter */}
+                    </div>
+                ))}
+            </div>
+            {!loading && !typing && entities.length === 0 ? (
                 <EmptyResults />
             ) : (
                 <div className="polaroid-container">
