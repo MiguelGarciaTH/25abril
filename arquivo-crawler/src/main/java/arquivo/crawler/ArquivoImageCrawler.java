@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
@@ -125,7 +126,7 @@ public class ArquivoImageCrawler {
         double confidence = 0.0;
         final Map<String, Double> scoreDetails = new HashMap<>();
         if (node.has("imgSrc")) {
-            final String url = URLDecoder.decode(node.get("imgSrc").asText());
+            final String url = URLDecoder.decode(node.get("imgSrc").asText(), StandardCharsets.UTF_8);
             double count = textScore.searchEntityscore(url, entity).total();
             score += count;
             scoreDetails.put("url", count);
