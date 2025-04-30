@@ -145,7 +145,10 @@ const Entities = () => {
                         className={`chip ${selectedType === type ? "chip-selected" : ""}`}
                         onClick={() => handleChipClick(type)}
                     >
-                        {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()} {/* Capitalize first letter */}
+                        {type
+                            .replace(/_/g, " ") // Replace underscores with spaces
+                            .charAt(0)
+                            .toUpperCase() + type.replace(/_/g, " ").slice(1).toLowerCase()} {/* Capitalize first letter */}
                     </div>
                 ))}
             </div>

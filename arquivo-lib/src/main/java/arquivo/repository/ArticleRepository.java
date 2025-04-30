@@ -45,6 +45,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             WHERE assoc.searchEntity.id = :searchEntityId
               AND a.summary IS NOT NULL
               AND a.summaryScore > 0.0
+              AND assoc.entityScore > 0.0
             ORDER BY assoc.entityScore, a.summaryScore DESC
             """)
     Page<Article> findBySearchEntityId(int searchEntityId, Pageable pageable);

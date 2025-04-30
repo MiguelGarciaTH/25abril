@@ -7,16 +7,16 @@ import org.codehaus.commons.nullanalysis.NotNull;
 public class SearchEntity {
 
     public enum Type {
-        CAPITAES,
-        MUSICOS,
-        EVENTOS,
-        MOVIMENTOS,
-        LOCAIS,
-        RESISTENTES,
-        ESCRITORES,
-        OPRESSORES,
+        CAPITÃES,
+        ARTISTAS,
+        JUNTA_DE_SALVAÇÃO_NACIONAL,
         JORNALISTAS,
-        POLITICOS
+        MOVIMENTOS,
+        EVENTOS,
+        LOCAIS,
+        OPRESSORES,
+        RESISTENTES,
+        POLÍTICOS
     }
 
     @Id
