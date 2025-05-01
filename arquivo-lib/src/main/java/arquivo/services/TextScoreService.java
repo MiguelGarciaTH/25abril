@@ -55,7 +55,6 @@ public class TextScoreService {
             // the article is not about 25 de abril or search entity
             return new Score(0, counterMap);
         }
-
         score += scoreTextScaling ? textCount / text.length() : textCount;
 
         final Matcher urlMatcher = pattern.matcher(url);
@@ -85,7 +84,7 @@ public class TextScoreService {
             }
             regexp = new StringBuilder(regexp.substring(0, regexp.length() - 1));
             regexp.append(")");
-            namesPattern.put(searchEntity.getId(), Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE));
+            namesPattern.put(searchEntity.getId(), Pattern.compile(regexp.toString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE));
         }
         return namesPattern.get(searchEntity.getId());
     }
