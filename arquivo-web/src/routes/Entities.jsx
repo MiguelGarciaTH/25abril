@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Header from "../components/Header";
 import Entity from '../components/Entity';
 import EntitySearchForm from '../components/EntitySearchForm';
@@ -17,6 +17,7 @@ const Entities = () => {
     const [typing, setTyping] = useState(false);
     const [entityTypes, setEntityTypes] = useState([]); // Store entity types for chips
     const [selectedType, setSelectedType] = useState(""); // Track selected chip filter
+    const searchInputRef = useRef(null);
 
     // Fetch entity types for chips
     useEffect(() => {
@@ -92,6 +93,14 @@ const Entities = () => {
         };
     }, [loading, hasMoreData]);
 
+    // Add this new useEffect for focus management
+    useEffect(() => {
+        if (!typing && searchInputRef.current) {
+            searchInputRef.current.focus();
+            searchInputRef.current.select();
+        }
+    }, [typing]);
+
     const handleSearchChange = (e) => {
         const newQuery = e.target.value;
         setSearchQuery(newQuery);
@@ -137,6 +146,7 @@ const Entities = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 clearSearch={clearSearch}
+                ref={searchInputRef}
             />
             <div className="chip-container">
                 {entityTypes.map((type) => (
