@@ -109,7 +109,7 @@ const SearchEntityCounter = () => {
       >
         Artigos por entidade
       </h3>
-      <ResponsiveContainer>
+      <ResponsiveContainer height={400}> {/* Set a fixed height */}
         <BarChart 
           data={data}
         >
@@ -153,7 +153,7 @@ const SearchEntityCounter = () => {
             }
             .recharts-wrapper {
               width: 100% !important;
-              height: 300px !important;
+              height: 250px !important; /* Reduced height for mobile */
             }
           }
         `}
