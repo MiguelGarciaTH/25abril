@@ -9,9 +9,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.Collator;
+import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -22,6 +25,17 @@ public class ArticleController {
 
     public ArticleController(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
+    }
+
+    private static final Pattern DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+
+    public static String normalizeSearchTerm(String input) {
+        if (input == null) return "";
+
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        String withoutAccents = DIACRITICS.matcher(normalized).replaceAll("");
+
+        return withoutAccents.toLowerCase().trim();
     }
 
     @GetMapping("/entity/{entityId}")
@@ -50,8 +64,11 @@ public class ArticleController {
 
     @GetMapping
     public Page<ArticleDTO> getArticlesBySearchTerm(@RequestParam("search_term") String searchTerm, Pageable pageable) {
-        searchTerm = searchTerm.replaceAll(" ", " & ");
-        final Page<Article> articlePages = articleRepository.findBySearchTerm(searchTerm, pageable);
+        final String normalized = normalizeSearchTerm(searchTerm);
+        final String query = Arrays.stream(normalized.split("\\s+"))
+                .map(word -> word + ":*")
+                .collect(Collectors.joining(" & "));
+        final Page<Article> articlePages = articleRepository.findBySearchTerm(query, pageable);
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), new SearchEntityDetails(article.getSearchEntities())));
     }
 
