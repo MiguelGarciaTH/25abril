@@ -33,9 +33,8 @@ CREATE TABLE IF NOT EXISTS search_entity (
     type varchar(50) NOT NULL CHECK (
                                      type IN (
                                          'CAPITÃES',
-                                         'ESCRITORES',
-                                         'MÚSICOS',
-                                         'JUNTA_DE_SAVALÇÃO_NACIONAL',
+                                         'ARTISTAS',
+                                         'JUNTA_DE_SALVAÇÃO_NACIONAL',
                                          'JORNALISTAS',
                                          'MOVIMENTOS',
                                          'EVENTOS',
