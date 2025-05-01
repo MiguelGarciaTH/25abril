@@ -47,7 +47,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
               AND a.summary IS NOT NULL
               AND a.summaryScore > 0.0
               AND assoc.entityScore > 0.0
-            ORDER BY assoc.entityScore, a.summaryScore DESC
+            ORDER BY (assoc.entityScore, a.summaryScore) DESC
             """)
     Page<Article> findBySearchEntityId(int searchEntityId, Pageable pageable);
 
@@ -60,7 +60,7 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
               AND a.summary IS NOT NULL
               AND a.summaryScore > 0.0
               AND assoc.entityScore > 0.0
-            ORDER BY assoc.entityScore, a.summaryScore DESC
+            ORDER BY (assoc.entityScore, a.summaryScore) DESC
             """)
     Page<Article> findBySearchEntityType(SearchEntity.Type type, Pageable pageable);
 
