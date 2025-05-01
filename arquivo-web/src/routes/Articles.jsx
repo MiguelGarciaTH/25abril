@@ -83,6 +83,7 @@ const Articles = () => {
                                 <ArticlePreview
                                     key={article.articleDetail.id}
                                     item={article}
+                                    name={name}
                                 />
                             ))}
                         </div>

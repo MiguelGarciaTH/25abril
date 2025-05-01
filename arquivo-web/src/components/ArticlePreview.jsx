@@ -2,8 +2,26 @@ import { Link } from "react-router-dom";
 import React, { useState } from 'react';
 import "../styles/Article.css";
 
-function ArticlePreview({ item }) {
+function ArticlePreview({ name, item }) {
     const [isHovered, setIsHovered] = useState(false);
+
+    const highlightText = (text, searchTerm) => {
+        if (!searchTerm) return text;
+        const regex = new RegExp(`(${searchTerm})`, 'gi');
+        return text.split(regex).map((part, index) => 
+            regex.test(part) ? (
+                <span key={index} style={{
+                    backgroundColor: 'rgba(255, 255, 0, 0.5)',
+                    transition: 'all 0.3s ease',
+                    borderRadius: '3px',
+                    padding: '0 2px',
+                    boxShadow: '0 0 2px rgba(255, 255, 0, 0.8)',
+                }}>
+                    {part}
+                </span>
+            ) : part
+        );
+    };
 
     return (
         <div className="collumn">
@@ -31,7 +49,7 @@ function ArticlePreview({ item }) {
                 </p>
             </div>
             <p className="article-summary">
-                {item.articleDetail.summary}
+                {highlightText(item.articleDetail.summary, name)}
             </p>
         </div>
     );

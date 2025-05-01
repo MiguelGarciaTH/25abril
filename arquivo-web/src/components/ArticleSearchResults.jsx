@@ -80,6 +80,7 @@ const ArticleSearchResults = () => {
                             <ArticlePreview
                                 key={article.articleDetail.id}
                                 item={article}
+                                name={query}
                             />
                         ))}
                     </div>
