@@ -136,6 +136,7 @@ const SearchEntityCounter = () => {
           <Bar 
             dataKey="count" 
             fill="#333"
+            name="Número de Artigos"  // Add a friendly name for the legend
             activeBar={{ fill: '#666' }}
           />
         </BarChart>

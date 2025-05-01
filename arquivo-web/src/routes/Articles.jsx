@@ -17,7 +17,9 @@ const Articles = () => {
         setError(null);
 
         try {
-            const url = `${import.meta.env.VITE_REST_URL}/articles/${path}/${id}?page=${pageNumber}`;
+            const url = path === 'type' 
+                ? `${import.meta.env.VITE_REST_URL}/articles/type/${name}?page=${pageNumber}`
+                : `${import.meta.env.VITE_REST_URL}/articles/${path}/${id}?page=${pageNumber}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');

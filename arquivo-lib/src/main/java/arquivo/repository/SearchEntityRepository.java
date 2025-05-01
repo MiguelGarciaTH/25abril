@@ -34,7 +34,23 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
             """)
     List<String> getSearchEntityTypes();
 
+    @Query("""
+            select new arquivo.repository.SearchEntityRepository$SearchEntityTypeCounter(
+                asea.searchEntity.type,
+                count(distinct asea.article.id)
+            )
+            from ArticleSearchEntityAssociation asea
+            where asea.entityScore > 0
+            group by asea.searchEntity.type
+            order by asea.searchEntity.type
+            """)
+    List<SearchEntityTypeCounter> getSearchEntityTypeCounts();
+
     record SearchEntityCounter(int id, String name, String image, Long count) {
+
+    }
+
+    record SearchEntityTypeCounter(SearchEntity.Type type, Long count) {
 
     }
 }

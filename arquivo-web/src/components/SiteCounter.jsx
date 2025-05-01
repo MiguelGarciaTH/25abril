@@ -83,7 +83,7 @@ const SiteCounter = () => {
             allowEscapeViewBox={{ x: true, y: true }}
           />
           <Legend />
-          <Bar dataKey="count" fill="#333" />
+          <Bar dataKey="count" fill="#333" name="Número de Artigos" />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -50,6 +50,12 @@ public class ArticleController {
         return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
     }
 
+    @GetMapping("/type/{type}")
+    public Page<ArticleDTO> getArticlesBySiteId(@PathVariable String type, Pageable pageable) {
+        final Page<Article> articlePages = articleRepository.findBySearchEntityType(SearchEntity.Type.valueOf(type), pageable);
+        return articlePages.map(article -> new ArticleDTO(new ArticleDetail(article), null));
+    }
+
     @GetMapping("/stats/top-relevance")
     public List<ArticleDTO> getArticleCountsByRelevance(Pageable pageable) {
         final Page<Article> articlePages = articleRepository.getArticleCountsByRelevance(pageable);

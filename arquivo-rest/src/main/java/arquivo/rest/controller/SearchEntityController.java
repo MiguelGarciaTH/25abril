@@ -57,6 +57,11 @@ public class SearchEntityController {
         return searchEntityRepository.getSearchEntityCounts();
     }
 
+    @GetMapping("/type/stats")
+    public List<SearchEntityRepository.SearchEntityTypeCounter> getSearchEntityTypeCounts() {
+        return searchEntityRepository.getSearchEntityTypeCounts();
+    }
+
     @GetMapping("/{entityId}")
     SearchEntity getSearchEntity(@PathVariable int entityId) {
         return searchEntityRepository.findById(entityId).orElse(null);

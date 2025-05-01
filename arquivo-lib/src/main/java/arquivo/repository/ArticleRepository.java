@@ -1,6 +1,7 @@
 package arquivo.repository;
 
 import arquivo.model.Article;
+import arquivo.model.SearchEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,6 +50,19 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             ORDER BY assoc.entityScore, a.summaryScore DESC
             """)
     Page<Article> findBySearchEntityId(int searchEntityId, Pageable pageable);
+
+    @Query(value = """
+            SELECT a
+            FROM Article a
+            JOIN a.site s
+            JOIN ArticleSearchEntityAssociation assoc ON assoc.article.id = a.id
+            WHERE assoc.searchEntity.type = :type
+              AND a.summary IS NOT NULL
+              AND a.summaryScore > 0.0
+              AND assoc.entityScore > 0.0
+            ORDER BY assoc.entityScore, a.summaryScore DESC
+            """)
+    Page<Article> findBySearchEntityType(SearchEntity.Type type, Pageable pageable);
 
     @Query(value = """
             select a
