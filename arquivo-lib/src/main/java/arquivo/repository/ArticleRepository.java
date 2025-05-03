@@ -38,6 +38,18 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             """)
     boolean existsByTitleAndSiteAndEntityId(String title, int siteId, int entityId);
 
+    @Query(nativeQuery = true, value = """
+            SELECT a.*
+            FROM article a
+            JOIN article_search_entity_association aes ON aes.article_id = a.id
+            WHERE a.title = ?1
+              AND a.site_id = ?2
+              AND aes.search_entity_id = ?3
+              AND a.summary IS NOT NULL
+              AND a.summary_score > 0.0
+            """)
+    Article findByTitleAndSiteAndEntityIdWithScoreAccepted(String title, int siteId, int entityId);
+
     @Query(value = """
             SELECT a
             FROM Article a
@@ -46,7 +58,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             WHERE assoc.searchEntity.id = :searchEntityId
               AND a.summary IS NOT NULL
               AND a.summaryScore > 0.0
-              AND assoc.entityScore > 0.0
             ORDER BY (assoc.entityScore, a.summaryScore) DESC
             """)
     Page<Article> findBySearchEntityId(int searchEntityId, Pageable pageable);
@@ -59,7 +70,6 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
             WHERE assoc.searchEntity.type = :type
               AND a.summary IS NOT NULL
               AND a.summaryScore > 0.0
-              AND assoc.entityScore > 0.0
             ORDER BY (assoc.entityScore, a.summaryScore) DESC
             """)
     Page<Article> findBySearchEntityType(SearchEntity.Type type, Pageable pageable);

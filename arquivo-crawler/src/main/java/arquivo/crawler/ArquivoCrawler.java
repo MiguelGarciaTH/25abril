@@ -1,9 +1,11 @@
 package arquivo.crawler;
 
-import arquivo.model.records.CrawlerRecord;
+import arquivo.model.Article;
 import arquivo.model.IntegrationLog;
 import arquivo.model.SearchEntity;
 import arquivo.model.Site;
+import arquivo.model.records.CrawlerRecord;
+import arquivo.model.records.ImageRecord;
 import arquivo.repository.*;
 import arquivo.services.MetricService;
 import arquivo.services.WebClientService;
@@ -54,9 +56,17 @@ public class ArquivoCrawler {
     private long noTitleCounter;
     private long duplicateCounter;
     private long totalSentCounter;
+    private long totalImageEventSentCounter;
+    private long jsonErrors;
 
     @Value("${processor.topic}")
     private String topic;
+
+    @Value("${image-crop.topic}")
+    private String imageCropTopic;
+
+    @Value("${25-abril.arquivo.article-crawler.image-recover-mode.enable}")
+    private boolean imageRecoverMode;
 
     @Autowired
     public ArquivoCrawler(IntegrationLogRepository integrationLogRepository, SearchEntityRepository searchEntityRepository,
@@ -77,6 +87,9 @@ public class ArquivoCrawler {
         noTitleCounter = metricService.loadValue("crawler_total_articles_no_title");
         duplicateCounter = metricService.loadValue("crawler_total_articles_duplicates");
         totalSentCounter = metricService.loadValue("crawler_total_articles_sent_to_processor");
+        totalImageEventSentCounter = metricService.loadValue("crawler_total_images_to_recover");
+        jsonErrors = metricService.loadValue("crawler_total_images_to_recover_errors");
+
     }
 
     @EventListener(ApplicationReadyEvent.class)
@@ -114,7 +127,11 @@ public class ArquivoCrawler {
                 }
 
                 for (JsonNode node : responses) {
-                    publish(url, node);
+                    if (imageRecoverMode) {
+                        publishOnImageTopic(url, node);
+                    } else {
+                        publish(url, node);
+                    }
                 }
 
                 LOG.info("Crawling results: {} (site: {}) : {} in {} pages", url.entity.getName(), url.site.getName(), entityTotal, pages);
@@ -130,11 +147,15 @@ public class ArquivoCrawler {
         LOG.info("\tArticles with no titles: {}/{}", noTitleCounter, totalFetchedCounter);
         LOG.info("\tArticles already stored: {}/{}", duplicateCounter, totalFetchedCounter);
         LOG.info("\tArticles sent: {}/{}", totalSentCounter, totalFetchedCounter);
+        LOG.info("\tArticles sent to image recover: {}/{}", totalImageEventSentCounter, totalFetchedCounter);
+        LOG.info("\tArticles image recover json errors: {}/{}", jsonErrors, totalFetchedCounter);
 
         metricService.setValue("crawler_total_articles_fetched", totalFetchedCounter);
         metricService.setValue("crawler_total_articles_no_title", noTitleCounter);
         metricService.setValue("crawler_total_articles_duplicates", duplicateCounter);
         metricService.setValue("crawler_total_articles_sent_to_processor", totalSentCounter);
+        metricService.setValue("crawler_total_images_to_recover", totalImageEventSentCounter);
+        metricService.setValue("crawler_total_images_to_recover_errors", jsonErrors);
 
     }
 
@@ -167,6 +188,31 @@ public class ArquivoCrawler {
                     LOG.debug("Sent to topic {} value={}", topic, record);
                 } catch (JsonProcessingException e) {
                     LOG.warn("Error processing {} and response item: {}", url.url, responseItem.toPrettyString());
+                }
+            }
+        }
+    }
+
+    int roundRobinIndex = 0;
+
+    private void publishOnImageTopic(UrlRecord url, JsonNode responseItems) {
+        for (var responseItem : responseItems) {
+            final int siteId = url.site.getId();
+            final int entityId = url.entity.getId();
+            final Article article = articleRepository.findByTitleAndSiteAndEntityIdWithScoreAccepted(responseItem.get("title").asText(), siteId, entityId);
+            if (article != null) {
+                final ImageRecord imageRecord = new ImageRecord(article.getId(), responseItem.get("linkToScreenshot").asText());
+                try {
+                    kafkaTemplate.send(imageCropTopic, roundRobinIndex, "" + roundRobinIndex, objectMapper.writeValueAsString(imageRecord));
+                    totalImageEventSentCounter++;
+                    roundRobinIndex++;
+                    LOG.debug("Sent to topic {} and partition value={}", imageCropTopic, imageRecord);
+                    if (roundRobinIndex == 15) {
+                        roundRobinIndex = 0;
+                    }
+                } catch (JsonProcessingException e) {
+                    LOG.warn("Error processing {} and response item: {}", url.url, responseItem.toPrettyString());
+                    jsonErrors++;
                 }
             }
         }
