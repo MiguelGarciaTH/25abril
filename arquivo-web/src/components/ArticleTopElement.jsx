@@ -48,7 +48,9 @@ const ArticleTopElement = ({ article, isMobile }) => {
         <div 
           className={`entityContainer ${
             showEntities && searchEntityDetails.count > 0 ? "show" : ""
-          } ${isMobile ? "mobile" : ""}`}
+          } ${isMobile ? "mobile" : ""} ${
+            searchEntityDetails.count > 15 ? "scroll" : ""
+          }`}
         >
           {showEntities &&
             searchEntityDetails.count > 0 &&
