@@ -2,10 +2,10 @@
 
 /* Container for the article and entities */
 .articleTopElementContainer {
-  margin-left: 1000px;
   /* Ensure the container is positioned correctly */
   position: relative;
   text-align: left;
+  margin-left: 25%;
   display: flex;
   /* Use flexbox for layout */
   align-items: center;
@@ -112,12 +112,9 @@
   /* Align items at the top */
   gap: 20px;
   /* Add spacing between entity circles */
-  margin-left: 20px;
   padding: 20px;
   border-radius: 8px;
-  width: 100%;
-  /* Allow the container to take full width */
-  max-width: 650px;
+  width: 40%;
   /* Limit the width to match the article container */
   position: relative;
   z-index: 3;
@@ -216,7 +213,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: calc(20% - 20px);
   /* Ensure five items per row with spacing */
   max-width: 120px;
   /* Limit the size of each circle */
@@ -298,8 +294,8 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  width: 1800px;
-  /* Fixed width to reserve space for both containers */
+  width: 100%;
+  margin: 0 auto;
 }
 
 .sliderContainer {
@@ -378,7 +374,9 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  /* Add spacing between ArticleTopElement components */
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .bannerLink {
@@ -586,7 +584,6 @@
     width: 200px;
     /* Increased width to fully accommodate text */
     height: 25px;
-
   }
 
   .sliderContainer {
@@ -621,229 +618,42 @@
     flex-direction: column;
     gap: 15px;
     padding: 10px;
-  }
-
-  .articleTopElementContainer {
-    margin-left: 10%;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-
-  .contentWrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
-    width: 100%;
-    /* Fixed width to reserve space for both containers */
-  }
-
-  .articlesWrapper {
-    display: flex;
     margin-left: 15%;
-    flex-direction: column;
-    gap: 15px;
-    /* Add spacing between ArticleTopElement components */
-  }
-
-  .articleContainer {
-    width: 100%;
-    padding: 15px;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-
-  .articleTitle {
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin: 10px 0;
-    color: #333;
-  }
-
-  .score {
-    font-size: 0.8rem;
-  }
-
-  .siteName {
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-
-  .articleImage {
-    height: 50px;
-    width: 100%;
-    object-fit: fill;
-    filter: grayscale(100%);
-    /* Ensures the image covers the entire area */
-  }
-
-  .entityContainer {
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-left: 0;
-    padding: 10px;
-    -webkit-mask-image: linear-gradient(
-      to right,
-      black 70%,
-      rgba(0, 0, 0, 0.8) 80%,
-      rgba(0, 0, 0, 0.6) 85%,
-      rgba(0, 0, 0, 0.4) 90%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to right,
-      black 70%,
-      rgba(0, 0, 0, 0.8) 80%,
-      rgba(0, 0, 0, 0.6) 85%,
-      rgba(0, 0, 0, 0.4) 90%,
-      transparent 100%
-    );
-  }
-
-  .entityCircle {
-    width: 50px;
-    max-width: 100px;
-    height:100%;
-  }
-
-  .entityImage {
-    width: 50%;
-    height: 50%;
-    object-fit: cover;
-  }
-
-  .entityName {
-    font-size: 0.8rem;
   }
 
   .articleTopElementContainer {
     flex-direction: column;
-    align-items: flex-start;
-    margin-bottom: 20px;
-  }
-
-  .articleContainer {
-    order: 1; /* Ensure articleContainer appears first */
-    width: 100%;
-    padding: 15px;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-
-  .entityContainer {
-    order: 2; /* Ensure entityContainer appears below articleContainer */
-    display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    gap: 10px;
-    margin: 0; /* Remove extra margins */
-    padding: 10px;
-    width: 100%; /* Full width for mobile */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #ccc transparent; /* For Firefox */
-  }
-
-  .entityContainer::-webkit-scrollbar {
-    height: 8px; /* Height of the scrollbar */
-  }
-
-  .entityContainer::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Scrollbar thumb color */
-    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
-  }
-
-  .entityContainer::-webkit-scrollbar-track {
-    background: transparent; /* Scrollbar track color */
-  }
-
-  .entityCircle {
-    flex: 0 0 auto; /* Prevent shrinking or growing */
-    width: 80px; /* Adjust size for mobile */
-    height: 80px; /* Adjust size for mobile */
-  }
-
-  .entityImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .entityName {
-    font-size: 0.8rem;
-  }
-
-  .articleTopElementContainer {
-    flex-direction: column; /* Stack children vertically */
     align-items: stretch; /* Ensure full width alignment */
     margin-bottom: 20px;
-  }
-
-  .articleContainer {
-    order: 1; /* Ensure articleContainer appears first */
-    width: 100%; /* Full width for mobile */
-    padding: 15px;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
-
-  .entityContainer {
-    order: 2; /* Ensure entityContainer appears below articleContainer */
     display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    gap: 10px;
-    margin: 0; /* Remove extra margins */
-    padding: 10px;
-    width: 100%; /* Full width for mobile */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #ccc transparent; /* For Firefox */
-  }
-
-  .entityContainer::-webkit-scrollbar {
-    height: 8px; /* Height of the scrollbar */
-  }
-
-  .entityContainer::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Scrollbar thumb color */
-    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
-  }
-
-  .entityContainer::-webkit-scrollbar-track {
-    background: transparent; /* Scrollbar track color */
-  }
-
-  .articleElement.mobile {
-    display: flex;
-    flex-direction: column; /* Stack content vertically */
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: none;
     width: 100%;
   }
 
-  .articleImage.mobile {
-    height: 150px; /* Adjust image height for mobile */
-    object-fit: cover;
-    border-radius: 8px;
+  .articleContainer {
+    order: 1;
+    width: 100%;
+    padding: 15px;
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
   }
 
-  .articleTitle.mobile {
-    font-size: 1rem; /* Adjust font size for mobile */
-    margin: 10px 0;
-  }
-
-  .articleMeta.mobile {
-    font-size: 0.8rem; /* Adjust meta font size for mobile */
+  .entityContainer {
+    order: 2;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 10px;
+    margin: 0;
+    padding: 10px;
+    width: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
   }
 
   .entityCircle {
-    flex: 0 0 auto; /* Prevent shrinking or growing */
-    width: 60px; /* Adjust size for mobile */
-    height: 60px; /* Adjust size for mobile */
+    flex: 0 0 auto;
+    width: 80px;
+    height: 80px;
   }
 
   .entityImage {
@@ -853,64 +663,7 @@
   }
 
   .entityName {
-    font-size: 0.7rem; /* Adjust font size for mobile */
-  }
-
-  .articleTopElementContainer {
-    display: flex;
-    flex-direction: column; /* Stack children vertically */
-    align-items: flex-start; /* Align items to the left */
-    margin-bottom: 20px;
-  }
-
-  .articleContainer {
-    order: 1; /* Ensure articleContainer appears first */
-    width: 100%; /* Full width for mobile */
-    padding: 15px;
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1); /* Restore original shadow */
-    border: 1px solid #ccc; /* Restore original border */
-  }
-
-  .entityContainer {
-    order: 2; /* Ensure entityContainer appears below articleContainer */
-    display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    gap: 10px;
-    margin-top: 10px; /* Add spacing between articleContainer and entityContainer */
-    padding: 10px;
-    width: 100%; /* Full width for mobile */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #ccc transparent; /* For Firefox */
-  }
-
-  .entityContainer::-webkit-scrollbar {
-    height: 8px; /* Height of the scrollbar */
-  }
-
-  .entityContainer::-webkit-scrollbar-thumb {
-    background-color: #ccc; /* Scrollbar thumb color */
-    border-radius: 4px; /* Rounded corners for the scrollbar thumb */
-  }
-
-  .entityContainer::-webkit-scrollbar-track {
-    background: transparent; /* Scrollbar track color */
-  }
-
-  .entityCircle {
-    flex: 0 0 auto; /* Prevent shrinking or growing */
-    width: 80px; /* Adjust size for mobile */
-    height: 80px; /* Adjust size for mobile */
-  }
-
-  .entityImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .entityName {
-    font-size: 0.8rem; /* Adjust font size for mobile */
+    font-size: 0.8rem;
   }
 
   .contentWrapper.mobile {
@@ -923,7 +676,7 @@
 
   .articleTopElementContainer.mobile {
     margin: 0;
-    width: 100%;
+    width: 80%;
     align-items: center;
   }
 
@@ -936,7 +689,7 @@
   .articleImage.mobile {
     height: 450px; /* Reduced from 150px */
     width: 100%;
-    object-fit: cover
+    object-fit: cover;
   }
 
   .articleContent {
