@@ -25,7 +25,6 @@ const Entities = () => {
             try {
                 const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity/types`);
                 const types = await response.json();
-                console.log("Fetched entity types:", types); // Debug log for fetched types
                 setEntityTypes(types);
             } catch (error) {
                 console.error("Error fetching entity types:", error);
