@@ -38,18 +38,35 @@ public class SearchEntityController {
     public Page<SearchEntity> getSearchEntityBySearchTerm(@RequestParam(required = false, value = "search_term") String searchTerm,
                                                           @RequestParam(required = false, value = "type") String type,
                                                           Pageable pageable) {
-        // If searchTerm is empty or null, set it to an empty string for wildcard search
-        if ((searchTerm == null || searchTerm.isEmpty()) && (type == null || type.isEmpty())) {
-            return searchEntityRepository.findAll(pageable);
-        } else if ((searchTerm == null || searchTerm.isEmpty()) && (type != null || !type.isEmpty())) {
-            return searchEntityRepository.findAllByType(type, pageable);
-        } else {
-            final String normalized = normalizeSearchTerm(searchTerm);
-            final String query = Arrays.stream(normalized.split("\\s+"))
+
+        boolean typeIsSet = false;
+        if (type != null && !type.isEmpty()) {
+            type = type.toUpperCase();
+            typeIsSet = true;
+        }
+        boolean searchTermIsSet = false;
+        String normalized;
+        String query = "";
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            normalized = normalizeSearchTerm(searchTerm);
+            query = Arrays.stream(normalized.split("\\s+"))
                     .map(word -> word + ":*")
                     .collect(Collectors.joining(" & "));
-            return searchEntityRepository.findBySearchTermAbdType(query, type.toUpperCase(), pageable);
+            searchTermIsSet = true;
         }
+
+        // If searchTerm is empty or null, set it to an empty string for wildcard search
+        if (typeIsSet && searchTermIsSet) {
+            return searchEntityRepository.findBySearchTermAndByType(query, type, pageable);
+        }
+        if (!typeIsSet && searchTermIsSet) {
+            return searchEntityRepository.findBySearchTerm(query, pageable);
+        }
+        if (typeIsSet) {
+            return searchEntityRepository.findAllByType(type, pageable);
+
+        }
+        return searchEntityRepository.findAll(pageable);
     }
 
     @GetMapping("/stats")

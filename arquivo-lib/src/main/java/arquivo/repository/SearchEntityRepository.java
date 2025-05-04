@@ -11,7 +11,10 @@ import java.util.List;
 public interface SearchEntityRepository extends JpaRepository<SearchEntity, Integer> {
 
     @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se WHERE se.names_vector @@ to_tsquery('portuguese', :searchTerm) and se.type = :type")
-    Page<SearchEntity> findBySearchTermAbdType(String searchTerm, String type, Pageable pageable);
+    Page<SearchEntity> findBySearchTermAndByType(String searchTerm, String type, Pageable pageable);
+
+    @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se WHERE se.names_vector @@ to_tsquery('portuguese', :searchTerm)")
+    Page<SearchEntity> findBySearchTerm(String searchTerm, Pageable pageable);
 
     @Query(nativeQuery = true, value = "SELECT se.* FROM search_entity se order by se.name asc")
     Page<SearchEntity> findAll(Pageable pageable);
