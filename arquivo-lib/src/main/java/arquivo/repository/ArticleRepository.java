@@ -116,8 +116,9 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     @Query(nativeQuery = true, value = """
             SELECT a.*
             FROM article a
-            LEFT JOIN article_search_entity_association asea ON a.id = asea.article_id
+            INNER JOIN article_search_entity_association asea ON a.id = asea.article_id
             WHERE a.summary_score > 0
+            and asea.entity_score > 0
             GROUP BY a.id
             ORDER BY COUNT(asea.search_entity_id) DESC, a.summary_score DESC
             """)
