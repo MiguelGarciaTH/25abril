@@ -1,0 +1,77 @@
+.entities-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+}
+
+.search-and-chips {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    position: relative;
+}
+
+.search-and-chips .search-form {
+    position: relative !important;
+    transform: none !important;
+    left: auto !important;
+    top: auto !important;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.chip-container {
+    margin-top: 150px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.chip {
+    padding: 0.5rem 1rem;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chip:hover {
+    background-color: #e0e0e0;
+}
+
+.chip-selected {
+    background-color: #333;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .entities-layout {
+        padding: 10px;
+    }
+
+    .search-and-chips {
+        gap: 2rem;  /* Increase gap on smaller screens */
+    }
+
+    .search-and-chips .search-form {
+        padding: 0 10px;
+    }
+
+    .chip-container {
+        padding: 1rem 10px;
+        justify-content: center;
+    }
+
+    .chip {
+        font-size: 14px;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-and-chips {
+        gap: 2.5rem;  /* Even more gap for mobile */
+    }
+}

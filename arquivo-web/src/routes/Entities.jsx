@@ -6,6 +6,7 @@ import EntitySearchForm from '../components/EntitySearchForm';
 import EmptyResults from '../components/EmptyResults';
 import "../index.css";
 import "../styles/ArticleSearchForm.css";
+import "../styles/Entities.css";
 
 const Entities = () => {
     const [entities, setEntities] = useState([]);
@@ -177,28 +178,30 @@ const Entities = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div>
+        <div className="entities-layout">
             <Header isHome={false} />
-            <EntitySearchForm
-                className="search-form"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                clearSearch={clearSearch}
-                ref={searchInputRef}
-            />
-            <div className="chip-container">
-                {entityTypes.map((type) => (
-                    <div
-                        key={type}
-                        className={`chip ${selectedType === type ? "chip-selected" : ""}`}
-                        onClick={() => handleChipClick(type)}
-                    >
-                        {type
-                            .replace(/_/g, " ") // Replace underscores with spaces
-                            .charAt(0)
-                            .toUpperCase() + type.replace(/_/g, " ").slice(1).toLowerCase()} {/* Capitalize first letter */}
-                    </div>
-                ))}
+            <div className="search-and-chips">
+                <EntitySearchForm
+                    className="search-form"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    clearSearch={clearSearch}
+                    ref={searchInputRef}
+                />
+                <div className="chip-container">
+                    {entityTypes.map((type) => (
+                        <div
+                            key={type}
+                            className={`chip ${selectedType === type ? "chip-selected" : ""}`}
+                            onClick={() => handleChipClick(type)}
+                        >
+                            {type
+                                .replace(/_/g, " ") // Replace underscores with spaces
+                                .charAt(0)
+                                .toUpperCase() + type.replace(/_/g, " ").slice(1).toLowerCase()} {/* Capitalize first letter */}
+                        </div>
+                    ))}
+                </div>
             </div>
             {!loading && !typing && entities.length === 0 ? (
                 <EmptyResults />
