@@ -45,7 +45,6 @@ const Entities = () => {
 
         try {
             const url = `${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=12&search_term=${query}&type=${type}`;
-            console.log("📜 Fetching entities:", { url, page: pageNumber, query, type });
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
@@ -70,21 +69,34 @@ const Entities = () => {
         }
     }, [hasMoreData]);
 
-    // Restore chip state and results only when navigating back
+    // Save both entities and scroll state
+    const handleEntityClick = () => {
+        sessionStorage.setItem("entities_state", JSON.stringify({
+            scrollY: window.scrollY,
+            entities: entities,
+            page: page,
+            selectedType: selectedType
+        }));
+    };
+
+    // Restore state when navigating back
     useEffect(() => {
         if (navigationType === "POP" && isInitialRestore.current) {
-            const savedType = sessionStorage.getItem("entities_selected_type");
-            if (savedType !== null) {
-                setSelectedType(savedType);
-                setEntities([]);
-                setPage(0);
-                setHasMoreData(true);
+            const savedState = JSON.parse(sessionStorage.getItem("entities_state"));
+            if (savedState) {
+                setEntities(savedState.entities);
+                setPage(savedState.page);
+                setSelectedType(savedState.selectedType);
+                // Wait for render then scroll
+                setTimeout(() => {
+                    window.scrollTo(0, savedState.scrollY);
+                }, 100);
             }
             isInitialRestore.current = false;
         } else if (navigationType !== "POP") {
-            sessionStorage.removeItem("entities_selected_type");
+            sessionStorage.removeItem("entities_state");
         }
-        setSkipFetch(false); // Enable fetching after initial setup
+        setSkipFetch(false);
     }, [navigationType]);
 
     // Single source of truth for fetching
@@ -199,6 +211,7 @@ const Entities = () => {
                             entityName={entity.name}
                             entityBio={entity.biography}
                             entityImage={entity.imageUrl}
+                            onClick={handleEntityClick}
                         />
                     ))}
                 </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "../styles/Entity.css";
 
-function Entity({ entityId, entityName, entityImage, entityBio }) {
+function Entity({ entityId, entityName, entityImage, entityBio, onClick }) {
     const [showBio, setShowBio] = useState(false);
 
     return (
@@ -11,6 +11,7 @@ function Entity({ entityId, entityName, entityImage, entityBio }) {
             className="polaroid-wrapper"
             onMouseEnter={() => setShowBio(true)}
             onMouseLeave={() => setShowBio(false)}
+            onClick={onClick}
         >
             <div className="polaroid">
                 {entityImage ? (
