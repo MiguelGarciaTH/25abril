@@ -35,6 +35,16 @@ const CustomTooltip = ({ active, payload }) => {
 
 const SiteCounter = () => {
   const [data, setData] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Fetch data from the API
   useEffect(() => {
@@ -51,7 +61,6 @@ const SiteCounter = () => {
   }, []);
 
   return (
-
     <div style={{ width: "90%", height: 400 }}>
       <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Artigos por site</h3> {/* Add title here */}
       <ResponsiveContainer>
@@ -59,15 +68,14 @@ const SiteCounter = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            angle={0} // Keep the labels horizontal
-            textAnchor="middle"  // Center the text horizontally
+            angle={isMobile ? -45 : 0} // Adjust angle based on screen width
+            textAnchor={isMobile ? "end" : "middle"}  // Adjust text anchor based on screen width
             tick={{
               fontSize: 16,
-              textAnchor: 'middle',
               dominantBaseline: 'middle'
             }} // Adjust label positioning
             interval={0} // Ensure all labels are rendered
-            height={100} // Set height to accommodate wrapped text
+            height={isMobile ? 120 : 100} // Adjust height based on screen width
             style={{
               wordWrap: 'break-word',
               whiteSpace: 'normal',

@@ -12,6 +12,16 @@ const formatType = (type) => {
 
 const SearchEntityTypeCounter = () => {
   const [data, setData] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Custom tooltip component moved inside to access data
   const CustomTooltip = ({ active, payload }) => {
@@ -72,15 +82,14 @@ const SearchEntityTypeCounter = () => {
           <XAxis
             dataKey="type"
             tickFormatter={formatType}
-            angle={0}
-            textAnchor="middle"
+            angle={isMobile ? -45 : 0}
+            textAnchor={isMobile ? "end" : "middle"}
             tick={{
               fontSize: 14,
-              textAnchor: 'middle',
               dominantBaseline: 'middle'
             }}
             interval={0}
-            height={100}
+            height={isMobile ? 120 : 100}
             style={{
               wordWrap: 'break-word',
               whiteSpace: 'normal',
