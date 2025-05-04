@@ -105,11 +105,10 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     Page<Article> findBySearchTerm(String searchTerm, Pageable pageable);
 
     @Query("""
-            select a
+            select distinct a
             from Article a
-            join a.site s
             where a.summaryScore > 0
-            order by a.summaryScore desc
+            order by a.summaryScore desc, a.id asc
             """)
     Page<Article> getArticleCountsByRelevance(Pageable pageable);
 
