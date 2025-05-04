@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigationType } from 'react-router-dom';
 import Header from "../components/Header";
 import Entity from '../components/Entity';
 import EntitySearchForm from '../components/EntitySearchForm';
@@ -17,7 +18,10 @@ const Entities = () => {
     const [typing, setTyping] = useState(false);
     const [entityTypes, setEntityTypes] = useState([]); // Store entity types for chips
     const [selectedType, setSelectedType] = useState(""); // Track selected chip filter
+    const [skipFetch, setSkipFetch] = useState(true); // Start with skip true to prevent initial fetch
     const searchInputRef = useRef(null);
+    const navigationType = useNavigationType();
+    const isInitialRestore = useRef(true);
 
     // Fetch entity types for chips
     useEffect(() => {
@@ -40,7 +44,9 @@ const Entities = () => {
         setError(null);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=12&search_term=${query}&type=${type}`);
+            const url = `${import.meta.env.VITE_REST_URL}/entity?page=${pageNumber}&size=12&search_term=${query}&type=${type}`;
+            console.log("📜 Fetching entities:", { url, page: pageNumber, query, type });
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -64,9 +70,29 @@ const Entities = () => {
         }
     }, [hasMoreData]);
 
+    // Restore chip state and results only when navigating back
     useEffect(() => {
+        if (navigationType === "POP" && isInitialRestore.current) {
+            const savedType = sessionStorage.getItem("entities_selected_type");
+            if (savedType !== null) {
+                setSelectedType(savedType);
+                setEntities([]);
+                setPage(0);
+                setHasMoreData(true);
+            }
+            isInitialRestore.current = false;
+        } else if (navigationType !== "POP") {
+            sessionStorage.removeItem("entities_selected_type");
+        }
+        setSkipFetch(false); // Enable fetching after initial setup
+    }, [navigationType]);
+
+    // Single source of truth for fetching
+    useEffect(() => {
+        if (skipFetch) return;
+        console.log("🔍 Fetching with:", { page, searchQuery, selectedType });
         fetchData(page, searchQuery, selectedType);
-    }, [fetchData, page, searchQuery, selectedType]);
+    }, [fetchData, page, searchQuery, selectedType, skipFetch]);
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -114,7 +140,6 @@ const Entities = () => {
             setEntities([]);
             setPage(0);
             setHasMoreData(true);
-            fetchData(0, newQuery, selectedType);
         }, 500);
 
         setSearchTimer(timer);
@@ -128,10 +153,12 @@ const Entities = () => {
     };
 
     const handleChipClick = (type) => {
-        setSelectedType(type === selectedType ? "" : type); // Toggle chip selection
+        const newType = type === selectedType ? "" : type;
+        setSelectedType(newType);
         setEntities([]);
         setPage(0);
         setHasMoreData(true);
+        sessionStorage.setItem("entities_selected_type", newType);
     };
 
     if (loading && page === 0) return <div>Loading...</div>;
