@@ -60,15 +60,14 @@
   font-size: 1.2rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .header-page-home {
-    margin-left: 16%;
+    margin-left: 10%;
     font-size: 8vw;
     padding: 15px 0;
   }
 
   .header-page {
-    margin-left: 10%;
     padding: 15px 0;
     font-size: 1.5rem;
   }

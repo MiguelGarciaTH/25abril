@@ -103,7 +103,6 @@ const Entities = () => {
     // Single source of truth for fetching
     useEffect(() => {
         if (skipFetch) return;
-        console.log("🔍 Fetching with:", { page, searchQuery, selectedType });
         fetchData(page, searchQuery, selectedType);
     }, [fetchData, page, searchQuery, selectedType, skipFetch]);
 

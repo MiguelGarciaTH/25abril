@@ -51,11 +51,11 @@
         align-items: center;
         top: 60px;
         margin-top: 10%;
-        margin-left: 10%;
     }
 
     .search-bar {
         flex-direction: column;
+        margin-left: 5%;
     }
 
     .input-wrapper {
