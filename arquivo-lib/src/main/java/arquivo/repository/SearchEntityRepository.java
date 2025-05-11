@@ -49,6 +49,13 @@ public interface SearchEntityRepository extends JpaRepository<SearchEntity, Inte
             """)
     List<SearchEntityTypeCounter> getSearchEntityTypeCounts();
 
+    @Query("""
+                    select se
+                    from SearchEntity se
+                    where se.done = false
+            """)
+    List<SearchEntity> findAllNotDone();
+
     record SearchEntityCounter(int id, String name, String image, Long count) {
 
     }

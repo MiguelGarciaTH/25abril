@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS search_entity (
     id integer NOT NULL DEFAULT nextval('search_entity_seq'),
     name varchar(255) NOT NULL,
     aliases text,
+    done boolean,
     type varchar(50) NOT NULL CHECK (
                                      type IN (
                                          'CAPITÃES',

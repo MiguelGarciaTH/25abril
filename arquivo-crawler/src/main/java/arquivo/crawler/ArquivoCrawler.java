@@ -95,7 +95,7 @@ public class ArquivoCrawler {
     @EventListener(ApplicationReadyEvent.class)
     public void crawl() {
         final LocalDateTime start = LocalDateTime.now(ZoneOffset.UTC);
-        final List<SearchEntity> entities = searchEntityRepository.findAll();
+        final List<SearchEntity> entities = searchEntityRepository.findAllNotDone();
         final List<Site> sites = siteRepository.findAll();
         final List<UrlRecord> urls = prepareSearchUrl(entities, sites);
         // shuffling aims to optimize the messages sent to kafka. If we shuffle we may avoid sending duplicated ahead.

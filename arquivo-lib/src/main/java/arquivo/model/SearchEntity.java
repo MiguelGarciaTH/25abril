@@ -46,6 +46,8 @@ public class SearchEntity {
     @Column(columnDefinition = "text")
     private String biography;
 
+    private boolean done;
+
 
     public SearchEntity() {
 
@@ -115,5 +117,13 @@ public class SearchEntity {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 }
