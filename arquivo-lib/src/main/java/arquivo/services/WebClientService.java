@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.netty.http.client.HttpClient;
 
@@ -65,7 +66,7 @@ public class WebClientService {
             return response;
         } catch (JsonProcessingException e) {
             LOG.error("Problem fetching {}", url);
-        } catch (WebClientResponseException e2) {
+        } catch (WebClientResponseException | WebClientRequestException e2) {
             LOG.error("Problem fetching {}: {}", url, e2.getMessage());
             try {
                 Thread.sleep(500L);
