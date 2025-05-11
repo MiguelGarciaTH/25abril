@@ -46,7 +46,7 @@ public class SearchEntity {
     @Column(columnDefinition = "text")
     private String biography;
 
-    private boolean done;
+    private Boolean done;
 
 
     public SearchEntity() {
@@ -57,6 +57,7 @@ public class SearchEntity {
         this.name = name;
         this.aliases = aliases;
         this.type = type;
+        this.done = false;
     }
 
     public int getId() {
