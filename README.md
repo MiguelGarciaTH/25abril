@@ -33,6 +33,9 @@ O resultado final deste projeto é fruto de várias decisões pessoais, em parti
 Foram escolhidos como fontes noticiosas os sites do:  
 **Público, Diário de Notícias, Jornal de Notícias, Expresso, Observador, SIC Notícias e TSF**.
 
+Link para o video de apresentação:
+[![Watch the video](https://img.youtube.com/vi/AyFX4hL2ma8/maxresdefault.jpg)](https://www.youtube.com/watch?v=AyFX4hL2ma8)
+
 ## Considerações pessoais
 
 Em relação às entidades de pesquisa, foram selecionadas com base no conhecimento do autor do tema através de livros, podcasts, documentários e de conversas com pessoas que viveram o 25 de Abril na primeira pessoa.  
