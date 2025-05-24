@@ -2,6 +2,7 @@
 
 ## 📌 Table of Contents
 - [Motivação](#motivação)
+- [Materiais](#materiais)
 - [Considerações pessoais](#considerações-pessoais)
 - [Agradecimentos](#agradecimentos)
 - [Arquitectura](#arquitectura)
@@ -32,6 +33,9 @@ Quando iniciei o projeto, não esperava encontrar tantos artigos publicados sobr
 O resultado final deste projeto é fruto de várias decisões pessoais, em particular na seleção das fontes noticiosas.  
 Foram escolhidos como fontes noticiosas os sites do:  
 **Público, Diário de Notícias, Jornal de Notícias, Expresso, Observador, SIC Notícias e TSF**.
+
+## Materiais
+[Link para o site Arquivo25Abril](https://www.arquivo25abril.com/home)
 
 Link para o video de apresentação:
 [![Watch the video](https://img.youtube.com/vi/AyFX4hL2ma8/maxresdefault.jpg)](https://www.youtube.com/watch?v=AyFX4hL2ma8)
