@@ -1,6 +1,7 @@
 # Arquivo 25 de Abril ![25 de Abril](./arquivo-web/public/favicon-32x32.png)
 
 ## 📌 Table of Contents
+- [Prémio Arquivo.pt 2025](#prémio-arquivo.pt-2025)
 - [Motivação](#motivação)
 - [Materiais](#materiais)
 - [Considerações pessoais](#considerações-pessoais)
@@ -10,6 +11,14 @@
     - [Livros](#livros)
     - [Podcasts](#podcasts)
     - [Documentários](#documentários)
+
+## Prémio Arquivo.pt 2025
+Este trabalho foi dinsguido com uma menção honrosa atribuída pela Comissão Comemorativa 50 anos 25 de Abril atribuiu uma Menção Honrosa. 
+
+[Noticia no Público](https://www.publico.pt/2025/06/28/ciencia/noticia/premio-arquivopt-portal-autarquico-quer-combater-abstencao-2138001)
+[Noticia no Arquivo.pt](https://sobre.arquivo.pt/pt/conheca-os-vencedores-do-premio-arquivo-pt-2025/)
+[Vídeo da cerimónia de entrega de prémios no Encontro Ciência 2025](www.youtube.com/watch?v=nFQDePvER2w&t=2134s)
+
 
 ## Motivação
 
