@@ -20,9 +20,9 @@
     "recharts": "^2.15.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^6.0.3",
     "jsdom": "^23.0.1",
-    "vite": "^6.4.2",
+    "vite": "^8.1.0",
     "vitest": "^4.1.0"
   },
   "description": "<h1 align=\"center\">   Vite Template React </h1>",
